@@ -6,16 +6,19 @@
 namespace file{
     class FileWorker {
         private:
-            std::string path;
-            std::vector<std::string> blocks;
+            //std::string path;
+            std::vector<std::string> segs;
+            std::string block;
             int blocksize;
+            int segsize;
         public:
-            FileWorker() : path(""), blocksize(0) {};
-            FileWorker(std::string val, int size) : path(val), blocksize(size) {};
+            FileWorker() :  blocksize(0),segsize(0) {};
+            FileWorker(int bsize, int ssize) : blocksize(bsize),segsize(ssize) {};
             ~FileWorker();
-            std::string getxFileBlock(int idx);
-            int getBlockSize();
-            void processFile();
+            std::string getxFileSeg(int idx);
+            int getSegSize();
+            void processBlock();
+            void setBlock(std::ifstream &ifs);
     };
 }
 #endif
