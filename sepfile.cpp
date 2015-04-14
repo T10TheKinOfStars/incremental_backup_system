@@ -5,7 +5,6 @@
 using namespace file;
 
 FileWorker::~FileWorker() {
-    //path = "";
     block = "";
     segs.clear();
     blocksize = 0;

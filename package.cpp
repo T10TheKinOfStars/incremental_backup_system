@@ -1,6 +1,7 @@
 #include "package.hpp"
 
 using namespace network;
+using namespace utility;
 
 void Package::fillSegs(vector<string> src) {
    for (string s : src) {

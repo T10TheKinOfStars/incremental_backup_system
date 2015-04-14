@@ -6,7 +6,6 @@
 namespace file{
     class FileWorker {
         private:
-            //std::string path;
             std::vector<std::string> segs;
             std::string block;
             int blocksize;

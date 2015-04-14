@@ -2,6 +2,7 @@
 #define PACKAGE_HPP
 #include <iostram>
 #include <vector>
+#include "md5.h"
 
 namespace network {
     class Package {
