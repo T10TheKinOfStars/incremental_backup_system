@@ -1,3 +1,9 @@
 This project is about increase storage upload files like dropbox
 
 Used to study rsync and implement a simple system to do updating files
+
+checksum.hpp/cpp    compute rolling-checksum and md5 checksum
+md5.h/cpp           generate md5 string
+package.hpp/cpp     generate send information and process rececive information
+sepfile.hpp/cpp     seperate file into n blocks
+search.hpp/cpp      search rolling checksum

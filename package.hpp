@@ -4,7 +4,7 @@
 #include <vector>
 #include "md5.h"
 
-namespace network {
+namespace process {
     class Package {
         private:
             vector<unsigned long> checksums;
@@ -14,7 +14,7 @@ namespace network {
             void fillSegs(vector<string> src);
             std::string getWholeChecksums();
             std::string getxChecksums(int idx);
-            void set md5(unsigned long val);
+            void setmd5(unsigned long val);
             unsigned long getmd5();
     };
 }

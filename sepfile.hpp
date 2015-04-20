@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-namespace file{
+namespace process{
     class FileWorker {
         private:
             std::vector<std::string> segs;
