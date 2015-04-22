@@ -1,4 +1,4 @@
-typedef i64 TimeStamp
+typedef i64 Timestamp
 
 exception SystemException {
   1: optional string message
@@ -31,10 +31,10 @@ struct RFile {
     2: optional list<Filedes> des;
 }
 
-service FileStore {
+service SmartSync {
     StatusReport writeFile(1: RFile rfile)
         throws (1: SystemException systemException),
 
     RFileMetadata checkFile(1: RFileMetadata meta)
-        thorws (1: SystemException systemException),
+        throws (1: SystemException systemException),
 }
