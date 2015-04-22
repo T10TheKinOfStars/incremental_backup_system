@@ -12,6 +12,7 @@ namespace process {
             vector<ritem> filedes;
         public:
             Package() {};
+            ~Package();
             void insert2Filedes(ritem val);
             void insert2Chksums(pitem val);
             vector<pitem> getchksums();

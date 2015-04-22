@@ -5,9 +5,9 @@
 #include <cmath>
 #include "types.h"
 
-
 namespace process {
-using namespace std;
+    using namespace std;
+    using namespace checksum;
     class SearchWorker {
         private:
             ChecksumWorker chkworker;
@@ -18,7 +18,7 @@ using namespace std;
             void init();
         public:
             SearchWorker() {init(); };
-            bool find();
+            void find();
             FileWorker getfWorker();
             void setfWorker(const FileWorker &worker); 
             Package getpworker();

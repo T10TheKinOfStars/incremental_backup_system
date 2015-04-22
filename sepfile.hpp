@@ -2,24 +2,23 @@
 #define SEPFILE_HPP
 #include <iostream>
 #include <vector>
+#include <string>
+#include <fstream>
+#include <cstdlib>
 
 using namespace std;
 
 namespace process{
     class FileWorker {
         private:
-            //char* addr;
-            //std::vector<std::string> segs;
-            //std::string block;
             string path;
             int filesize;
             int blocksize;
         public:
-            FileWorker() :  blocksize(0),addr(nullptr) {};
-            FileWorker(int bsize, char* add, string fpath) : blocksize(bsize),addr(add), path(fpath) {};
+            FileWorker() :  blocksize(0),filesize(0),path("") {};
+            FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
             ~FileWorker();
             FileWorker(const FileWorker &worker);
-            //std::string getxFileSeg(int idx);
             int getBlockSize();
             int getFileSize();
             string getBlock(int pos);

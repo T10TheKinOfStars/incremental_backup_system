@@ -1,7 +1,9 @@
 #include "package.hpp"
 
-using namespace network;
-using namespace utility;
+Package::~Package() {
+    checksums.clear();
+    filedes.clear();
+}
 
 void Package::insert2Filedes(ritem val) {
     filedes.push_back(val);

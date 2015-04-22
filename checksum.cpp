@@ -1,9 +1,4 @@
 #include "checksum.h"
-#include "md5.h"
-#include <string>
-
-using namespace std;
-using namespace checksum;
 
 /*   num1 = 1, num2 = 0
  *   input is the block of file that needs to compute rolling checksum

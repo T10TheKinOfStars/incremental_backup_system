@@ -1,5 +1,7 @@
-This project is about increase storage upload files like dropbox
+Author: Yilin Tao
 
+This project is about increase storage upload files like dropbox
+It is implemented by using C++ and thrift
 Used to study rsync and implement a simple system to do updating files
 
 checksum.hpp/cpp    compute rolling-checksum and md5 checksum
@@ -7,3 +9,4 @@ md5.h/cpp           generate md5 string
 package.hpp/cpp     generate send information and process rececive information
 sepfile.hpp/cpp     seperate file into n blocks
 search.hpp/cpp      search rolling checksum
+types.h             define all the types
