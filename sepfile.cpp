@@ -12,12 +12,14 @@ FileWorker::~FileWorker() {
     addr = nullptr;
 }
 
-int FileWorker::getBlockSize() {
-    return blocksize;
+FileWorker::FileWorker(const FileWorker &worker) {
+    path = worker.path;
+    filesize = worker.filesize;
+    blocksize = worker.blocksize;
 }
 
-int FileWorker::getSegSize() {
-    return segsize;
+int FileWorker::getBlockSize() {
+    return blocksize;
 }
 
 int FileWorker::getFileSize() {
@@ -34,16 +36,6 @@ string FileWorker::getBlock(int pos) {
     return retVal;
 }
 
-string FileWorker::getSeg(int pos) {
-    int len = (filesize - pos) > segsize ? segsize : (filesize - pos);
-    ifstream ifs(path.c_str());
-    ifs.seekg(pos,ifs.beg);
-    char* buf = new char[len];
-    ifs.read(buf,len);
-    string retVal = buf;
-    ifs.close();
-    return retVal;
-}
 
 char FileWorker::getxChar(int pos) {
     ifstream ifs(path.c_str());
@@ -61,9 +53,6 @@ void FileWorker::setBlockSize(int val) {
     blocksize = val;
 }
 
-void FileWorker::setSegSize(int val) {
-    segsize = val;
-}
 /*
 void FileWorker::processBlock() {        
     int idx = 0;

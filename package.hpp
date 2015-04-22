@@ -3,19 +3,19 @@
 #include <iostram>
 #include <vector>
 #include "md5.h"
+#include "types.h"
 
 namespace process {
     class Package {
         private:
-            vector<unsigned long> checksums;
-            unsigned long md5sum;
+            vector<pitem> checksums;
+            vector<ritem> filedes;
         public:
             Package() {};
-            void fillSegs(vector<string> src);
-            std::string getWholeChecksums();
-            std::string getxChecksums(int idx);
-            void setmd5(unsigned long val);
-            unsigned long getmd5();
+            void insert2Filedes(ritem val);
+            void insert2Chksums(pitem val);
+            vector<pitem> getchksums();
+            vector<ritem> getFiledes();
     };
 }
 #endif
