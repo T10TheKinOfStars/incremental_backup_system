@@ -74,8 +74,8 @@ typedef struct _SmartSync_writeFile_args__isset {
 class SmartSync_writeFile_args {
  public:
 
-  static const char* ascii_fingerprint; // = "D1C8E5995BD6B9318B19BB605AB94D5C";
-  static const uint8_t binary_fingerprint[16]; // = {0xD1,0xC8,0xE5,0x99,0x5B,0xD6,0xB9,0x31,0x8B,0x19,0xBB,0x60,0x5A,0xB9,0x4D,0x5C};
+  static const char* ascii_fingerprint; // = "B6C473B73EB7263E1D6516769D099380";
+  static const uint8_t binary_fingerprint[16]; // = {0xB6,0xC4,0x73,0xB7,0x3E,0xB7,0x26,0x3E,0x1D,0x65,0x16,0x76,0x9D,0x09,0x93,0x80};
 
   SmartSync_writeFile_args(const SmartSync_writeFile_args&);
   SmartSync_writeFile_args& operator=(const SmartSync_writeFile_args&);
@@ -111,8 +111,8 @@ class SmartSync_writeFile_args {
 class SmartSync_writeFile_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "D1C8E5995BD6B9318B19BB605AB94D5C";
-  static const uint8_t binary_fingerprint[16]; // = {0xD1,0xC8,0xE5,0x99,0x5B,0xD6,0xB9,0x31,0x8B,0x19,0xBB,0x60,0x5A,0xB9,0x4D,0x5C};
+  static const char* ascii_fingerprint; // = "B6C473B73EB7263E1D6516769D099380";
+  static const uint8_t binary_fingerprint[16]; // = {0xB6,0xC4,0x73,0xB7,0x3E,0xB7,0x26,0x3E,0x1D,0x65,0x16,0x76,0x9D,0x09,0x93,0x80};
 
 
   virtual ~SmartSync_writeFile_pargs() throw();
@@ -202,8 +202,8 @@ typedef struct _SmartSync_updateLocal_args__isset {
 class SmartSync_updateLocal_args {
  public:
 
-  static const char* ascii_fingerprint; // = "645095A61F3767BFF1E1C6D296F44C70";
-  static const uint8_t binary_fingerprint[16]; // = {0x64,0x50,0x95,0xA6,0x1F,0x37,0x67,0xBF,0xF1,0xE1,0xC6,0xD2,0x96,0xF4,0x4C,0x70};
+  static const char* ascii_fingerprint; // = "E3816E9C7BC92A21DE1E41307A06EC52";
+  static const uint8_t binary_fingerprint[16]; // = {0xE3,0x81,0x6E,0x9C,0x7B,0xC9,0x2A,0x21,0xDE,0x1E,0x41,0x30,0x7A,0x06,0xEC,0x52};
 
   SmartSync_updateLocal_args(const SmartSync_updateLocal_args&);
   SmartSync_updateLocal_args& operator=(const SmartSync_updateLocal_args&);
@@ -239,8 +239,8 @@ class SmartSync_updateLocal_args {
 class SmartSync_updateLocal_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "645095A61F3767BFF1E1C6D296F44C70";
-  static const uint8_t binary_fingerprint[16]; // = {0x64,0x50,0x95,0xA6,0x1F,0x37,0x67,0xBF,0xF1,0xE1,0xC6,0xD2,0x96,0xF4,0x4C,0x70};
+  static const char* ascii_fingerprint; // = "E3816E9C7BC92A21DE1E41307A06EC52";
+  static const uint8_t binary_fingerprint[16]; // = {0xE3,0x81,0x6E,0x9C,0x7B,0xC9,0x2A,0x21,0xDE,0x1E,0x41,0x30,0x7A,0x06,0xEC,0x52};
 
 
   virtual ~SmartSync_updateLocal_pargs() throw();
@@ -504,8 +504,8 @@ typedef struct _SmartSync_request_result__isset {
 class SmartSync_request_result {
  public:
 
-  static const char* ascii_fingerprint; // = "412ACF4F3B631AD8DBB9FC1D7DB8D86D";
-  static const uint8_t binary_fingerprint[16]; // = {0x41,0x2A,0xCF,0x4F,0x3B,0x63,0x1A,0xD8,0xDB,0xB9,0xFC,0x1D,0x7D,0xB8,0xD8,0x6D};
+  static const char* ascii_fingerprint; // = "18D29E7F5794A0237B267143D8D5100A";
+  static const uint8_t binary_fingerprint[16]; // = {0x18,0xD2,0x9E,0x7F,0x57,0x94,0xA0,0x23,0x7B,0x26,0x71,0x43,0xD8,0xD5,0x10,0x0A};
 
   SmartSync_request_result(const SmartSync_request_result&);
   SmartSync_request_result& operator=(const SmartSync_request_result&);
@@ -551,8 +551,8 @@ typedef struct _SmartSync_request_presult__isset {
 class SmartSync_request_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "412ACF4F3B631AD8DBB9FC1D7DB8D86D";
-  static const uint8_t binary_fingerprint[16]; // = {0x41,0x2A,0xCF,0x4F,0x3B,0x63,0x1A,0xD8,0xDB,0xB9,0xFC,0x1D,0x7D,0xB8,0xD8,0x6D};
+  static const char* ascii_fingerprint; // = "18D29E7F5794A0237B267143D8D5100A";
+  static const uint8_t binary_fingerprint[16]; // = {0x18,0xD2,0x9E,0x7F,0x57,0x94,0xA0,0x23,0x7B,0x26,0x71,0x43,0xD8,0xD5,0x10,0x0A};
 
 
   virtual ~SmartSync_request_presult() throw();
@@ -574,8 +574,8 @@ typedef struct _SmartSync_checkFile_args__isset {
 class SmartSync_checkFile_args {
  public:
 
-  static const char* ascii_fingerprint; // = "9EE4018516E354F02FE73A3E56509ECE";
-  static const uint8_t binary_fingerprint[16]; // = {0x9E,0xE4,0x01,0x85,0x16,0xE3,0x54,0xF0,0x2F,0xE7,0x3A,0x3E,0x56,0x50,0x9E,0xCE};
+  static const char* ascii_fingerprint; // = "F5094887E52140E9553FC39680659538";
+  static const uint8_t binary_fingerprint[16]; // = {0xF5,0x09,0x48,0x87,0xE5,0x21,0x40,0xE9,0x55,0x3F,0xC3,0x96,0x80,0x65,0x95,0x38};
 
   SmartSync_checkFile_args(const SmartSync_checkFile_args&);
   SmartSync_checkFile_args& operator=(const SmartSync_checkFile_args&);
@@ -611,8 +611,8 @@ class SmartSync_checkFile_args {
 class SmartSync_checkFile_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "9EE4018516E354F02FE73A3E56509ECE";
-  static const uint8_t binary_fingerprint[16]; // = {0x9E,0xE4,0x01,0x85,0x16,0xE3,0x54,0xF0,0x2F,0xE7,0x3A,0x3E,0x56,0x50,0x9E,0xCE};
+  static const char* ascii_fingerprint; // = "F5094887E52140E9553FC39680659538";
+  static const uint8_t binary_fingerprint[16]; // = {0xF5,0x09,0x48,0x87,0xE5,0x21,0x40,0xE9,0x55,0x3F,0xC3,0x96,0x80,0x65,0x95,0x38};
 
 
   virtual ~SmartSync_checkFile_pargs() throw();

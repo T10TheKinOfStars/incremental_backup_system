@@ -2,6 +2,12 @@
 // You should copy it to another filename to avoid overwriting it.
 
 #include "SmartSync.h"
+#include "unistd.h"
+#include "checksum.hpp"
+#include "types.h"
+#include "package.hpp"
+#include "search.hpp"
+#include "file.hpp"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -14,6 +20,8 @@ using namespace ::apache::thrift::server;
 
 using boost::shared_ptr;
 
+FileWorker fworker;
+
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
   SmartSyncHandler() {
@@ -23,6 +31,11 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void writeFile(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
     printf("writeFile\n");
+    if (fworker.writefile(rFile) != -1) {
+        _return.__set_status(Status::SUCCESSFUL);
+    } else {
+        _return.__set_status(Status::FAILED);
+    }
   }
 
   void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
@@ -43,6 +56,44 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
     printf("checkFile\n");
+    string filename = meta.filename;
+    if (acccess(filename.c_str(),F_OK) == 0) {
+        //means exist
+        //check content whether is the same
+        string fcontent;
+        ifstream ifs(filename.c_str());
+        if (ifs) {
+            ifs.seekg(0,ifs.end);
+            int len = ifs.tellg();
+            ifs.seekg(0,ifs.beg);
+            char* buf = new char[leni+1];
+            buf[len] = '\0';
+            string fmd5 = md5(buf);
+            delete [] buf;
+            ifs.close();
+            if (fmd5 == meta.contenthash) {
+                //it means the same
+                _return.__set_status(Status::SAME);
+            } else {
+                struct stat st;
+                if (stat(filename.c_str(),&st) == -1) {
+                    SystemException se;
+                    se.__set_message("stat error");
+                    throw se;
+                }
+                Timestamp t = time(&st.st_mtime);
+                if (t < meta.updated) {
+                    //client newer
+                    _return.__set_status(Status::NEWER);
+                } else if (t > meta.updated) {
+                    //server newer
+                    _return.__set_status(Status::OLDER);
+                }
+            }
+    } else {
+        //not exist
+        _return.__set_status(Status::NOEXIST);
+    }
   }
 
 };

@@ -73,12 +73,14 @@ int main(int argc, char** argv) {
             try {
                 ifstream ifs(filename.c_str());
                 if (ifs) {
-                    char* buf = new char[INT_MAX];
                     ifs.seekg(0,ifs.end);
                     int len = ifs.tellg();
                     ifs.seekg(0,ifs.beg);
+                    char* buf = new char[len+1];
                     ifs.read(buf,len);
+                    buf[len] = '\0';
                     data.__set_contenthash(md5(buf));
+                    data.__set_contentLen(len);
                     delete [] buf;
                     ifs.close();
                 } else {
@@ -87,7 +89,7 @@ int main(int argc, char** argv) {
                 }
                 Timestamp lastmod = time(&st.st_mtime);
                 data.__set_filename(filename);
-                data.__set_modified(lastmod);
+                data.__set_updated(lastmod);
              
                 statusReport = client.checkFile(data);                
             } catch (SystemException se) {

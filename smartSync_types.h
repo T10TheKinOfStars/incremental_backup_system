@@ -129,23 +129,24 @@ class StatusReport {
 void swap(StatusReport &a, StatusReport &b);
 
 typedef struct _RFileMetadata__isset {
-  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false) {}
+  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false), contentLen(false) {}
   bool filename :1;
   bool created :1;
   bool updated :1;
   bool version :1;
   bool contenthash :1;
+  bool contentLen :1;
 } _RFileMetadata__isset;
 
 class RFileMetadata {
  public:
 
-  static const char* ascii_fingerprint; // = "29CADA0CEE463BAC0670B6F800004BEC";
-  static const uint8_t binary_fingerprint[16]; // = {0x29,0xCA,0xDA,0x0C,0xEE,0x46,0x3B,0xAC,0x06,0x70,0xB6,0xF8,0x00,0x00,0x4B,0xEC};
+  static const char* ascii_fingerprint; // = "E4CFBC1301040562F64C075EE28E8B53";
+  static const uint8_t binary_fingerprint[16]; // = {0xE4,0xCF,0xBC,0x13,0x01,0x04,0x05,0x62,0xF6,0x4C,0x07,0x5E,0xE2,0x8E,0x8B,0x53};
 
   RFileMetadata(const RFileMetadata&);
   RFileMetadata& operator=(const RFileMetadata&);
-  RFileMetadata() : filename(), created(0), updated(0), version(0), contenthash() {
+  RFileMetadata() : filename(), created(0), updated(0), version(0), contenthash(), contentLen(0) {
   }
 
   virtual ~RFileMetadata() throw();
@@ -154,6 +155,7 @@ class RFileMetadata {
   Timestamp updated;
   int32_t version;
   std::string contenthash;
+  int32_t contentLen;
 
   _RFileMetadata__isset __isset;
 
@@ -166,6 +168,8 @@ class RFileMetadata {
   void __set_version(const int32_t val);
 
   void __set_contenthash(const std::string& val);
+
+  void __set_contentLen(const int32_t val);
 
   bool operator == (const RFileMetadata & rhs) const
   {
@@ -188,6 +192,10 @@ class RFileMetadata {
     if (__isset.contenthash != rhs.__isset.contenthash)
       return false;
     else if (__isset.contenthash && !(contenthash == rhs.contenthash))
+      return false;
+    if (__isset.contentLen != rhs.__isset.contentLen)
+      return false;
+    else if (__isset.contentLen && !(contentLen == rhs.contentLen))
       return false;
     return true;
   }
@@ -267,31 +275,35 @@ class Filedes {
 void swap(Filedes &a, Filedes &b);
 
 typedef struct _Filechk__isset {
-  _Filechk__isset() : rollchk(false), md5chk(false) {}
+  _Filechk__isset() : rollchk(false), md5chk(false), block(false) {}
   bool rollchk :1;
   bool md5chk :1;
+  bool block :1;
 } _Filechk__isset;
 
 class Filechk {
  public:
 
-  static const char* ascii_fingerprint; // = "0354D07C94CB8542872CA1277008860A";
-  static const uint8_t binary_fingerprint[16]; // = {0x03,0x54,0xD0,0x7C,0x94,0xCB,0x85,0x42,0x87,0x2C,0xA1,0x27,0x70,0x08,0x86,0x0A};
+  static const char* ascii_fingerprint; // = "78227C1B11AB86815EA86E763AA88569";
+  static const uint8_t binary_fingerprint[16]; // = {0x78,0x22,0x7C,0x1B,0x11,0xAB,0x86,0x81,0x5E,0xA8,0x6E,0x76,0x3A,0xA8,0x85,0x69};
 
   Filechk(const Filechk&);
   Filechk& operator=(const Filechk&);
-  Filechk() : rollchk(0), md5chk(0) {
+  Filechk() : rollchk(0), md5chk(0), block(0) {
   }
 
   virtual ~Filechk() throw();
   int64_t rollchk;
   int64_t md5chk;
+  int32_t block;
 
   _Filechk__isset __isset;
 
   void __set_rollchk(const int64_t val);
 
   void __set_md5chk(const int64_t val);
+
+  void __set_block(const int32_t val);
 
   bool operator == (const Filechk & rhs) const
   {
@@ -302,6 +314,10 @@ class Filechk {
     if (__isset.md5chk != rhs.__isset.md5chk)
       return false;
     else if (__isset.md5chk && !(md5chk == rhs.md5chk))
+      return false;
+    if (__isset.block != rhs.__isset.block)
+      return false;
+    else if (__isset.block && !(block == rhs.block))
       return false;
     return true;
   }
@@ -328,8 +344,8 @@ typedef struct _RFile__isset {
 class RFile {
  public:
 
-  static const char* ascii_fingerprint; // = "40077053B9C9B3A3984700ABD9814964";
-  static const uint8_t binary_fingerprint[16]; // = {0x40,0x07,0x70,0x53,0xB9,0xC9,0xB3,0xA3,0x98,0x47,0x00,0xAB,0xD9,0x81,0x49,0x64};
+  static const char* ascii_fingerprint; // = "804A806F307222AB98994824DBA02B04";
+  static const uint8_t binary_fingerprint[16]; // = {0x80,0x4A,0x80,0x6F,0x30,0x72,0x22,0xAB,0x98,0x99,0x48,0x24,0xDB,0xA0,0x2B,0x04};
 
   RFile(const RFile&);
   RFile& operator=(const RFile&);

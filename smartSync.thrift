@@ -23,6 +23,7 @@ struct RFileMetadata {
     3: optional Timestamp updated;
     4: optional i32 version;
     5: optional string contenthash;
+    6: optional i32 contentLen;
 }
 
 struct Filedes {
@@ -33,6 +34,7 @@ struct Filedes {
 struct Filechk {
     1: optional i64 rollchk;
     2: optional i64 md5chk;
+    3: optional i32 block;
 }
 
 struct RFile {
