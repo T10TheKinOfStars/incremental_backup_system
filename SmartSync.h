@@ -15,8 +15,9 @@
 class SmartSyncIf {
  public:
   virtual ~SmartSyncIf() {}
-  virtual void writeFile(StatusReport& _return, const RFile& rfile) = 0;
-  virtual void checkFile(RFileMetadata& _return, const RFileMetadata& meta) = 0;
+  virtual void update(RFile& _return, const RFile& rfile, const NodeID& node) = 0;
+  virtual void request(RFile& _return, const NodeID& node) = 0;
+  virtual void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node) = 0;
 };
 
 class SmartSyncIfFactory {
@@ -46,99 +47,109 @@ class SmartSyncIfSingletonFactory : virtual public SmartSyncIfFactory {
 class SmartSyncNull : virtual public SmartSyncIf {
  public:
   virtual ~SmartSyncNull() {}
-  void writeFile(StatusReport& /* _return */, const RFile& /* rfile */) {
+  void update(RFile& /* _return */, const RFile& /* rfile */, const NodeID& /* node */) {
     return;
   }
-  void checkFile(RFileMetadata& /* _return */, const RFileMetadata& /* meta */) {
+  void request(RFile& /* _return */, const NodeID& /* node */) {
+    return;
+  }
+  void checkFile(RFileMetadata& /* _return */, const RFileMetadata& /* meta */, const NodeID& /* node */) {
     return;
   }
 };
 
-typedef struct _SmartSync_writeFile_args__isset {
-  _SmartSync_writeFile_args__isset() : rfile(false) {}
+typedef struct _SmartSync_update_args__isset {
+  _SmartSync_update_args__isset() : rfile(false), node(false) {}
   bool rfile :1;
-} _SmartSync_writeFile_args__isset;
+  bool node :1;
+} _SmartSync_update_args__isset;
 
-class SmartSync_writeFile_args {
+class SmartSync_update_args {
  public:
 
-  static const char* ascii_fingerprint; // = "1E5C9A9DC4A4ABC516EC4A8E390C91EE";
-  static const uint8_t binary_fingerprint[16]; // = {0x1E,0x5C,0x9A,0x9D,0xC4,0xA4,0xAB,0xC5,0x16,0xEC,0x4A,0x8E,0x39,0x0C,0x91,0xEE};
+  static const char* ascii_fingerprint; // = "A33A10555116172CEAF3CAE03B08B77A";
+  static const uint8_t binary_fingerprint[16]; // = {0xA3,0x3A,0x10,0x55,0x51,0x16,0x17,0x2C,0xEA,0xF3,0xCA,0xE0,0x3B,0x08,0xB7,0x7A};
 
-  SmartSync_writeFile_args(const SmartSync_writeFile_args&);
-  SmartSync_writeFile_args& operator=(const SmartSync_writeFile_args&);
-  SmartSync_writeFile_args() {
+  SmartSync_update_args(const SmartSync_update_args&);
+  SmartSync_update_args& operator=(const SmartSync_update_args&);
+  SmartSync_update_args() {
   }
 
-  virtual ~SmartSync_writeFile_args() throw();
+  virtual ~SmartSync_update_args() throw();
   RFile rfile;
+  NodeID node;
 
-  _SmartSync_writeFile_args__isset __isset;
+  _SmartSync_update_args__isset __isset;
 
   void __set_rfile(const RFile& val);
 
-  bool operator == (const SmartSync_writeFile_args & rhs) const
+  void __set_node(const NodeID& val);
+
+  bool operator == (const SmartSync_update_args & rhs) const
   {
     if (!(rfile == rhs.rfile))
       return false;
+    if (!(node == rhs.node))
+      return false;
     return true;
   }
-  bool operator != (const SmartSync_writeFile_args &rhs) const {
+  bool operator != (const SmartSync_update_args &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const SmartSync_writeFile_args & ) const;
+  bool operator < (const SmartSync_update_args & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_args& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_args& obj);
 };
 
 
-class SmartSync_writeFile_pargs {
+class SmartSync_update_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "1E5C9A9DC4A4ABC516EC4A8E390C91EE";
-  static const uint8_t binary_fingerprint[16]; // = {0x1E,0x5C,0x9A,0x9D,0xC4,0xA4,0xAB,0xC5,0x16,0xEC,0x4A,0x8E,0x39,0x0C,0x91,0xEE};
+  static const char* ascii_fingerprint; // = "A33A10555116172CEAF3CAE03B08B77A";
+  static const uint8_t binary_fingerprint[16]; // = {0xA3,0x3A,0x10,0x55,0x51,0x16,0x17,0x2C,0xEA,0xF3,0xCA,0xE0,0x3B,0x08,0xB7,0x7A};
 
 
-  virtual ~SmartSync_writeFile_pargs() throw();
+  virtual ~SmartSync_update_pargs() throw();
   const RFile* rfile;
+  const NodeID* node;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_pargs& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_pargs& obj);
 };
 
-typedef struct _SmartSync_writeFile_result__isset {
-  _SmartSync_writeFile_result__isset() : success(false), systemException(false) {}
+typedef struct _SmartSync_update_result__isset {
+  _SmartSync_update_result__isset() : success(false), systemException(false) {}
   bool success :1;
   bool systemException :1;
-} _SmartSync_writeFile_result__isset;
+} _SmartSync_update_result__isset;
 
-class SmartSync_writeFile_result {
+class SmartSync_update_result {
  public:
 
-  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
-  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
+  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
+  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
 
-  SmartSync_writeFile_result(const SmartSync_writeFile_result&);
-  SmartSync_writeFile_result& operator=(const SmartSync_writeFile_result&);
-  SmartSync_writeFile_result() {
+  SmartSync_update_result(const SmartSync_update_result&);
+  SmartSync_update_result& operator=(const SmartSync_update_result&);
+  SmartSync_update_result() {
   }
 
-  virtual ~SmartSync_writeFile_result() throw();
-  StatusReport success;
+  virtual ~SmartSync_update_result() throw();
+  RFile success;
   SystemException systemException;
 
-  _SmartSync_writeFile_result__isset __isset;
+  _SmartSync_update_result__isset __isset;
 
-  void __set_success(const StatusReport& val);
+  void __set_success(const RFile& val);
 
   void __set_systemException(const SystemException& val);
 
-  bool operator == (const SmartSync_writeFile_result & rhs) const
+  bool operator == (const SmartSync_update_result & rhs) const
   {
     if (!(success == rhs.success))
       return false;
@@ -146,52 +157,181 @@ class SmartSync_writeFile_result {
       return false;
     return true;
   }
-  bool operator != (const SmartSync_writeFile_result &rhs) const {
+  bool operator != (const SmartSync_update_result &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const SmartSync_writeFile_result & ) const;
+  bool operator < (const SmartSync_update_result & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_result& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_result& obj);
 };
 
-typedef struct _SmartSync_writeFile_presult__isset {
-  _SmartSync_writeFile_presult__isset() : success(false), systemException(false) {}
+typedef struct _SmartSync_update_presult__isset {
+  _SmartSync_update_presult__isset() : success(false), systemException(false) {}
   bool success :1;
   bool systemException :1;
-} _SmartSync_writeFile_presult__isset;
+} _SmartSync_update_presult__isset;
 
-class SmartSync_writeFile_presult {
+class SmartSync_update_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
-  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
+  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
+  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
 
 
-  virtual ~SmartSync_writeFile_presult() throw();
-  StatusReport* success;
+  virtual ~SmartSync_update_presult() throw();
+  RFile* success;
   SystemException systemException;
 
-  _SmartSync_writeFile_presult__isset __isset;
+  _SmartSync_update_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_presult& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_presult& obj);
+};
+
+typedef struct _SmartSync_request_args__isset {
+  _SmartSync_request_args__isset() : node(false) {}
+  bool node :1;
+} _SmartSync_request_args__isset;
+
+class SmartSync_request_args {
+ public:
+
+  static const char* ascii_fingerprint; // = "2BD9E1CC52BCB0899198EEADB3593B00";
+  static const uint8_t binary_fingerprint[16]; // = {0x2B,0xD9,0xE1,0xCC,0x52,0xBC,0xB0,0x89,0x91,0x98,0xEE,0xAD,0xB3,0x59,0x3B,0x00};
+
+  SmartSync_request_args(const SmartSync_request_args&);
+  SmartSync_request_args& operator=(const SmartSync_request_args&);
+  SmartSync_request_args() {
+  }
+
+  virtual ~SmartSync_request_args() throw();
+  NodeID node;
+
+  _SmartSync_request_args__isset __isset;
+
+  void __set_node(const NodeID& val);
+
+  bool operator == (const SmartSync_request_args & rhs) const
+  {
+    if (!(node == rhs.node))
+      return false;
+    return true;
+  }
+  bool operator != (const SmartSync_request_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SmartSync_request_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_request_args& obj);
+};
+
+
+class SmartSync_request_pargs {
+ public:
+
+  static const char* ascii_fingerprint; // = "2BD9E1CC52BCB0899198EEADB3593B00";
+  static const uint8_t binary_fingerprint[16]; // = {0x2B,0xD9,0xE1,0xCC,0x52,0xBC,0xB0,0x89,0x91,0x98,0xEE,0xAD,0xB3,0x59,0x3B,0x00};
+
+
+  virtual ~SmartSync_request_pargs() throw();
+  const NodeID* node;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_request_pargs& obj);
+};
+
+typedef struct _SmartSync_request_result__isset {
+  _SmartSync_request_result__isset() : success(false), systemException(false) {}
+  bool success :1;
+  bool systemException :1;
+} _SmartSync_request_result__isset;
+
+class SmartSync_request_result {
+ public:
+
+  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
+  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
+
+  SmartSync_request_result(const SmartSync_request_result&);
+  SmartSync_request_result& operator=(const SmartSync_request_result&);
+  SmartSync_request_result() {
+  }
+
+  virtual ~SmartSync_request_result() throw();
+  RFile success;
+  SystemException systemException;
+
+  _SmartSync_request_result__isset __isset;
+
+  void __set_success(const RFile& val);
+
+  void __set_systemException(const SystemException& val);
+
+  bool operator == (const SmartSync_request_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(systemException == rhs.systemException))
+      return false;
+    return true;
+  }
+  bool operator != (const SmartSync_request_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SmartSync_request_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_request_result& obj);
+};
+
+typedef struct _SmartSync_request_presult__isset {
+  _SmartSync_request_presult__isset() : success(false), systemException(false) {}
+  bool success :1;
+  bool systemException :1;
+} _SmartSync_request_presult__isset;
+
+class SmartSync_request_presult {
+ public:
+
+  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
+  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
+
+
+  virtual ~SmartSync_request_presult() throw();
+  RFile* success;
+  SystemException systemException;
+
+  _SmartSync_request_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_request_presult& obj);
 };
 
 typedef struct _SmartSync_checkFile_args__isset {
-  _SmartSync_checkFile_args__isset() : meta(false) {}
+  _SmartSync_checkFile_args__isset() : meta(false), node(false) {}
   bool meta :1;
+  bool node :1;
 } _SmartSync_checkFile_args__isset;
 
 class SmartSync_checkFile_args {
  public:
 
-  static const char* ascii_fingerprint; // = "3734AA090439F90029F2700C2ED8340E";
-  static const uint8_t binary_fingerprint[16]; // = {0x37,0x34,0xAA,0x09,0x04,0x39,0xF9,0x00,0x29,0xF2,0x70,0x0C,0x2E,0xD8,0x34,0x0E};
+  static const char* ascii_fingerprint; // = "C65734E20AD62980068E4AF990098466";
+  static const uint8_t binary_fingerprint[16]; // = {0xC6,0x57,0x34,0xE2,0x0A,0xD6,0x29,0x80,0x06,0x8E,0x4A,0xF9,0x90,0x09,0x84,0x66};
 
   SmartSync_checkFile_args(const SmartSync_checkFile_args&);
   SmartSync_checkFile_args& operator=(const SmartSync_checkFile_args&);
@@ -200,14 +340,19 @@ class SmartSync_checkFile_args {
 
   virtual ~SmartSync_checkFile_args() throw();
   RFileMetadata meta;
+  NodeID node;
 
   _SmartSync_checkFile_args__isset __isset;
 
   void __set_meta(const RFileMetadata& val);
 
+  void __set_node(const NodeID& val);
+
   bool operator == (const SmartSync_checkFile_args & rhs) const
   {
     if (!(meta == rhs.meta))
+      return false;
+    if (!(node == rhs.node))
       return false;
     return true;
   }
@@ -227,12 +372,13 @@ class SmartSync_checkFile_args {
 class SmartSync_checkFile_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "3734AA090439F90029F2700C2ED8340E";
-  static const uint8_t binary_fingerprint[16]; // = {0x37,0x34,0xAA,0x09,0x04,0x39,0xF9,0x00,0x29,0xF2,0x70,0x0C,0x2E,0xD8,0x34,0x0E};
+  static const char* ascii_fingerprint; // = "C65734E20AD62980068E4AF990098466";
+  static const uint8_t binary_fingerprint[16]; // = {0xC6,0x57,0x34,0xE2,0x0A,0xD6,0x29,0x80,0x06,0x8E,0x4A,0xF9,0x90,0x09,0x84,0x66};
 
 
   virtual ~SmartSync_checkFile_pargs() throw();
   const RFileMetadata* meta;
+  const NodeID* node;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -248,8 +394,8 @@ typedef struct _SmartSync_checkFile_result__isset {
 class SmartSync_checkFile_result {
  public:
 
-  static const char* ascii_fingerprint; // = "0305D956EEBAE6003A8617160B071B9F";
-  static const uint8_t binary_fingerprint[16]; // = {0x03,0x05,0xD9,0x56,0xEE,0xBA,0xE6,0x00,0x3A,0x86,0x17,0x16,0x0B,0x07,0x1B,0x9F};
+  static const char* ascii_fingerprint; // = "A0DC2A879CBCFCA16A672C40DD88C2B4";
+  static const uint8_t binary_fingerprint[16]; // = {0xA0,0xDC,0x2A,0x87,0x9C,0xBC,0xFC,0xA1,0x6A,0x67,0x2C,0x40,0xDD,0x88,0xC2,0xB4};
 
   SmartSync_checkFile_result(const SmartSync_checkFile_result&);
   SmartSync_checkFile_result& operator=(const SmartSync_checkFile_result&);
@@ -295,8 +441,8 @@ typedef struct _SmartSync_checkFile_presult__isset {
 class SmartSync_checkFile_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "0305D956EEBAE6003A8617160B071B9F";
-  static const uint8_t binary_fingerprint[16]; // = {0x03,0x05,0xD9,0x56,0xEE,0xBA,0xE6,0x00,0x3A,0x86,0x17,0x16,0x0B,0x07,0x1B,0x9F};
+  static const char* ascii_fingerprint; // = "A0DC2A879CBCFCA16A672C40DD88C2B4";
+  static const uint8_t binary_fingerprint[16]; // = {0xA0,0xDC,0x2A,0x87,0x9C,0xBC,0xFC,0xA1,0x6A,0x67,0x2C,0x40,0xDD,0x88,0xC2,0xB4};
 
 
   virtual ~SmartSync_checkFile_presult() throw();
@@ -335,11 +481,14 @@ class SmartSyncClient : virtual public SmartSyncIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void writeFile(StatusReport& _return, const RFile& rfile);
-  void send_writeFile(const RFile& rfile);
-  void recv_writeFile(StatusReport& _return);
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta);
-  void send_checkFile(const RFileMetadata& meta);
+  void update(RFile& _return, const RFile& rfile, const NodeID& node);
+  void send_update(const RFile& rfile, const NodeID& node);
+  void recv_update(RFile& _return);
+  void request(RFile& _return, const NodeID& node);
+  void send_request(const NodeID& node);
+  void recv_request(RFile& _return);
+  void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node);
+  void send_checkFile(const RFileMetadata& meta, const NodeID& node);
   void recv_checkFile(RFileMetadata& _return);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
@@ -356,12 +505,14 @@ class SmartSyncProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef  void (SmartSyncProcessor::*ProcessFunction)(int32_t, ::apache::thrift::protocol::TProtocol*, ::apache::thrift::protocol::TProtocol*, void*);
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
-  void process_writeFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_update(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_request(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_checkFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   SmartSyncProcessor(boost::shared_ptr<SmartSyncIf> iface) :
     iface_(iface) {
-    processMap_["writeFile"] = &SmartSyncProcessor::process_writeFile;
+    processMap_["update"] = &SmartSyncProcessor::process_update;
+    processMap_["request"] = &SmartSyncProcessor::process_request;
     processMap_["checkFile"] = &SmartSyncProcessor::process_checkFile;
   }
 
@@ -391,23 +542,33 @@ class SmartSyncMultiface : virtual public SmartSyncIf {
     ifaces_.push_back(iface);
   }
  public:
-  void writeFile(StatusReport& _return, const RFile& rfile) {
+  void update(RFile& _return, const RFile& rfile, const NodeID& node) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->writeFile(_return, rfile);
+      ifaces_[i]->update(_return, rfile, node);
     }
-    ifaces_[i]->writeFile(_return, rfile);
+    ifaces_[i]->update(_return, rfile, node);
     return;
   }
 
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta) {
+  void request(RFile& _return, const NodeID& node) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->checkFile(_return, meta);
+      ifaces_[i]->request(_return, node);
     }
-    ifaces_[i]->checkFile(_return, meta);
+    ifaces_[i]->request(_return, node);
+    return;
+  }
+
+  void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->checkFile(_return, meta, node);
+    }
+    ifaces_[i]->checkFile(_return, meta, node);
     return;
   }
 

@@ -9,11 +9,11 @@
 
 
 
-SmartSync_writeFile_args::~SmartSync_writeFile_args() throw() {
+SmartSync_update_args::~SmartSync_update_args() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t SmartSync_update_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -41,6 +41,14 @@ uint32_t SmartSync_writeFile_args::read(::apache::thrift::protocol::TProtocol* i
           xfer += iprot->skip(ftype);
         }
         break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->node.read(iprot);
+          this->__isset.node = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -53,33 +61,17 @@ uint32_t SmartSync_writeFile_args::read(::apache::thrift::protocol::TProtocol* i
   return xfer;
 }
 
-uint32_t SmartSync_writeFile_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t SmartSync_update_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   oprot->incrementRecursionDepth();
-  xfer += oprot->writeStructBegin("SmartSync_writeFile_args");
+  xfer += oprot->writeStructBegin("SmartSync_update_args");
 
   xfer += oprot->writeFieldBegin("rfile", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += this->rfile.write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  oprot->decrementRecursionDepth();
-  return xfer;
-}
-
-
-SmartSync_writeFile_pargs::~SmartSync_writeFile_pargs() throw() {
-}
-
-
-uint32_t SmartSync_writeFile_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  oprot->incrementRecursionDepth();
-  xfer += oprot->writeStructBegin("SmartSync_writeFile_pargs");
-
-  xfer += oprot->writeFieldBegin("rfile", ::apache::thrift::protocol::T_STRUCT, 1);
-  xfer += (*(this->rfile)).write(oprot);
+  xfer += oprot->writeFieldBegin("node", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += this->node.write(oprot);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -89,11 +81,35 @@ uint32_t SmartSync_writeFile_pargs::write(::apache::thrift::protocol::TProtocol*
 }
 
 
-SmartSync_writeFile_result::~SmartSync_writeFile_result() throw() {
+SmartSync_update_pargs::~SmartSync_update_pargs() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t SmartSync_update_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("SmartSync_update_pargs");
+
+  xfer += oprot->writeFieldBegin("rfile", ::apache::thrift::protocol::T_STRUCT, 1);
+  xfer += (*(this->rfile)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("node", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += (*(this->node)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+
+SmartSync_update_result::~SmartSync_update_result() throw() {
+}
+
+
+uint32_t SmartSync_update_result::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -141,11 +157,11 @@ uint32_t SmartSync_writeFile_result::read(::apache::thrift::protocol::TProtocol*
   return xfer;
 }
 
-uint32_t SmartSync_writeFile_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t SmartSync_update_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
 
   uint32_t xfer = 0;
 
-  xfer += oprot->writeStructBegin("SmartSync_writeFile_result");
+  xfer += oprot->writeStructBegin("SmartSync_update_result");
 
   if (this->__isset.success) {
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
@@ -162,11 +178,217 @@ uint32_t SmartSync_writeFile_result::write(::apache::thrift::protocol::TProtocol
 }
 
 
-SmartSync_writeFile_presult::~SmartSync_writeFile_presult() throw() {
+SmartSync_update_presult::~SmartSync_update_presult() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t SmartSync_update_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += (*(this->success)).read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+
+SmartSync_request_args::~SmartSync_request_args() throw() {
+}
+
+
+uint32_t SmartSync_request_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->node.read(iprot);
+          this->__isset.node = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t SmartSync_request_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("SmartSync_request_args");
+
+  xfer += oprot->writeFieldBegin("node", ::apache::thrift::protocol::T_STRUCT, 1);
+  xfer += this->node.write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+
+SmartSync_request_pargs::~SmartSync_request_pargs() throw() {
+}
+
+
+uint32_t SmartSync_request_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("SmartSync_request_pargs");
+
+  xfer += oprot->writeFieldBegin("node", ::apache::thrift::protocol::T_STRUCT, 1);
+  xfer += (*(this->node)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+
+SmartSync_request_result::~SmartSync_request_result() throw() {
+}
+
+
+uint32_t SmartSync_request_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->success.read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t SmartSync_request_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("SmartSync_request_result");
+
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
+    xfer += this->success.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+
+SmartSync_request_presult::~SmartSync_request_presult() throw() {
+}
+
+
+uint32_t SmartSync_request_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -247,6 +469,14 @@ uint32_t SmartSync_checkFile_args::read(::apache::thrift::protocol::TProtocol* i
           xfer += iprot->skip(ftype);
         }
         break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->node.read(iprot);
+          this->__isset.node = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -268,6 +498,10 @@ uint32_t SmartSync_checkFile_args::write(::apache::thrift::protocol::TProtocol* 
   xfer += this->meta.write(oprot);
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("node", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += this->node.write(oprot);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   oprot->decrementRecursionDepth();
@@ -286,6 +520,10 @@ uint32_t SmartSync_checkFile_pargs::write(::apache::thrift::protocol::TProtocol*
 
   xfer += oprot->writeFieldBegin("meta", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += (*(this->meta)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("node", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += (*(this->node)).write(oprot);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -420,19 +658,20 @@ uint32_t SmartSync_checkFile_presult::read(::apache::thrift::protocol::TProtocol
   return xfer;
 }
 
-void SmartSyncClient::writeFile(StatusReport& _return, const RFile& rfile)
+void SmartSyncClient::update(RFile& _return, const RFile& rfile, const NodeID& node)
 {
-  send_writeFile(rfile);
-  recv_writeFile(_return);
+  send_update(rfile, node);
+  recv_update(_return);
 }
 
-void SmartSyncClient::send_writeFile(const RFile& rfile)
+void SmartSyncClient::send_update(const RFile& rfile, const NodeID& node)
 {
   int32_t cseqid = 0;
-  oprot_->writeMessageBegin("writeFile", ::apache::thrift::protocol::T_CALL, cseqid);
+  oprot_->writeMessageBegin("update", ::apache::thrift::protocol::T_CALL, cseqid);
 
-  SmartSync_writeFile_pargs args;
+  SmartSync_update_pargs args;
   args.rfile = &rfile;
+  args.node = &node;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -440,7 +679,7 @@ void SmartSyncClient::send_writeFile(const RFile& rfile)
   oprot_->getTransport()->flush();
 }
 
-void SmartSyncClient::recv_writeFile(StatusReport& _return)
+void SmartSyncClient::recv_update(RFile& _return)
 {
 
   int32_t rseqid = 0;
@@ -460,12 +699,12 @@ void SmartSyncClient::recv_writeFile(StatusReport& _return)
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  if (fname.compare("writeFile") != 0) {
+  if (fname.compare("update") != 0) {
     iprot_->skip(::apache::thrift::protocol::T_STRUCT);
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  SmartSync_writeFile_presult result;
+  SmartSync_update_presult result;
   result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
@@ -478,22 +717,84 @@ void SmartSyncClient::recv_writeFile(StatusReport& _return)
   if (result.__isset.systemException) {
     throw result.systemException;
   }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "writeFile failed: unknown result");
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "update failed: unknown result");
 }
 
-void SmartSyncClient::checkFile(RFileMetadata& _return, const RFileMetadata& meta)
+void SmartSyncClient::request(RFile& _return, const NodeID& node)
 {
-  send_checkFile(meta);
+  send_request(node);
+  recv_request(_return);
+}
+
+void SmartSyncClient::send_request(const NodeID& node)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("request", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  SmartSync_request_pargs args;
+  args.node = &node;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->writeEnd();
+  oprot_->getTransport()->flush();
+}
+
+void SmartSyncClient::recv_request(RFile& _return)
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+  }
+  if (fname.compare("request") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+  }
+  SmartSync_request_presult result;
+  result.success = &_return;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "request failed: unknown result");
+}
+
+void SmartSyncClient::checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node)
+{
+  send_checkFile(meta, node);
   recv_checkFile(_return);
 }
 
-void SmartSyncClient::send_checkFile(const RFileMetadata& meta)
+void SmartSyncClient::send_checkFile(const RFileMetadata& meta, const NodeID& node)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("checkFile", ::apache::thrift::protocol::T_CALL, cseqid);
 
   SmartSync_checkFile_pargs args;
   args.meta = &meta;
+  args.node = &node;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -561,41 +862,41 @@ bool SmartSyncProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* ipr
   return true;
 }
 
-void SmartSyncProcessor::process_writeFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+void SmartSyncProcessor::process_update(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
 {
   void* ctx = NULL;
   if (this->eventHandler_.get() != NULL) {
-    ctx = this->eventHandler_->getContext("SmartSync.writeFile", callContext);
+    ctx = this->eventHandler_->getContext("SmartSync.update", callContext);
   }
-  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "SmartSync.writeFile");
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "SmartSync.update");
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preRead(ctx, "SmartSync.writeFile");
+    this->eventHandler_->preRead(ctx, "SmartSync.update");
   }
 
-  SmartSync_writeFile_args args;
+  SmartSync_update_args args;
   args.read(iprot);
   iprot->readMessageEnd();
   uint32_t bytes = iprot->getTransport()->readEnd();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postRead(ctx, "SmartSync.writeFile", bytes);
+    this->eventHandler_->postRead(ctx, "SmartSync.update", bytes);
   }
 
-  SmartSync_writeFile_result result;
+  SmartSync_update_result result;
   try {
-    iface_->writeFile(result.success, args.rfile);
+    iface_->update(result.success, args.rfile, args.node);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;
     result.__isset.systemException = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
-      this->eventHandler_->handlerError(ctx, "SmartSync.writeFile");
+      this->eventHandler_->handlerError(ctx, "SmartSync.update");
     }
 
     ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("writeFile", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    oprot->writeMessageBegin("update", ::apache::thrift::protocol::T_EXCEPTION, seqid);
     x.write(oprot);
     oprot->writeMessageEnd();
     oprot->getTransport()->writeEnd();
@@ -604,17 +905,74 @@ void SmartSyncProcessor::process_writeFile(int32_t seqid, ::apache::thrift::prot
   }
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preWrite(ctx, "SmartSync.writeFile");
+    this->eventHandler_->preWrite(ctx, "SmartSync.update");
   }
 
-  oprot->writeMessageBegin("writeFile", ::apache::thrift::protocol::T_REPLY, seqid);
+  oprot->writeMessageBegin("update", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   bytes = oprot->getTransport()->writeEnd();
   oprot->getTransport()->flush();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postWrite(ctx, "SmartSync.writeFile", bytes);
+    this->eventHandler_->postWrite(ctx, "SmartSync.update", bytes);
+  }
+}
+
+void SmartSyncProcessor::process_request(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+{
+  void* ctx = NULL;
+  if (this->eventHandler_.get() != NULL) {
+    ctx = this->eventHandler_->getContext("SmartSync.request", callContext);
+  }
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "SmartSync.request");
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->preRead(ctx, "SmartSync.request");
+  }
+
+  SmartSync_request_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  uint32_t bytes = iprot->getTransport()->readEnd();
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->postRead(ctx, "SmartSync.request", bytes);
+  }
+
+  SmartSync_request_result result;
+  try {
+    iface_->request(result.success, args.node);
+    result.__isset.success = true;
+  } catch (SystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (const std::exception& e) {
+    if (this->eventHandler_.get() != NULL) {
+      this->eventHandler_->handlerError(ctx, "SmartSync.request");
+    }
+
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("request", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->writeEnd();
+    oprot->getTransport()->flush();
+    return;
+  }
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->preWrite(ctx, "SmartSync.request");
+  }
+
+  oprot->writeMessageBegin("request", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  bytes = oprot->getTransport()->writeEnd();
+  oprot->getTransport()->flush();
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->postWrite(ctx, "SmartSync.request", bytes);
   }
 }
 
@@ -641,7 +999,7 @@ void SmartSyncProcessor::process_checkFile(int32_t seqid, ::apache::thrift::prot
 
   SmartSync_checkFile_result result;
   try {
-    iface_->checkFile(result.success, args.meta);
+    iface_->checkFile(result.success, args.meta, args.node);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;

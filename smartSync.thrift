@@ -5,8 +5,10 @@ exception SystemException {
 }
 
 enum Status {
-    FAIL = 0;
-    SUCCESS = 1;
+    SAME = 0;
+    NOEXIST = 1;
+    OLDER = 2;
+    NEWER = 3;
 }
 
 struct StatusReport {
@@ -18,6 +20,7 @@ struct RFileMetadata {
     2: optional Timestamp created;
     3: optional Timestamp updated;
     4: optional i32 version;
+    5: optional string contenthash;
 }
 
 struct Filedes {
@@ -29,12 +32,22 @@ struct Filedes {
 struct RFile {
     1: optional RFileMetadata meta;
     2: optional list<Filedes> des;
+    3: optional string content;
+    4: optional i32 flag;
+}
+
+struct NodeID {
+  1: string ip;
+  2: i32 port;
 }
 
 service SmartSync {
-    StatusReport writeFile(1: RFile rfile)
+    RFile update(1: RFile rfile, 2: NodeID node)
         throws (1: SystemException systemException),
 
-    RFileMetadata checkFile(1: RFileMetadata meta)
+    RFile request(1: NodeID node)
+        throws (1: SystemException systemException),
+
+    RFileMetadata checkFile(1: RFileMetadata meta, 2: NodeID node)
         throws (1: SystemException systemException),
 }

@@ -49,3 +49,6 @@ void FileWorker::setBlockSize(int val) {
     blocksize = val;
 }
 
+void FileWorker::updateFile(vector<string> olddes, vector<string> newdes) {
+
+}

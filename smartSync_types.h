@@ -21,8 +21,10 @@
 
 struct Status {
   enum type {
-    FAIL = 0,
-    SUCCESS = 1
+    SAME = 0,
+    NOEXIST = 1,
+    OLDER = 2,
+    NEWER = 3
   };
 };
 
@@ -39,6 +41,8 @@ class RFileMetadata;
 class Filedes;
 
 class RFile;
+
+class NodeID;
 
 typedef struct _SystemException__isset {
   _SystemException__isset() : message(false) {}
@@ -123,22 +127,23 @@ class StatusReport {
 void swap(StatusReport &a, StatusReport &b);
 
 typedef struct _RFileMetadata__isset {
-  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false) {}
+  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false) {}
   bool filename :1;
   bool created :1;
   bool updated :1;
   bool version :1;
+  bool contenthash :1;
 } _RFileMetadata__isset;
 
 class RFileMetadata {
  public:
 
-  static const char* ascii_fingerprint; // = "5FB3B1F400337D62274F237291F965A2";
-  static const uint8_t binary_fingerprint[16]; // = {0x5F,0xB3,0xB1,0xF4,0x00,0x33,0x7D,0x62,0x27,0x4F,0x23,0x72,0x91,0xF9,0x65,0xA2};
+  static const char* ascii_fingerprint; // = "29CADA0CEE463BAC0670B6F800004BEC";
+  static const uint8_t binary_fingerprint[16]; // = {0x29,0xCA,0xDA,0x0C,0xEE,0x46,0x3B,0xAC,0x06,0x70,0xB6,0xF8,0x00,0x00,0x4B,0xEC};
 
   RFileMetadata(const RFileMetadata&);
   RFileMetadata& operator=(const RFileMetadata&);
-  RFileMetadata() : filename(), created(0), updated(0), version(0) {
+  RFileMetadata() : filename(), created(0), updated(0), version(0), contenthash() {
   }
 
   virtual ~RFileMetadata() throw();
@@ -146,6 +151,7 @@ class RFileMetadata {
   Timestamp created;
   Timestamp updated;
   int32_t version;
+  std::string contenthash;
 
   _RFileMetadata__isset __isset;
 
@@ -156,6 +162,8 @@ class RFileMetadata {
   void __set_updated(const Timestamp val);
 
   void __set_version(const int32_t val);
+
+  void __set_contenthash(const std::string& val);
 
   bool operator == (const RFileMetadata & rhs) const
   {
@@ -174,6 +182,10 @@ class RFileMetadata {
     if (__isset.version != rhs.__isset.version)
       return false;
     else if (__isset.version && !(version == rhs.version))
+      return false;
+    if (__isset.contenthash != rhs.__isset.contenthash)
+      return false;
+    else if (__isset.contenthash && !(contenthash == rhs.contenthash))
       return false;
     return true;
   }
@@ -253,31 +265,39 @@ class Filedes {
 void swap(Filedes &a, Filedes &b);
 
 typedef struct _RFile__isset {
-  _RFile__isset() : meta(false), des(false) {}
+  _RFile__isset() : meta(false), des(false), content(false), flag(false) {}
   bool meta :1;
   bool des :1;
+  bool content :1;
+  bool flag :1;
 } _RFile__isset;
 
 class RFile {
  public:
 
-  static const char* ascii_fingerprint; // = "2467575F6DEDDA313BD293A8357E5DD7";
-  static const uint8_t binary_fingerprint[16]; // = {0x24,0x67,0x57,0x5F,0x6D,0xED,0xDA,0x31,0x3B,0xD2,0x93,0xA8,0x35,0x7E,0x5D,0xD7};
+  static const char* ascii_fingerprint; // = "9413952014B1A9B68C144F11C1B8F839";
+  static const uint8_t binary_fingerprint[16]; // = {0x94,0x13,0x95,0x20,0x14,0xB1,0xA9,0xB6,0x8C,0x14,0x4F,0x11,0xC1,0xB8,0xF8,0x39};
 
   RFile(const RFile&);
   RFile& operator=(const RFile&);
-  RFile() {
+  RFile() : content(), flag(0) {
   }
 
   virtual ~RFile() throw();
   RFileMetadata meta;
   std::vector<Filedes>  des;
+  std::string content;
+  int32_t flag;
 
   _RFile__isset __isset;
 
   void __set_meta(const RFileMetadata& val);
 
   void __set_des(const std::vector<Filedes> & val);
+
+  void __set_content(const std::string& val);
+
+  void __set_flag(const int32_t val);
 
   bool operator == (const RFile & rhs) const
   {
@@ -288,6 +308,14 @@ class RFile {
     if (__isset.des != rhs.__isset.des)
       return false;
     else if (__isset.des && !(des == rhs.des))
+      return false;
+    if (__isset.content != rhs.__isset.content)
+      return false;
+    else if (__isset.content && !(content == rhs.content))
+      return false;
+    if (__isset.flag != rhs.__isset.flag)
+      return false;
+    else if (__isset.flag && !(flag == rhs.flag))
       return false;
     return true;
   }
@@ -304,6 +332,55 @@ class RFile {
 };
 
 void swap(RFile &a, RFile &b);
+
+typedef struct _NodeID__isset {
+  _NodeID__isset() : ip(false), port(false) {}
+  bool ip :1;
+  bool port :1;
+} _NodeID__isset;
+
+class NodeID {
+ public:
+
+  static const char* ascii_fingerprint; // = "EEBC915CE44901401D881E6091423036";
+  static const uint8_t binary_fingerprint[16]; // = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
+
+  NodeID(const NodeID&);
+  NodeID& operator=(const NodeID&);
+  NodeID() : ip(), port(0) {
+  }
+
+  virtual ~NodeID() throw();
+  std::string ip;
+  int32_t port;
+
+  _NodeID__isset __isset;
+
+  void __set_ip(const std::string& val);
+
+  void __set_port(const int32_t val);
+
+  bool operator == (const NodeID & rhs) const
+  {
+    if (!(ip == rhs.ip))
+      return false;
+    if (!(port == rhs.port))
+      return false;
+    return true;
+  }
+  bool operator != (const NodeID &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const NodeID & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const NodeID& obj);
+};
+
+void swap(NodeID &a, NodeID &b);
 
 
 

@@ -25,6 +25,7 @@ namespace process{
             char getxChar(int pos);
             char* getFileAddr();
             void setBlockSize(int val);
+            void updateFile(vector<string> olddes, vector<string> newdes);
     };
 }
 #endif
