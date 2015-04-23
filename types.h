@@ -5,7 +5,7 @@
 
 typedef unsigned long checksum;
 typedef unordered_multimap<unsigned long,package_item> FileDstTb;
-
+typedef std::map<std::string, RFileMetadata> NameDataMap;
 typedef struct package_item {          
     checksum s;
     checksum a;

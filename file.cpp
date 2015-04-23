@@ -74,3 +74,59 @@ void FileWorker::updateFile(vector<Filedes> newdes) {
 
     ifs.close();
 }
+
+void FileWorker::initFolder() {
+    std::string cmd = "rm -rf files | mkdir files";    
+    if (system(cmd.c_str()) == -1) {
+        SystemException se;
+        se.__set_message("create folder failed");
+        throw se;
+    }
+}
+
+int FileWorker::write2Disk(std::string path, const std::string &content) {
+    std::ofstream ofs(path.c_str(), std::ios::binary);
+
+    if (ofs) {
+        ofs<<content;
+        ofs.close();
+    } else {
+        return -1;
+    }
+
+    return 0;
+}
+
+int FileWorker::writefile(const RFile &_rfile) {
+    RFile rfile = _rfile;
+    RFileMetadata rdata = rfile.meta;    
+    std::string filename = rdata.filename;
+    std::string path = "./files/" + filename;
+    SystemException exception;
+    
+    if (filemap.find(filename) == files.end()) {
+        //std::cout<<"this file not exists, we need create a new one"<<std::endl;
+        if (write2Disk(path,rfile.content) != -1) {
+            rdata.__set_version(0);
+            rdata.__set_contentHash(md5(rfile.content));
+            rdata.__set_created((Timestamp)time(NULL) * 1000);    //need to change
+            rdata.__set_updated((Timestamp)time(NULL) * 1000);    //need to change                
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+        /* when do update, can review this
+         else {
+            std::cout<<"this file exists, we need do update"<<std::endl;
+            if (write2Disk(path,rfile.content) != -1) {                
+                ++files[filename].version;
+                files[filename].__set_contentLength(rfile.content.size());
+                files[filename].__set_contentHash(md5(rfile.content));
+                files[filename].__set_updated((Timestamp)time(NULL) * 1000);    //need to change
+            } else {
+                return -1;
+            }
+        }
+    */
+}
