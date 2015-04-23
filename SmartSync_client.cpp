@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
             data.__set_version(0);
             data.__set_owner(user);
             Timestamp lastmod = time(&st.st_mtime);
-            data.__set_modified(lastmod);
+            data.__set_updated(lastmod);
             
             //read data from disk            
             std::ifstream ifs(filename.c_str(),std::ios::binary);
