@@ -1,5 +1,5 @@
-#ifndef SEPFILE_HPP
-#define SEPFILE_HPP
+#ifndef FILE_HPP
+#define FILE_HPP
 #include <iostream>
 #include <vector>
 #include <string>

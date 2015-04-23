@@ -1,4 +1,4 @@
-#include "sepfile.hpp"
+#include "file.hpp"
 
 using namespace process;
 
@@ -50,5 +50,19 @@ void FileWorker::setBlockSize(int val) {
 }
 
 void FileWorker::updateFile(vector<string> olddes, vector<string> newdes) {
-
+    //use to store the content of each block
+    vector<string> file(olddes.size());
+    ifstream ifs(path.c_str());
+    if (ifs) {
+        for (int i = 0; i < olddes.size(); ++i) {
+            char *buf = new char[blocksize];
+            ifs.read(buf,blocksize);
+            file[i] = buf;
+            delete [] buf;
+        }
+        ifs.close();
+    } else {
+        cerr<<"open file error"<<endl;
+        exit(-1);
+    }
 }
