@@ -41,28 +41,36 @@ char FileWorker::getxChar(int pos) {
     return c;
 }
 
-char* FileWorker::getFileAddr() {
-    return addr;
-}
-
 void FileWorker::setBlockSize(int val) {
     blocksize = val;
 }
 
-void FileWorker::updateFile(vector<string> olddes, vector<string> newdes) {
+void FileWorker::updateFile(vector<Filedes> newdes) {
     //use to store the content of each block
-    vector<string> file(olddes.size());
+    vector<string> file;
     ifstream ifs(path.c_str());
     if (ifs) {
-        for (int i = 0; i < olddes.size(); ++i) {
+        for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
             char *buf = new char[blocksize];
             ifs.read(buf,blocksize);
-            file[i] = buf;
+            file.push_back(buf);
             delete [] buf;
         }
-        ifs.close();
+        //ifs.close();
     } else {
         cerr<<"open file error"<<endl;
         exit(-1);
     }
+
+    ifs.seekg(0,ifs.beg);
+    for (int i = 0; i < newdes.size(); ++i) {
+        if (newdes[i].flag == 0) {
+            //0 means it has content
+            ifs<<newdes[i].content;
+        } else {
+            ifs<<file[newdes[i].block];
+        }
+    }
+
+    ifs.close();
 }

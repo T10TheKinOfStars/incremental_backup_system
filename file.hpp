@@ -5,6 +5,8 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
+#include "smartSync_types.h"
+#include "types.h"
 
 using namespace std;
 
@@ -23,9 +25,8 @@ namespace process{
             int getFileSize();
             string getBlock(int pos);
             char getxChar(int pos);
-            char* getFileAddr();
             void setBlockSize(int val);
-            void updateFile(vector<string> olddes, vector<string> newdes);
+            void updateFile(vector<Filedes> newdes);
     };
 }
 #endif
