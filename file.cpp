@@ -46,7 +46,7 @@ void FileWorker::setBlockSize(int val) {
 }
 
 void FileWorker::updateFile(vector<Filedes> newdes) {
-    //use to store the content of each block
+    //use to store the content of each block in old file
     vector<string> file;
     ifstream ifs(path.c_str());
     if (ifs) {
@@ -66,18 +66,19 @@ void FileWorker::updateFile(vector<Filedes> newdes) {
         cerr<<"open file error"<<endl;
         exit(-1);
     }
-
-    ifs.seekg(0,ifs.beg);
+    ifs.close();
+    //generate new file 
+    ofstream ofs(path.c_str());
     for (int i = 0; i < newdes.size(); ++i) {
         if (newdes[i].flag == 0) {
             //0 means it has content
-            ifs<<newdes[i].content;
+            ofs<<newdes[i].content;
         } else {
-            ifs<<file[newdes[i].block];
+            ofs<<file[newdes[i].block];
         }
     }
 
-    ifs.close();
+    ofs.close();
 }
 
 void FileWorker::initFolder() {

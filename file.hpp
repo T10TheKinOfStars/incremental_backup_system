@@ -19,7 +19,7 @@ namespace process{
             int filesize;
             int blocksize;
 
-            int write2Disk(std::string path, const std::string &content);
+            int write2Disk(string path, const string &content);
 
         public:
             FileWorker() :  blocksize(0),filesize(0),path("") {};
