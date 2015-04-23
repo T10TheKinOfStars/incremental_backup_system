@@ -17,15 +17,19 @@ int _kStatusValues[] = {
   Status::SAME,
   Status::NOEXIST,
   Status::OLDER,
-  Status::NEWER
+  Status::NEWER,
+  Status::FAIL,
+  Status::SUCCESS
 };
 const char* _kStatusNames[] = {
   "SAME",
   "NOEXIST",
   "OLDER",
-  "NEWER"
+  "NEWER",
+  "FAIL",
+  "SUCCESS"
 };
-const std::map<int, const char*> _Status_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(4, _kStatusValues, _kStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
+const std::map<int, const char*> _Status_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(6, _kStatusValues, _kStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
 
 
 SystemException::~SystemException() throw() {
@@ -528,6 +532,120 @@ std::ostream& operator<<(std::ostream& out, const Filedes& obj) {
 }
 
 
+Filechk::~Filechk() throw() {
+}
+
+
+void Filechk::__set_rollchk(const int64_t val) {
+  this->rollchk = val;
+__isset.rollchk = true;
+}
+
+void Filechk::__set_md5chk(const int64_t val) {
+  this->md5chk = val;
+__isset.md5chk = true;
+}
+
+const char* Filechk::ascii_fingerprint = "0354D07C94CB8542872CA1277008860A";
+const uint8_t Filechk::binary_fingerprint[16] = {0x03,0x54,0xD0,0x7C,0x94,0xCB,0x85,0x42,0x87,0x2C,0xA1,0x27,0x70,0x08,0x86,0x0A};
+
+uint32_t Filechk::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->rollchk);
+          this->__isset.rollchk = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->md5chk);
+          this->__isset.md5chk = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t Filechk::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("Filechk");
+
+  if (this->__isset.rollchk) {
+    xfer += oprot->writeFieldBegin("rollchk", ::apache::thrift::protocol::T_I64, 1);
+    xfer += oprot->writeI64(this->rollchk);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.md5chk) {
+    xfer += oprot->writeFieldBegin("md5chk", ::apache::thrift::protocol::T_I64, 2);
+    xfer += oprot->writeI64(this->md5chk);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+void swap(Filechk &a, Filechk &b) {
+  using ::std::swap;
+  swap(a.rollchk, b.rollchk);
+  swap(a.md5chk, b.md5chk);
+  swap(a.__isset, b.__isset);
+}
+
+Filechk::Filechk(const Filechk& other9) {
+  rollchk = other9.rollchk;
+  md5chk = other9.md5chk;
+  __isset = other9.__isset;
+}
+Filechk& Filechk::operator=(const Filechk& other10) {
+  rollchk = other10.rollchk;
+  md5chk = other10.md5chk;
+  __isset = other10.__isset;
+  return *this;
+}
+std::ostream& operator<<(std::ostream& out, const Filechk& obj) {
+  using apache::thrift::to_string;
+  out << "Filechk(";
+  out << "rollchk="; (obj.__isset.rollchk ? (out << to_string(obj.rollchk)) : (out << "<null>"));
+  out << ", " << "md5chk="; (obj.__isset.md5chk ? (out << to_string(obj.md5chk)) : (out << "<null>"));
+  out << ")";
+  return out;
+}
+
+
 RFile::~RFile() throw() {
 }
 
@@ -537,23 +655,13 @@ void RFile::__set_meta(const RFileMetadata& val) {
 __isset.meta = true;
 }
 
-void RFile::__set_des(const std::vector<Filedes> & val) {
-  this->des = val;
-__isset.des = true;
-}
-
 void RFile::__set_content(const std::string& val) {
   this->content = val;
 __isset.content = true;
 }
 
-void RFile::__set_flag(const int32_t val) {
-  this->flag = val;
-__isset.flag = true;
-}
-
-const char* RFile::ascii_fingerprint = "9413952014B1A9B68C144F11C1B8F839";
-const uint8_t RFile::binary_fingerprint[16] = {0x94,0x13,0x95,0x20,0x14,0xB1,0xA9,0xB6,0x8C,0x14,0x4F,0x11,0xC1,0xB8,0xF8,0x39};
+const char* RFile::ascii_fingerprint = "40077053B9C9B3A3984700ABD9814964";
+const uint8_t RFile::binary_fingerprint[16] = {0x40,0x07,0x70,0x53,0xB9,0xC9,0xB3,0xA3,0x98,0x47,0x00,0xAB,0xD9,0x81,0x49,0x64};
 
 uint32_t RFile::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -584,37 +692,9 @@ uint32_t RFile::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 2:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->des.clear();
-            uint32_t _size9;
-            ::apache::thrift::protocol::TType _etype12;
-            xfer += iprot->readListBegin(_etype12, _size9);
-            this->des.resize(_size9);
-            uint32_t _i13;
-            for (_i13 = 0; _i13 < _size9; ++_i13)
-            {
-              xfer += this->des[_i13].read(iprot);
-            }
-            xfer += iprot->readListEnd();
-          }
-          this->__isset.des = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
           xfer += iprot->readString(this->content);
           this->__isset.content = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 4:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32(this->flag);
-          this->__isset.flag = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -641,27 +721,9 @@ uint32_t RFile::write(::apache::thrift::protocol::TProtocol* oprot) const {
     xfer += this->meta.write(oprot);
     xfer += oprot->writeFieldEnd();
   }
-  if (this->__isset.des) {
-    xfer += oprot->writeFieldBegin("des", ::apache::thrift::protocol::T_LIST, 2);
-    {
-      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->des.size()));
-      std::vector<Filedes> ::const_iterator _iter14;
-      for (_iter14 = this->des.begin(); _iter14 != this->des.end(); ++_iter14)
-      {
-        xfer += (*_iter14).write(oprot);
-      }
-      xfer += oprot->writeListEnd();
-    }
-    xfer += oprot->writeFieldEnd();
-  }
   if (this->__isset.content) {
-    xfer += oprot->writeFieldBegin("content", ::apache::thrift::protocol::T_STRING, 3);
+    xfer += oprot->writeFieldBegin("content", ::apache::thrift::protocol::T_STRING, 2);
     xfer += oprot->writeString(this->content);
-    xfer += oprot->writeFieldEnd();
-  }
-  if (this->__isset.flag) {
-    xfer += oprot->writeFieldBegin("flag", ::apache::thrift::protocol::T_I32, 4);
-    xfer += oprot->writeI32(this->flag);
     xfer += oprot->writeFieldEnd();
   }
   xfer += oprot->writeFieldStop();
@@ -673,144 +735,26 @@ uint32_t RFile::write(::apache::thrift::protocol::TProtocol* oprot) const {
 void swap(RFile &a, RFile &b) {
   using ::std::swap;
   swap(a.meta, b.meta);
-  swap(a.des, b.des);
   swap(a.content, b.content);
-  swap(a.flag, b.flag);
   swap(a.__isset, b.__isset);
 }
 
-RFile::RFile(const RFile& other15) {
-  meta = other15.meta;
-  des = other15.des;
-  content = other15.content;
-  flag = other15.flag;
-  __isset = other15.__isset;
+RFile::RFile(const RFile& other11) {
+  meta = other11.meta;
+  content = other11.content;
+  __isset = other11.__isset;
 }
-RFile& RFile::operator=(const RFile& other16) {
-  meta = other16.meta;
-  des = other16.des;
-  content = other16.content;
-  flag = other16.flag;
-  __isset = other16.__isset;
+RFile& RFile::operator=(const RFile& other12) {
+  meta = other12.meta;
+  content = other12.content;
+  __isset = other12.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const RFile& obj) {
   using apache::thrift::to_string;
   out << "RFile(";
   out << "meta="; (obj.__isset.meta ? (out << to_string(obj.meta)) : (out << "<null>"));
-  out << ", " << "des="; (obj.__isset.des ? (out << to_string(obj.des)) : (out << "<null>"));
   out << ", " << "content="; (obj.__isset.content ? (out << to_string(obj.content)) : (out << "<null>"));
-  out << ", " << "flag="; (obj.__isset.flag ? (out << to_string(obj.flag)) : (out << "<null>"));
-  out << ")";
-  return out;
-}
-
-
-NodeID::~NodeID() throw() {
-}
-
-
-void NodeID::__set_ip(const std::string& val) {
-  this->ip = val;
-}
-
-void NodeID::__set_port(const int32_t val) {
-  this->port = val;
-}
-
-const char* NodeID::ascii_fingerprint = "EEBC915CE44901401D881E6091423036";
-const uint8_t NodeID::binary_fingerprint[16] = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
-
-uint32_t NodeID::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->ip);
-          this->__isset.ip = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32(this->port);
-          this->__isset.port = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NodeID::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  oprot->incrementRecursionDepth();
-  xfer += oprot->writeStructBegin("NodeID");
-
-  xfer += oprot->writeFieldBegin("ip", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString(this->ip);
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldBegin("port", ::apache::thrift::protocol::T_I32, 2);
-  xfer += oprot->writeI32(this->port);
-  xfer += oprot->writeFieldEnd();
-
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  oprot->decrementRecursionDepth();
-  return xfer;
-}
-
-void swap(NodeID &a, NodeID &b) {
-  using ::std::swap;
-  swap(a.ip, b.ip);
-  swap(a.port, b.port);
-  swap(a.__isset, b.__isset);
-}
-
-NodeID::NodeID(const NodeID& other17) {
-  ip = other17.ip;
-  port = other17.port;
-  __isset = other17.__isset;
-}
-NodeID& NodeID::operator=(const NodeID& other18) {
-  ip = other18.ip;
-  port = other18.port;
-  __isset = other18.__isset;
-  return *this;
-}
-std::ostream& operator<<(std::ostream& out, const NodeID& obj) {
-  using apache::thrift::to_string;
-  out << "NodeID(";
-  out << "ip=" << to_string(obj.ip);
-  out << ", " << "port=" << to_string(obj.port);
   out << ")";
   return out;
 }

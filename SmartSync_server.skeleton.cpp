@@ -20,17 +20,27 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your initialization goes here
   }
 
-  void update(RFile& _return, const RFile& rfile, const NodeID& node) {
+  void writeFile(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
-    printf("update\n");
+    printf("writeFile\n");
   }
 
-  void request(RFile& _return, const NodeID& node) {
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
+    // Your implementation goes here
+    printf("updateLocal\n");
+  }
+
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
+    // Your implementation goes here
+    printf("updateServer\n");
+  }
+
+  void request(std::vector<Filechk> & _return) {
     // Your implementation goes here
     printf("request\n");
   }
 
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node) {
+  void checkFile(RFileMetadata& _return, const RFileMetadata& meta) {
     // Your implementation goes here
     printf("checkFile\n");
   }

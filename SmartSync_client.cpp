@@ -62,14 +62,15 @@ int main(int argc, char** argv) {
         }
         bool needUpdate = false;
 
+        struct stat st;
+        if (stat(filename.c_str(),&st) == -1) {
+            cerr<"stat error"<<endl;
+            return -1;
+        }
+
         //first check whether need update
         {
             try {
-                struct stat st;
-                if (stat(filename.c_str(),&st) == -1) {
-                    cerr<"stat error"<<endl;
-                    return -1;
-                }
                 ifstream ifs(filename.c_str());
                 if (ifs) {
                     char* buf = new char[INT_MAX];
@@ -96,12 +97,16 @@ int main(int argc, char** argv) {
             }
             //format rfile in json format
             std::cout<<ThriftJSONString(rfile)<<std::endl;
-        }         
+        }
+        
+             
         if (statusReport.status == 1) {
             //file doesn't exist on server
             data.__set_filename(filename);
             data.__set_version(0);
             data.__set_owner(user);
+            Timestamp lastmod = time(&st.st_mtime);
+            data.__set_modified(lastmod);
             
             //read data from disk            
             std::ifstream ifs(filename.c_str(),std::ios::binary);
@@ -122,7 +127,7 @@ int main(int argc, char** argv) {
                 return -1;
             }
             try {
-                client.writeFile(status,rfile);
+                statusReport = client.writeFile(rfile);
             } catch (SystemException se) {
                 //format se information in json format
                 std::cout<<ThriftJSONString(se)<<std::endl;
@@ -132,15 +137,41 @@ int main(int argc, char** argv) {
             std::cout<<ThriftJSONString(status)<<std::endl;
         } else if (statusReport.status == 0) {
             //file is the same 
+            std::cout<<"File is the same"<<std::endl;
         } else if (statusReport.status == 2) {
             //if client is older, it sends des to server
-            rfile = client.update(rfile);
+            vector<Filechk> v;
+            vector<Filedes> des;
+            //gene v
+            //...........
+            try {
+                des = client.updateLocal(v);
+            } catch (SystemException se) {
+                std::cout<<ThriftJSONString(se)<<std::endl;
+                return -1;
+            }
+
+            //generate new file based on des
             //...........
         } else if (statusReport.status == 3) {
             //if client is newer, it receives the des from server
-            RFile newrfile = client.request();
-            newrfile = client.update(newrfile);
-            //..........
+            vector<Filechk> fchks = client.request();
+            vector<Filedes> v;
+            //gene v
+            //...........
+            try {
+                statusReport = client.updateServer(v);
+            } catch (SystemException se) {
+                std::cout<<ThriftJSONString(se)<<std::endl;
+                return -1;
+            }
+            if (statusReport.status == 5) {
+                std::cout<<"Success"<<std::endl;
+            } else if (statusReport.status == 4) {
+                std::cout<<"Fail"<<std::endl;
+            } else {
+                std::cout<<"undefined status"<<std::endl;
+            }
         } else {
             std::cerr<<"operation argument error"<<std::endl;
             return 0;

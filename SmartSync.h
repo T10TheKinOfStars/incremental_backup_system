@@ -15,9 +15,11 @@
 class SmartSyncIf {
  public:
   virtual ~SmartSyncIf() {}
-  virtual void update(RFile& _return, const RFile& rfile, const NodeID& node) = 0;
-  virtual void request(RFile& _return, const NodeID& node) = 0;
-  virtual void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node) = 0;
+  virtual void writeFile(StatusReport& _return, const RFile& rFile) = 0;
+  virtual void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) = 0;
+  virtual void updateServer(StatusReport& _return, const std::vector<Filedes> & des) = 0;
+  virtual void request(std::vector<Filechk> & _return) = 0;
+  virtual void checkFile(RFileMetadata& _return, const RFileMetadata& meta) = 0;
 };
 
 class SmartSyncIfFactory {
@@ -47,109 +49,108 @@ class SmartSyncIfSingletonFactory : virtual public SmartSyncIfFactory {
 class SmartSyncNull : virtual public SmartSyncIf {
  public:
   virtual ~SmartSyncNull() {}
-  void update(RFile& /* _return */, const RFile& /* rfile */, const NodeID& /* node */) {
+  void writeFile(StatusReport& /* _return */, const RFile& /* rFile */) {
     return;
   }
-  void request(RFile& /* _return */, const NodeID& /* node */) {
+  void updateLocal(std::vector<Filedes> & /* _return */, const std::vector<Filechk> & /* chks */) {
     return;
   }
-  void checkFile(RFileMetadata& /* _return */, const RFileMetadata& /* meta */, const NodeID& /* node */) {
+  void updateServer(StatusReport& /* _return */, const std::vector<Filedes> & /* des */) {
+    return;
+  }
+  void request(std::vector<Filechk> & /* _return */) {
+    return;
+  }
+  void checkFile(RFileMetadata& /* _return */, const RFileMetadata& /* meta */) {
     return;
   }
 };
 
-typedef struct _SmartSync_update_args__isset {
-  _SmartSync_update_args__isset() : rfile(false), node(false) {}
-  bool rfile :1;
-  bool node :1;
-} _SmartSync_update_args__isset;
+typedef struct _SmartSync_writeFile_args__isset {
+  _SmartSync_writeFile_args__isset() : rFile(false) {}
+  bool rFile :1;
+} _SmartSync_writeFile_args__isset;
 
-class SmartSync_update_args {
+class SmartSync_writeFile_args {
  public:
 
-  static const char* ascii_fingerprint; // = "A33A10555116172CEAF3CAE03B08B77A";
-  static const uint8_t binary_fingerprint[16]; // = {0xA3,0x3A,0x10,0x55,0x51,0x16,0x17,0x2C,0xEA,0xF3,0xCA,0xE0,0x3B,0x08,0xB7,0x7A};
+  static const char* ascii_fingerprint; // = "D1C8E5995BD6B9318B19BB605AB94D5C";
+  static const uint8_t binary_fingerprint[16]; // = {0xD1,0xC8,0xE5,0x99,0x5B,0xD6,0xB9,0x31,0x8B,0x19,0xBB,0x60,0x5A,0xB9,0x4D,0x5C};
 
-  SmartSync_update_args(const SmartSync_update_args&);
-  SmartSync_update_args& operator=(const SmartSync_update_args&);
-  SmartSync_update_args() {
+  SmartSync_writeFile_args(const SmartSync_writeFile_args&);
+  SmartSync_writeFile_args& operator=(const SmartSync_writeFile_args&);
+  SmartSync_writeFile_args() {
   }
 
-  virtual ~SmartSync_update_args() throw();
-  RFile rfile;
-  NodeID node;
+  virtual ~SmartSync_writeFile_args() throw();
+  RFile rFile;
 
-  _SmartSync_update_args__isset __isset;
+  _SmartSync_writeFile_args__isset __isset;
 
-  void __set_rfile(const RFile& val);
+  void __set_rFile(const RFile& val);
 
-  void __set_node(const NodeID& val);
-
-  bool operator == (const SmartSync_update_args & rhs) const
+  bool operator == (const SmartSync_writeFile_args & rhs) const
   {
-    if (!(rfile == rhs.rfile))
-      return false;
-    if (!(node == rhs.node))
+    if (!(rFile == rhs.rFile))
       return false;
     return true;
   }
-  bool operator != (const SmartSync_update_args &rhs) const {
+  bool operator != (const SmartSync_writeFile_args &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const SmartSync_update_args & ) const;
+  bool operator < (const SmartSync_writeFile_args & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_args& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_args& obj);
 };
 
 
-class SmartSync_update_pargs {
+class SmartSync_writeFile_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "A33A10555116172CEAF3CAE03B08B77A";
-  static const uint8_t binary_fingerprint[16]; // = {0xA3,0x3A,0x10,0x55,0x51,0x16,0x17,0x2C,0xEA,0xF3,0xCA,0xE0,0x3B,0x08,0xB7,0x7A};
+  static const char* ascii_fingerprint; // = "D1C8E5995BD6B9318B19BB605AB94D5C";
+  static const uint8_t binary_fingerprint[16]; // = {0xD1,0xC8,0xE5,0x99,0x5B,0xD6,0xB9,0x31,0x8B,0x19,0xBB,0x60,0x5A,0xB9,0x4D,0x5C};
 
 
-  virtual ~SmartSync_update_pargs() throw();
-  const RFile* rfile;
-  const NodeID* node;
+  virtual ~SmartSync_writeFile_pargs() throw();
+  const RFile* rFile;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_pargs& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_pargs& obj);
 };
 
-typedef struct _SmartSync_update_result__isset {
-  _SmartSync_update_result__isset() : success(false), systemException(false) {}
+typedef struct _SmartSync_writeFile_result__isset {
+  _SmartSync_writeFile_result__isset() : success(false), systemException(false) {}
   bool success :1;
   bool systemException :1;
-} _SmartSync_update_result__isset;
+} _SmartSync_writeFile_result__isset;
 
-class SmartSync_update_result {
+class SmartSync_writeFile_result {
  public:
 
-  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
-  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
+  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
+  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
 
-  SmartSync_update_result(const SmartSync_update_result&);
-  SmartSync_update_result& operator=(const SmartSync_update_result&);
-  SmartSync_update_result() {
+  SmartSync_writeFile_result(const SmartSync_writeFile_result&);
+  SmartSync_writeFile_result& operator=(const SmartSync_writeFile_result&);
+  SmartSync_writeFile_result() {
   }
 
-  virtual ~SmartSync_update_result() throw();
-  RFile success;
+  virtual ~SmartSync_writeFile_result() throw();
+  StatusReport success;
   SystemException systemException;
 
-  _SmartSync_update_result__isset __isset;
+  _SmartSync_writeFile_result__isset __isset;
 
-  void __set_success(const RFile& val);
+  void __set_success(const StatusReport& val);
 
   void __set_systemException(const SystemException& val);
 
-  bool operator == (const SmartSync_update_result & rhs) const
+  bool operator == (const SmartSync_writeFile_result & rhs) const
   {
     if (!(success == rhs.success))
       return false;
@@ -157,52 +158,304 @@ class SmartSync_update_result {
       return false;
     return true;
   }
-  bool operator != (const SmartSync_update_result &rhs) const {
+  bool operator != (const SmartSync_writeFile_result &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const SmartSync_update_result & ) const;
+  bool operator < (const SmartSync_writeFile_result & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_result& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_result& obj);
 };
 
-typedef struct _SmartSync_update_presult__isset {
-  _SmartSync_update_presult__isset() : success(false), systemException(false) {}
+typedef struct _SmartSync_writeFile_presult__isset {
+  _SmartSync_writeFile_presult__isset() : success(false), systemException(false) {}
   bool success :1;
   bool systemException :1;
-} _SmartSync_update_presult__isset;
+} _SmartSync_writeFile_presult__isset;
 
-class SmartSync_update_presult {
+class SmartSync_writeFile_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
-  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
+  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
+  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
 
 
-  virtual ~SmartSync_update_presult() throw();
-  RFile* success;
+  virtual ~SmartSync_writeFile_presult() throw();
+  StatusReport* success;
   SystemException systemException;
 
-  _SmartSync_update_presult__isset __isset;
+  _SmartSync_writeFile_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
-  friend std::ostream& operator<<(std::ostream& out, const SmartSync_update_presult& obj);
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_writeFile_presult& obj);
 };
 
-typedef struct _SmartSync_request_args__isset {
-  _SmartSync_request_args__isset() : node(false) {}
-  bool node :1;
-} _SmartSync_request_args__isset;
+typedef struct _SmartSync_updateLocal_args__isset {
+  _SmartSync_updateLocal_args__isset() : chks(false) {}
+  bool chks :1;
+} _SmartSync_updateLocal_args__isset;
+
+class SmartSync_updateLocal_args {
+ public:
+
+  static const char* ascii_fingerprint; // = "645095A61F3767BFF1E1C6D296F44C70";
+  static const uint8_t binary_fingerprint[16]; // = {0x64,0x50,0x95,0xA6,0x1F,0x37,0x67,0xBF,0xF1,0xE1,0xC6,0xD2,0x96,0xF4,0x4C,0x70};
+
+  SmartSync_updateLocal_args(const SmartSync_updateLocal_args&);
+  SmartSync_updateLocal_args& operator=(const SmartSync_updateLocal_args&);
+  SmartSync_updateLocal_args() {
+  }
+
+  virtual ~SmartSync_updateLocal_args() throw();
+  std::vector<Filechk>  chks;
+
+  _SmartSync_updateLocal_args__isset __isset;
+
+  void __set_chks(const std::vector<Filechk> & val);
+
+  bool operator == (const SmartSync_updateLocal_args & rhs) const
+  {
+    if (!(chks == rhs.chks))
+      return false;
+    return true;
+  }
+  bool operator != (const SmartSync_updateLocal_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SmartSync_updateLocal_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateLocal_args& obj);
+};
+
+
+class SmartSync_updateLocal_pargs {
+ public:
+
+  static const char* ascii_fingerprint; // = "645095A61F3767BFF1E1C6D296F44C70";
+  static const uint8_t binary_fingerprint[16]; // = {0x64,0x50,0x95,0xA6,0x1F,0x37,0x67,0xBF,0xF1,0xE1,0xC6,0xD2,0x96,0xF4,0x4C,0x70};
+
+
+  virtual ~SmartSync_updateLocal_pargs() throw();
+  const std::vector<Filechk> * chks;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateLocal_pargs& obj);
+};
+
+typedef struct _SmartSync_updateLocal_result__isset {
+  _SmartSync_updateLocal_result__isset() : success(false), systemException(false) {}
+  bool success :1;
+  bool systemException :1;
+} _SmartSync_updateLocal_result__isset;
+
+class SmartSync_updateLocal_result {
+ public:
+
+  static const char* ascii_fingerprint; // = "0708DD83212BFC89AE61A1CDBD89F832";
+  static const uint8_t binary_fingerprint[16]; // = {0x07,0x08,0xDD,0x83,0x21,0x2B,0xFC,0x89,0xAE,0x61,0xA1,0xCD,0xBD,0x89,0xF8,0x32};
+
+  SmartSync_updateLocal_result(const SmartSync_updateLocal_result&);
+  SmartSync_updateLocal_result& operator=(const SmartSync_updateLocal_result&);
+  SmartSync_updateLocal_result() {
+  }
+
+  virtual ~SmartSync_updateLocal_result() throw();
+  std::vector<Filedes>  success;
+  SystemException systemException;
+
+  _SmartSync_updateLocal_result__isset __isset;
+
+  void __set_success(const std::vector<Filedes> & val);
+
+  void __set_systemException(const SystemException& val);
+
+  bool operator == (const SmartSync_updateLocal_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(systemException == rhs.systemException))
+      return false;
+    return true;
+  }
+  bool operator != (const SmartSync_updateLocal_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SmartSync_updateLocal_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateLocal_result& obj);
+};
+
+typedef struct _SmartSync_updateLocal_presult__isset {
+  _SmartSync_updateLocal_presult__isset() : success(false), systemException(false) {}
+  bool success :1;
+  bool systemException :1;
+} _SmartSync_updateLocal_presult__isset;
+
+class SmartSync_updateLocal_presult {
+ public:
+
+  static const char* ascii_fingerprint; // = "0708DD83212BFC89AE61A1CDBD89F832";
+  static const uint8_t binary_fingerprint[16]; // = {0x07,0x08,0xDD,0x83,0x21,0x2B,0xFC,0x89,0xAE,0x61,0xA1,0xCD,0xBD,0x89,0xF8,0x32};
+
+
+  virtual ~SmartSync_updateLocal_presult() throw();
+  std::vector<Filedes> * success;
+  SystemException systemException;
+
+  _SmartSync_updateLocal_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateLocal_presult& obj);
+};
+
+typedef struct _SmartSync_updateServer_args__isset {
+  _SmartSync_updateServer_args__isset() : des(false) {}
+  bool des :1;
+} _SmartSync_updateServer_args__isset;
+
+class SmartSync_updateServer_args {
+ public:
+
+  static const char* ascii_fingerprint; // = "B2B8C604CBD25F8DA59BB142404EDAE2";
+  static const uint8_t binary_fingerprint[16]; // = {0xB2,0xB8,0xC6,0x04,0xCB,0xD2,0x5F,0x8D,0xA5,0x9B,0xB1,0x42,0x40,0x4E,0xDA,0xE2};
+
+  SmartSync_updateServer_args(const SmartSync_updateServer_args&);
+  SmartSync_updateServer_args& operator=(const SmartSync_updateServer_args&);
+  SmartSync_updateServer_args() {
+  }
+
+  virtual ~SmartSync_updateServer_args() throw();
+  std::vector<Filedes>  des;
+
+  _SmartSync_updateServer_args__isset __isset;
+
+  void __set_des(const std::vector<Filedes> & val);
+
+  bool operator == (const SmartSync_updateServer_args & rhs) const
+  {
+    if (!(des == rhs.des))
+      return false;
+    return true;
+  }
+  bool operator != (const SmartSync_updateServer_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SmartSync_updateServer_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateServer_args& obj);
+};
+
+
+class SmartSync_updateServer_pargs {
+ public:
+
+  static const char* ascii_fingerprint; // = "B2B8C604CBD25F8DA59BB142404EDAE2";
+  static const uint8_t binary_fingerprint[16]; // = {0xB2,0xB8,0xC6,0x04,0xCB,0xD2,0x5F,0x8D,0xA5,0x9B,0xB1,0x42,0x40,0x4E,0xDA,0xE2};
+
+
+  virtual ~SmartSync_updateServer_pargs() throw();
+  const std::vector<Filedes> * des;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateServer_pargs& obj);
+};
+
+typedef struct _SmartSync_updateServer_result__isset {
+  _SmartSync_updateServer_result__isset() : success(false), systemException(false) {}
+  bool success :1;
+  bool systemException :1;
+} _SmartSync_updateServer_result__isset;
+
+class SmartSync_updateServer_result {
+ public:
+
+  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
+  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
+
+  SmartSync_updateServer_result(const SmartSync_updateServer_result&);
+  SmartSync_updateServer_result& operator=(const SmartSync_updateServer_result&);
+  SmartSync_updateServer_result() {
+  }
+
+  virtual ~SmartSync_updateServer_result() throw();
+  StatusReport success;
+  SystemException systemException;
+
+  _SmartSync_updateServer_result__isset __isset;
+
+  void __set_success(const StatusReport& val);
+
+  void __set_systemException(const SystemException& val);
+
+  bool operator == (const SmartSync_updateServer_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(systemException == rhs.systemException))
+      return false;
+    return true;
+  }
+  bool operator != (const SmartSync_updateServer_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SmartSync_updateServer_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateServer_result& obj);
+};
+
+typedef struct _SmartSync_updateServer_presult__isset {
+  _SmartSync_updateServer_presult__isset() : success(false), systemException(false) {}
+  bool success :1;
+  bool systemException :1;
+} _SmartSync_updateServer_presult__isset;
+
+class SmartSync_updateServer_presult {
+ public:
+
+  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
+  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
+
+
+  virtual ~SmartSync_updateServer_presult() throw();
+  StatusReport* success;
+  SystemException systemException;
+
+  _SmartSync_updateServer_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+  friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateServer_presult& obj);
+};
+
 
 class SmartSync_request_args {
  public:
 
-  static const char* ascii_fingerprint; // = "2BD9E1CC52BCB0899198EEADB3593B00";
-  static const uint8_t binary_fingerprint[16]; // = {0x2B,0xD9,0xE1,0xCC,0x52,0xBC,0xB0,0x89,0x91,0x98,0xEE,0xAD,0xB3,0x59,0x3B,0x00};
+  static const char* ascii_fingerprint; // = "99914B932BD37A50B983C5E7C90AE93B";
+  static const uint8_t binary_fingerprint[16]; // = {0x99,0x91,0x4B,0x93,0x2B,0xD3,0x7A,0x50,0xB9,0x83,0xC5,0xE7,0xC9,0x0A,0xE9,0x3B};
 
   SmartSync_request_args(const SmartSync_request_args&);
   SmartSync_request_args& operator=(const SmartSync_request_args&);
@@ -210,16 +463,9 @@ class SmartSync_request_args {
   }
 
   virtual ~SmartSync_request_args() throw();
-  NodeID node;
 
-  _SmartSync_request_args__isset __isset;
-
-  void __set_node(const NodeID& val);
-
-  bool operator == (const SmartSync_request_args & rhs) const
+  bool operator == (const SmartSync_request_args & /* rhs */) const
   {
-    if (!(node == rhs.node))
-      return false;
     return true;
   }
   bool operator != (const SmartSync_request_args &rhs) const {
@@ -238,12 +484,11 @@ class SmartSync_request_args {
 class SmartSync_request_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "2BD9E1CC52BCB0899198EEADB3593B00";
-  static const uint8_t binary_fingerprint[16]; // = {0x2B,0xD9,0xE1,0xCC,0x52,0xBC,0xB0,0x89,0x91,0x98,0xEE,0xAD,0xB3,0x59,0x3B,0x00};
+  static const char* ascii_fingerprint; // = "99914B932BD37A50B983C5E7C90AE93B";
+  static const uint8_t binary_fingerprint[16]; // = {0x99,0x91,0x4B,0x93,0x2B,0xD3,0x7A,0x50,0xB9,0x83,0xC5,0xE7,0xC9,0x0A,0xE9,0x3B};
 
 
   virtual ~SmartSync_request_pargs() throw();
-  const NodeID* node;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -259,8 +504,8 @@ typedef struct _SmartSync_request_result__isset {
 class SmartSync_request_result {
  public:
 
-  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
-  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
+  static const char* ascii_fingerprint; // = "412ACF4F3B631AD8DBB9FC1D7DB8D86D";
+  static const uint8_t binary_fingerprint[16]; // = {0x41,0x2A,0xCF,0x4F,0x3B,0x63,0x1A,0xD8,0xDB,0xB9,0xFC,0x1D,0x7D,0xB8,0xD8,0x6D};
 
   SmartSync_request_result(const SmartSync_request_result&);
   SmartSync_request_result& operator=(const SmartSync_request_result&);
@@ -268,12 +513,12 @@ class SmartSync_request_result {
   }
 
   virtual ~SmartSync_request_result() throw();
-  RFile success;
+  std::vector<Filechk>  success;
   SystemException systemException;
 
   _SmartSync_request_result__isset __isset;
 
-  void __set_success(const RFile& val);
+  void __set_success(const std::vector<Filechk> & val);
 
   void __set_systemException(const SystemException& val);
 
@@ -306,12 +551,12 @@ typedef struct _SmartSync_request_presult__isset {
 class SmartSync_request_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "4E9ECDC6DA2700E057A89E1DD5437A44";
-  static const uint8_t binary_fingerprint[16]; // = {0x4E,0x9E,0xCD,0xC6,0xDA,0x27,0x00,0xE0,0x57,0xA8,0x9E,0x1D,0xD5,0x43,0x7A,0x44};
+  static const char* ascii_fingerprint; // = "412ACF4F3B631AD8DBB9FC1D7DB8D86D";
+  static const uint8_t binary_fingerprint[16]; // = {0x41,0x2A,0xCF,0x4F,0x3B,0x63,0x1A,0xD8,0xDB,0xB9,0xFC,0x1D,0x7D,0xB8,0xD8,0x6D};
 
 
   virtual ~SmartSync_request_presult() throw();
-  RFile* success;
+  std::vector<Filechk> * success;
   SystemException systemException;
 
   _SmartSync_request_presult__isset __isset;
@@ -322,16 +567,15 @@ class SmartSync_request_presult {
 };
 
 typedef struct _SmartSync_checkFile_args__isset {
-  _SmartSync_checkFile_args__isset() : meta(false), node(false) {}
+  _SmartSync_checkFile_args__isset() : meta(false) {}
   bool meta :1;
-  bool node :1;
 } _SmartSync_checkFile_args__isset;
 
 class SmartSync_checkFile_args {
  public:
 
-  static const char* ascii_fingerprint; // = "C65734E20AD62980068E4AF990098466";
-  static const uint8_t binary_fingerprint[16]; // = {0xC6,0x57,0x34,0xE2,0x0A,0xD6,0x29,0x80,0x06,0x8E,0x4A,0xF9,0x90,0x09,0x84,0x66};
+  static const char* ascii_fingerprint; // = "9EE4018516E354F02FE73A3E56509ECE";
+  static const uint8_t binary_fingerprint[16]; // = {0x9E,0xE4,0x01,0x85,0x16,0xE3,0x54,0xF0,0x2F,0xE7,0x3A,0x3E,0x56,0x50,0x9E,0xCE};
 
   SmartSync_checkFile_args(const SmartSync_checkFile_args&);
   SmartSync_checkFile_args& operator=(const SmartSync_checkFile_args&);
@@ -340,19 +584,14 @@ class SmartSync_checkFile_args {
 
   virtual ~SmartSync_checkFile_args() throw();
   RFileMetadata meta;
-  NodeID node;
 
   _SmartSync_checkFile_args__isset __isset;
 
   void __set_meta(const RFileMetadata& val);
 
-  void __set_node(const NodeID& val);
-
   bool operator == (const SmartSync_checkFile_args & rhs) const
   {
     if (!(meta == rhs.meta))
-      return false;
-    if (!(node == rhs.node))
       return false;
     return true;
   }
@@ -372,13 +611,12 @@ class SmartSync_checkFile_args {
 class SmartSync_checkFile_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "C65734E20AD62980068E4AF990098466";
-  static const uint8_t binary_fingerprint[16]; // = {0xC6,0x57,0x34,0xE2,0x0A,0xD6,0x29,0x80,0x06,0x8E,0x4A,0xF9,0x90,0x09,0x84,0x66};
+  static const char* ascii_fingerprint; // = "9EE4018516E354F02FE73A3E56509ECE";
+  static const uint8_t binary_fingerprint[16]; // = {0x9E,0xE4,0x01,0x85,0x16,0xE3,0x54,0xF0,0x2F,0xE7,0x3A,0x3E,0x56,0x50,0x9E,0xCE};
 
 
   virtual ~SmartSync_checkFile_pargs() throw();
   const RFileMetadata* meta;
-  const NodeID* node;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -481,14 +719,20 @@ class SmartSyncClient : virtual public SmartSyncIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void update(RFile& _return, const RFile& rfile, const NodeID& node);
-  void send_update(const RFile& rfile, const NodeID& node);
-  void recv_update(RFile& _return);
-  void request(RFile& _return, const NodeID& node);
-  void send_request(const NodeID& node);
-  void recv_request(RFile& _return);
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node);
-  void send_checkFile(const RFileMetadata& meta, const NodeID& node);
+  void writeFile(StatusReport& _return, const RFile& rFile);
+  void send_writeFile(const RFile& rFile);
+  void recv_writeFile(StatusReport& _return);
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks);
+  void send_updateLocal(const std::vector<Filechk> & chks);
+  void recv_updateLocal(std::vector<Filedes> & _return);
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des);
+  void send_updateServer(const std::vector<Filedes> & des);
+  void recv_updateServer(StatusReport& _return);
+  void request(std::vector<Filechk> & _return);
+  void send_request();
+  void recv_request(std::vector<Filechk> & _return);
+  void checkFile(RFileMetadata& _return, const RFileMetadata& meta);
+  void send_checkFile(const RFileMetadata& meta);
   void recv_checkFile(RFileMetadata& _return);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
@@ -505,13 +749,17 @@ class SmartSyncProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef  void (SmartSyncProcessor::*ProcessFunction)(int32_t, ::apache::thrift::protocol::TProtocol*, ::apache::thrift::protocol::TProtocol*, void*);
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
-  void process_update(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_writeFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_updateLocal(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_updateServer(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_request(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_checkFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   SmartSyncProcessor(boost::shared_ptr<SmartSyncIf> iface) :
     iface_(iface) {
-    processMap_["update"] = &SmartSyncProcessor::process_update;
+    processMap_["writeFile"] = &SmartSyncProcessor::process_writeFile;
+    processMap_["updateLocal"] = &SmartSyncProcessor::process_updateLocal;
+    processMap_["updateServer"] = &SmartSyncProcessor::process_updateServer;
     processMap_["request"] = &SmartSyncProcessor::process_request;
     processMap_["checkFile"] = &SmartSyncProcessor::process_checkFile;
   }
@@ -542,33 +790,53 @@ class SmartSyncMultiface : virtual public SmartSyncIf {
     ifaces_.push_back(iface);
   }
  public:
-  void update(RFile& _return, const RFile& rfile, const NodeID& node) {
+  void writeFile(StatusReport& _return, const RFile& rFile) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->update(_return, rfile, node);
+      ifaces_[i]->writeFile(_return, rFile);
     }
-    ifaces_[i]->update(_return, rfile, node);
+    ifaces_[i]->writeFile(_return, rFile);
     return;
   }
 
-  void request(RFile& _return, const NodeID& node) {
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->request(_return, node);
+      ifaces_[i]->updateLocal(_return, chks);
     }
-    ifaces_[i]->request(_return, node);
+    ifaces_[i]->updateLocal(_return, chks);
     return;
   }
 
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta, const NodeID& node) {
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->checkFile(_return, meta, node);
+      ifaces_[i]->updateServer(_return, des);
     }
-    ifaces_[i]->checkFile(_return, meta, node);
+    ifaces_[i]->updateServer(_return, des);
+    return;
+  }
+
+  void request(std::vector<Filechk> & _return) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->request(_return);
+    }
+    ifaces_[i]->request(_return);
+    return;
+  }
+
+  void checkFile(RFileMetadata& _return, const RFileMetadata& meta) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->checkFile(_return, meta);
+    }
+    ifaces_[i]->checkFile(_return, meta);
     return;
   }
 

@@ -51,10 +51,10 @@ service SmartSync {
     StatusReport writeFile(1:RFile rFile)
         throws (1: SystemException systemException),
 
-    list<Filedes> updateLocal(1: list<Filechk>)
+    list<Filedes> updateLocal(1: list<Filechk> chks)
         throws (1: SystemException systemException),
 
-    StatusReport updateServer(1: list<Filedes>)
+    StatusReport updateServer(1: list<Filedes> des)
         throws (1: SystemException systemException),
 
     list<Filechk> request()

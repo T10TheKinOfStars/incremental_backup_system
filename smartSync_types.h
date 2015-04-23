@@ -24,7 +24,9 @@ struct Status {
     SAME = 0,
     NOEXIST = 1,
     OLDER = 2,
-    NEWER = 3
+    NEWER = 3,
+    FAIL = 4,
+    SUCCESS = 5
   };
 };
 
@@ -40,9 +42,9 @@ class RFileMetadata;
 
 class Filedes;
 
-class RFile;
+class Filechk;
 
-class NodeID;
+class RFile;
 
 typedef struct _SystemException__isset {
   _SystemException__isset() : message(false) {}
@@ -264,40 +266,85 @@ class Filedes {
 
 void swap(Filedes &a, Filedes &b);
 
+typedef struct _Filechk__isset {
+  _Filechk__isset() : rollchk(false), md5chk(false) {}
+  bool rollchk :1;
+  bool md5chk :1;
+} _Filechk__isset;
+
+class Filechk {
+ public:
+
+  static const char* ascii_fingerprint; // = "0354D07C94CB8542872CA1277008860A";
+  static const uint8_t binary_fingerprint[16]; // = {0x03,0x54,0xD0,0x7C,0x94,0xCB,0x85,0x42,0x87,0x2C,0xA1,0x27,0x70,0x08,0x86,0x0A};
+
+  Filechk(const Filechk&);
+  Filechk& operator=(const Filechk&);
+  Filechk() : rollchk(0), md5chk(0) {
+  }
+
+  virtual ~Filechk() throw();
+  int64_t rollchk;
+  int64_t md5chk;
+
+  _Filechk__isset __isset;
+
+  void __set_rollchk(const int64_t val);
+
+  void __set_md5chk(const int64_t val);
+
+  bool operator == (const Filechk & rhs) const
+  {
+    if (__isset.rollchk != rhs.__isset.rollchk)
+      return false;
+    else if (__isset.rollchk && !(rollchk == rhs.rollchk))
+      return false;
+    if (__isset.md5chk != rhs.__isset.md5chk)
+      return false;
+    else if (__isset.md5chk && !(md5chk == rhs.md5chk))
+      return false;
+    return true;
+  }
+  bool operator != (const Filechk &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Filechk & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const Filechk& obj);
+};
+
+void swap(Filechk &a, Filechk &b);
+
 typedef struct _RFile__isset {
-  _RFile__isset() : meta(false), des(false), content(false), flag(false) {}
+  _RFile__isset() : meta(false), content(false) {}
   bool meta :1;
-  bool des :1;
   bool content :1;
-  bool flag :1;
 } _RFile__isset;
 
 class RFile {
  public:
 
-  static const char* ascii_fingerprint; // = "9413952014B1A9B68C144F11C1B8F839";
-  static const uint8_t binary_fingerprint[16]; // = {0x94,0x13,0x95,0x20,0x14,0xB1,0xA9,0xB6,0x8C,0x14,0x4F,0x11,0xC1,0xB8,0xF8,0x39};
+  static const char* ascii_fingerprint; // = "40077053B9C9B3A3984700ABD9814964";
+  static const uint8_t binary_fingerprint[16]; // = {0x40,0x07,0x70,0x53,0xB9,0xC9,0xB3,0xA3,0x98,0x47,0x00,0xAB,0xD9,0x81,0x49,0x64};
 
   RFile(const RFile&);
   RFile& operator=(const RFile&);
-  RFile() : content(), flag(0) {
+  RFile() : content() {
   }
 
   virtual ~RFile() throw();
   RFileMetadata meta;
-  std::vector<Filedes>  des;
   std::string content;
-  int32_t flag;
 
   _RFile__isset __isset;
 
   void __set_meta(const RFileMetadata& val);
 
-  void __set_des(const std::vector<Filedes> & val);
-
   void __set_content(const std::string& val);
-
-  void __set_flag(const int32_t val);
 
   bool operator == (const RFile & rhs) const
   {
@@ -305,17 +352,9 @@ class RFile {
       return false;
     else if (__isset.meta && !(meta == rhs.meta))
       return false;
-    if (__isset.des != rhs.__isset.des)
-      return false;
-    else if (__isset.des && !(des == rhs.des))
-      return false;
     if (__isset.content != rhs.__isset.content)
       return false;
     else if (__isset.content && !(content == rhs.content))
-      return false;
-    if (__isset.flag != rhs.__isset.flag)
-      return false;
-    else if (__isset.flag && !(flag == rhs.flag))
       return false;
     return true;
   }
@@ -332,55 +371,6 @@ class RFile {
 };
 
 void swap(RFile &a, RFile &b);
-
-typedef struct _NodeID__isset {
-  _NodeID__isset() : ip(false), port(false) {}
-  bool ip :1;
-  bool port :1;
-} _NodeID__isset;
-
-class NodeID {
- public:
-
-  static const char* ascii_fingerprint; // = "EEBC915CE44901401D881E6091423036";
-  static const uint8_t binary_fingerprint[16]; // = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
-
-  NodeID(const NodeID&);
-  NodeID& operator=(const NodeID&);
-  NodeID() : ip(), port(0) {
-  }
-
-  virtual ~NodeID() throw();
-  std::string ip;
-  int32_t port;
-
-  _NodeID__isset __isset;
-
-  void __set_ip(const std::string& val);
-
-  void __set_port(const int32_t val);
-
-  bool operator == (const NodeID & rhs) const
-  {
-    if (!(ip == rhs.ip))
-      return false;
-    if (!(port == rhs.port))
-      return false;
-    return true;
-  }
-  bool operator != (const NodeID &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const NodeID & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-  friend std::ostream& operator<<(std::ostream& out, const NodeID& obj);
-};
-
-void swap(NodeID &a, NodeID &b);
 
 
 
