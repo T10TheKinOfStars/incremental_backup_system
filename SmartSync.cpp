@@ -1380,7 +1380,7 @@ void SmartSyncClient::recv_request(std::vector<Filechk> & _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "request failed: unknown result");
 }
 
-void SmartSyncClient::checkFile(RFileMetadata& _return, const RFileMetadata& meta)
+void SmartSyncClient::checkFile(StatusReport& _return, const RFileMetadata& meta)
 {
   send_checkFile(meta);
   recv_checkFile(_return);
@@ -1400,7 +1400,7 @@ void SmartSyncClient::send_checkFile(const RFileMetadata& meta)
   oprot_->getTransport()->flush();
 }
 
-void SmartSyncClient::recv_checkFile(RFileMetadata& _return)
+void SmartSyncClient::recv_checkFile(StatusReport& _return)
 {
 
   int32_t rseqid = 0;

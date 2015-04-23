@@ -60,6 +60,6 @@ service SmartSync {
     list<Filechk> request()
         throws (1: SystemException systemException),
 
-    RFileMetadata checkFile(1: RFileMetadata meta)
+    StatusReport checkFile(1: RFileMetadata meta)
         throws (1: SystemException systemException),
 }

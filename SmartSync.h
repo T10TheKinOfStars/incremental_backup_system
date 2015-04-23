@@ -19,7 +19,7 @@ class SmartSyncIf {
   virtual void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) = 0;
   virtual void updateServer(StatusReport& _return, const std::vector<Filedes> & des) = 0;
   virtual void request(std::vector<Filechk> & _return) = 0;
-  virtual void checkFile(RFileMetadata& _return, const RFileMetadata& meta) = 0;
+  virtual void checkFile(StatusReport& _return, const RFileMetadata& meta) = 0;
 };
 
 class SmartSyncIfFactory {
@@ -61,7 +61,7 @@ class SmartSyncNull : virtual public SmartSyncIf {
   void request(std::vector<Filechk> & /* _return */) {
     return;
   }
-  void checkFile(RFileMetadata& /* _return */, const RFileMetadata& /* meta */) {
+  void checkFile(StatusReport& /* _return */, const RFileMetadata& /* meta */) {
     return;
   }
 };
@@ -632,8 +632,8 @@ typedef struct _SmartSync_checkFile_result__isset {
 class SmartSync_checkFile_result {
  public:
 
-  static const char* ascii_fingerprint; // = "A0DC2A879CBCFCA16A672C40DD88C2B4";
-  static const uint8_t binary_fingerprint[16]; // = {0xA0,0xDC,0x2A,0x87,0x9C,0xBC,0xFC,0xA1,0x6A,0x67,0x2C,0x40,0xDD,0x88,0xC2,0xB4};
+  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
+  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
 
   SmartSync_checkFile_result(const SmartSync_checkFile_result&);
   SmartSync_checkFile_result& operator=(const SmartSync_checkFile_result&);
@@ -641,12 +641,12 @@ class SmartSync_checkFile_result {
   }
 
   virtual ~SmartSync_checkFile_result() throw();
-  RFileMetadata success;
+  StatusReport success;
   SystemException systemException;
 
   _SmartSync_checkFile_result__isset __isset;
 
-  void __set_success(const RFileMetadata& val);
+  void __set_success(const StatusReport& val);
 
   void __set_systemException(const SystemException& val);
 
@@ -679,12 +679,12 @@ typedef struct _SmartSync_checkFile_presult__isset {
 class SmartSync_checkFile_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "A0DC2A879CBCFCA16A672C40DD88C2B4";
-  static const uint8_t binary_fingerprint[16]; // = {0xA0,0xDC,0x2A,0x87,0x9C,0xBC,0xFC,0xA1,0x6A,0x67,0x2C,0x40,0xDD,0x88,0xC2,0xB4};
+  static const char* ascii_fingerprint; // = "3FF585046B57CAB37B1AE9B1FE6EDD6F";
+  static const uint8_t binary_fingerprint[16]; // = {0x3F,0xF5,0x85,0x04,0x6B,0x57,0xCA,0xB3,0x7B,0x1A,0xE9,0xB1,0xFE,0x6E,0xDD,0x6F};
 
 
   virtual ~SmartSync_checkFile_presult() throw();
-  RFileMetadata* success;
+  StatusReport* success;
   SystemException systemException;
 
   _SmartSync_checkFile_presult__isset __isset;
@@ -731,9 +731,9 @@ class SmartSyncClient : virtual public SmartSyncIf {
   void request(std::vector<Filechk> & _return);
   void send_request();
   void recv_request(std::vector<Filechk> & _return);
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta);
+  void checkFile(StatusReport& _return, const RFileMetadata& meta);
   void send_checkFile(const RFileMetadata& meta);
-  void recv_checkFile(RFileMetadata& _return);
+  void recv_checkFile(StatusReport& _return);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -830,7 +830,7 @@ class SmartSyncMultiface : virtual public SmartSyncIf {
     return;
   }
 
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta) {
+  void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {

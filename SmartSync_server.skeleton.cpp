@@ -40,7 +40,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     printf("request\n");
   }
 
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta) {
+  void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
     printf("checkFile\n");
   }
