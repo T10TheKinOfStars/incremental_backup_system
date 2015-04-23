@@ -9,6 +9,8 @@ enum Status {
     NOEXIST = 1;
     OLDER = 2;
     NEWER = 3;
+    FAIL = 4;
+    SUCCESS = 5;
 }
 
 struct StatusReport {
@@ -28,26 +30,36 @@ struct Filedes {
     2: optional string content;
     3: optional i32 block;
 }
+struct Filechk {
+    1: optional i64 rollchk;
+    2: optional i64 md5chk;
+}
 
 struct RFile {
     1: optional RFileMetadata meta;
-    2: optional list<Filedes> des;
-    3: optional string content;
-    4: optional i32 flag;
+    2: optional string content;
 }
 
+/*
 struct NodeID {
   1: string ip;
   2: i32 port;
 }
+*/
 
 service SmartSync {
-    RFile update(1: RFile rfile, 2: NodeID node)
+    StatusReport writeFile(1:RFile rFile)
         throws (1: SystemException systemException),
 
-    RFile request(1: NodeID node)
+    list<Filedes> updateLocal(1: list<Filechk>)
         throws (1: SystemException systemException),
 
-    RFileMetadata checkFile(1: RFileMetadata meta, 2: NodeID node)
+    StatusReport updateServer(1: list<Filedes>)
+        throws (1: SystemException systemException),
+
+    list<Filechk> request()
+        throws (1: SystemException systemException),
+
+    RFileMetadata checkFile(1: RFileMetadata meta)
         throws (1: SystemException systemException),
 }
