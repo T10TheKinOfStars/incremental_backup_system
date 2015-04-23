@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
+#include <cmath>
 #include "smartSync_types.h"
 #include "types.h"
 

@@ -50,10 +50,15 @@ void FileWorker::updateFile(vector<Filedes> newdes) {
     vector<string> file;
     ifstream ifs(path.c_str());
     if (ifs) {
-        for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
+        for (int i = 0; i < (int)ceil((double)filesize/blocksize); ++i) {
             char *buf = new char[blocksize];
             ifs.read(buf,blocksize);
-            file.push_back(buf);
+            if (ifs) {
+                file.push_back(buf);
+            } else {
+                buf[ifs.gcount()] = '\0';
+                file.push_back(buf);
+            }
             delete [] buf;
         }
         //ifs.close();
