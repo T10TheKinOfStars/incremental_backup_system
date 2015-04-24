@@ -202,8 +202,8 @@ typedef struct _SmartSync_updateLocal_args__isset {
 class SmartSync_updateLocal_args {
  public:
 
-  static const char* ascii_fingerprint; // = "E3816E9C7BC92A21DE1E41307A06EC52";
-  static const uint8_t binary_fingerprint[16]; // = {0xE3,0x81,0x6E,0x9C,0x7B,0xC9,0x2A,0x21,0xDE,0x1E,0x41,0x30,0x7A,0x06,0xEC,0x52};
+  static const char* ascii_fingerprint; // = "050D6F7BB9739A4C12969A7AA2A7AC95";
+  static const uint8_t binary_fingerprint[16]; // = {0x05,0x0D,0x6F,0x7B,0xB9,0x73,0x9A,0x4C,0x12,0x96,0x9A,0x7A,0xA2,0xA7,0xAC,0x95};
 
   SmartSync_updateLocal_args(const SmartSync_updateLocal_args&);
   SmartSync_updateLocal_args& operator=(const SmartSync_updateLocal_args&);
@@ -239,8 +239,8 @@ class SmartSync_updateLocal_args {
 class SmartSync_updateLocal_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "E3816E9C7BC92A21DE1E41307A06EC52";
-  static const uint8_t binary_fingerprint[16]; // = {0xE3,0x81,0x6E,0x9C,0x7B,0xC9,0x2A,0x21,0xDE,0x1E,0x41,0x30,0x7A,0x06,0xEC,0x52};
+  static const char* ascii_fingerprint; // = "050D6F7BB9739A4C12969A7AA2A7AC95";
+  static const uint8_t binary_fingerprint[16]; // = {0x05,0x0D,0x6F,0x7B,0xB9,0x73,0x9A,0x4C,0x12,0x96,0x9A,0x7A,0xA2,0xA7,0xAC,0x95};
 
 
   virtual ~SmartSync_updateLocal_pargs() throw();
@@ -504,8 +504,8 @@ typedef struct _SmartSync_request_result__isset {
 class SmartSync_request_result {
  public:
 
-  static const char* ascii_fingerprint; // = "18D29E7F5794A0237B267143D8D5100A";
-  static const uint8_t binary_fingerprint[16]; // = {0x18,0xD2,0x9E,0x7F,0x57,0x94,0xA0,0x23,0x7B,0x26,0x71,0x43,0xD8,0xD5,0x10,0x0A};
+  static const char* ascii_fingerprint; // = "4671332074D8183661C2207F57543D91";
+  static const uint8_t binary_fingerprint[16]; // = {0x46,0x71,0x33,0x20,0x74,0xD8,0x18,0x36,0x61,0xC2,0x20,0x7F,0x57,0x54,0x3D,0x91};
 
   SmartSync_request_result(const SmartSync_request_result&);
   SmartSync_request_result& operator=(const SmartSync_request_result&);
@@ -551,8 +551,8 @@ typedef struct _SmartSync_request_presult__isset {
 class SmartSync_request_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "18D29E7F5794A0237B267143D8D5100A";
-  static const uint8_t binary_fingerprint[16]; // = {0x18,0xD2,0x9E,0x7F,0x57,0x94,0xA0,0x23,0x7B,0x26,0x71,0x43,0xD8,0xD5,0x10,0x0A};
+  static const char* ascii_fingerprint; // = "4671332074D8183661C2207F57543D91";
+  static const uint8_t binary_fingerprint[16]; // = {0x46,0x71,0x33,0x20,0x74,0xD8,0x18,0x36,0x61,0xC2,0x20,0x7F,0x57,0x54,0x3D,0x91};
 
 
   virtual ~SmartSync_request_presult() throw();

@@ -563,6 +563,16 @@ void Filechk::__set_rollchk(const int64_t val) {
 __isset.rollchk = true;
 }
 
+void Filechk::__set_num1(const int64_t val) {
+  this->num1 = val;
+__isset.num1 = true;
+}
+
+void Filechk::__set_num2(const int64_t val) {
+  this->num2 = val;
+__isset.num2 = true;
+}
+
 void Filechk::__set_md5chk(const int64_t val) {
   this->md5chk = val;
 __isset.md5chk = true;
@@ -573,8 +583,8 @@ void Filechk::__set_block(const int32_t val) {
 __isset.block = true;
 }
 
-const char* Filechk::ascii_fingerprint = "78227C1B11AB86815EA86E763AA88569";
-const uint8_t Filechk::binary_fingerprint[16] = {0x78,0x22,0x7C,0x1B,0x11,0xAB,0x86,0x81,0x5E,0xA8,0x6E,0x76,0x3A,0xA8,0x85,0x69};
+const char* Filechk::ascii_fingerprint = "FFDBCAA33A4A102D0D255736822CC22F";
+const uint8_t Filechk::binary_fingerprint[16] = {0xFF,0xDB,0xCA,0xA3,0x3A,0x4A,0x10,0x2D,0x0D,0x25,0x57,0x36,0x82,0x2C,0xC2,0x2F};
 
 uint32_t Filechk::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -606,13 +616,29 @@ uint32_t Filechk::read(::apache::thrift::protocol::TProtocol* iprot) {
         break;
       case 2:
         if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->num1);
+          this->__isset.num1 = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->num2);
+          this->__isset.num2 = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 4:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
           xfer += iprot->readI64(this->md5chk);
           this->__isset.md5chk = true;
         } else {
           xfer += iprot->skip(ftype);
         }
         break;
-      case 3:
+      case 5:
         if (ftype == ::apache::thrift::protocol::T_I32) {
           xfer += iprot->readI32(this->block);
           this->__isset.block = true;
@@ -642,13 +668,23 @@ uint32_t Filechk::write(::apache::thrift::protocol::TProtocol* oprot) const {
     xfer += oprot->writeI64(this->rollchk);
     xfer += oprot->writeFieldEnd();
   }
+  if (this->__isset.num1) {
+    xfer += oprot->writeFieldBegin("num1", ::apache::thrift::protocol::T_I64, 2);
+    xfer += oprot->writeI64(this->num1);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.num2) {
+    xfer += oprot->writeFieldBegin("num2", ::apache::thrift::protocol::T_I64, 3);
+    xfer += oprot->writeI64(this->num2);
+    xfer += oprot->writeFieldEnd();
+  }
   if (this->__isset.md5chk) {
-    xfer += oprot->writeFieldBegin("md5chk", ::apache::thrift::protocol::T_I64, 2);
+    xfer += oprot->writeFieldBegin("md5chk", ::apache::thrift::protocol::T_I64, 4);
     xfer += oprot->writeI64(this->md5chk);
     xfer += oprot->writeFieldEnd();
   }
   if (this->__isset.block) {
-    xfer += oprot->writeFieldBegin("block", ::apache::thrift::protocol::T_I32, 3);
+    xfer += oprot->writeFieldBegin("block", ::apache::thrift::protocol::T_I32, 5);
     xfer += oprot->writeI32(this->block);
     xfer += oprot->writeFieldEnd();
   }
@@ -661,6 +697,8 @@ uint32_t Filechk::write(::apache::thrift::protocol::TProtocol* oprot) const {
 void swap(Filechk &a, Filechk &b) {
   using ::std::swap;
   swap(a.rollchk, b.rollchk);
+  swap(a.num1, b.num1);
+  swap(a.num2, b.num2);
   swap(a.md5chk, b.md5chk);
   swap(a.block, b.block);
   swap(a.__isset, b.__isset);
@@ -668,12 +706,16 @@ void swap(Filechk &a, Filechk &b) {
 
 Filechk::Filechk(const Filechk& other9) {
   rollchk = other9.rollchk;
+  num1 = other9.num1;
+  num2 = other9.num2;
   md5chk = other9.md5chk;
   block = other9.block;
   __isset = other9.__isset;
 }
 Filechk& Filechk::operator=(const Filechk& other10) {
   rollchk = other10.rollchk;
+  num1 = other10.num1;
+  num2 = other10.num2;
   md5chk = other10.md5chk;
   block = other10.block;
   __isset = other10.__isset;
@@ -683,6 +725,8 @@ std::ostream& operator<<(std::ostream& out, const Filechk& obj) {
   using apache::thrift::to_string;
   out << "Filechk(";
   out << "rollchk="; (obj.__isset.rollchk ? (out << to_string(obj.rollchk)) : (out << "<null>"));
+  out << ", " << "num1="; (obj.__isset.num1 ? (out << to_string(obj.num1)) : (out << "<null>"));
+  out << ", " << "num2="; (obj.__isset.num2 ? (out << to_string(obj.num2)) : (out << "<null>"));
   out << ", " << "md5chk="; (obj.__isset.md5chk ? (out << to_string(obj.md5chk)) : (out << "<null>"));
   out << ", " << "block="; (obj.__isset.block ? (out << to_string(obj.block)) : (out << "<null>"));
   out << ")";

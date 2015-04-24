@@ -21,6 +21,7 @@ using namespace ::apache::thrift::server;
 using boost::shared_ptr;
 
 FileWorker fworker;
+ChecksumWorker chkworker;
 
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
@@ -51,6 +52,48 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void request(std::vector<Filechk> & _return) {
     // Your implementation goes here
     printf("request\n");
+    vector<string> file;
+    ifstream ifs(path.c_str());
+    if (ifs) {
+        for (int i = 0; i < (int)ceil((double)filesize/blocksize); ++i) {
+            char *buf = new char[blocksize];
+            ifs.read(buf,blocksize);
+            if (ifs) {
+                file.push_back(buf);
+            } else {
+                buf[ifs.gcount()] = '\0';
+                file.push_back(buf);
+            }
+            delete [] buf;
+        }
+        //ifs.close();
+    } else {
+        cerr<<"open file error"<<endl;
+        exit(-1);
+    }
+    ifs.close();
+    int l;
+    int bsize = fworker.getBlockSize();
+    int fsize = fworker.getFileSize();
+    for (int i = 0; i < file.size(); ++i) {
+        if (i == (int)file.size() - 1) {
+            l = fsize - (i+1)*bsize-1;
+        } else {
+            l = bsize-1;
+        }
+        checksum num1 = 1;
+        checksum num2 = 0;
+        checksum rchk = chkworker.rolling_chksum1(file[i],0,l,num1,num2);
+        checksum md5chk = chkworker.md5_chksum(file[i]);
+        Filechk temp;
+        temp.__set_rollchk(rchk);
+        temp.__set_md5chk(md5chk);
+        temp.__set_block(i);
+        temp.__set_num1(num1);
+        temp.__set_num2(num2);
+
+        _return.push_back(temp);
+    }
   }
 
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {

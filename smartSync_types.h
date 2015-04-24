@@ -275,8 +275,10 @@ class Filedes {
 void swap(Filedes &a, Filedes &b);
 
 typedef struct _Filechk__isset {
-  _Filechk__isset() : rollchk(false), md5chk(false), block(false) {}
+  _Filechk__isset() : rollchk(false), num1(false), num2(false), md5chk(false), block(false) {}
   bool rollchk :1;
+  bool num1 :1;
+  bool num2 :1;
   bool md5chk :1;
   bool block :1;
 } _Filechk__isset;
@@ -284,22 +286,28 @@ typedef struct _Filechk__isset {
 class Filechk {
  public:
 
-  static const char* ascii_fingerprint; // = "78227C1B11AB86815EA86E763AA88569";
-  static const uint8_t binary_fingerprint[16]; // = {0x78,0x22,0x7C,0x1B,0x11,0xAB,0x86,0x81,0x5E,0xA8,0x6E,0x76,0x3A,0xA8,0x85,0x69};
+  static const char* ascii_fingerprint; // = "FFDBCAA33A4A102D0D255736822CC22F";
+  static const uint8_t binary_fingerprint[16]; // = {0xFF,0xDB,0xCA,0xA3,0x3A,0x4A,0x10,0x2D,0x0D,0x25,0x57,0x36,0x82,0x2C,0xC2,0x2F};
 
   Filechk(const Filechk&);
   Filechk& operator=(const Filechk&);
-  Filechk() : rollchk(0), md5chk(0), block(0) {
+  Filechk() : rollchk(0), num1(0), num2(0), md5chk(0), block(0) {
   }
 
   virtual ~Filechk() throw();
   int64_t rollchk;
+  int64_t num1;
+  int64_t num2;
   int64_t md5chk;
   int32_t block;
 
   _Filechk__isset __isset;
 
   void __set_rollchk(const int64_t val);
+
+  void __set_num1(const int64_t val);
+
+  void __set_num2(const int64_t val);
 
   void __set_md5chk(const int64_t val);
 
@@ -310,6 +318,14 @@ class Filechk {
     if (__isset.rollchk != rhs.__isset.rollchk)
       return false;
     else if (__isset.rollchk && !(rollchk == rhs.rollchk))
+      return false;
+    if (__isset.num1 != rhs.__isset.num1)
+      return false;
+    else if (__isset.num1 && !(num1 == rhs.num1))
+      return false;
+    if (__isset.num2 != rhs.__isset.num2)
+      return false;
+    else if (__isset.num2 && !(num2 == rhs.num2))
       return false;
     if (__isset.md5chk != rhs.__isset.md5chk)
       return false;
