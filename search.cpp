@@ -1,12 +1,14 @@
 #include "search.hpp"
 
+using namespace std;
+
 //init unordered_map<rollingchksum,blockNumber> rollchksum
 //read all the the file blocks and add checksum to map
 void SearchWorker::init() {
     //根据B发来的package来构建hashtable
-    vector<package_item> v = pworker.getchksums();
-    for (int i = 0; i < (int)v.size(); ++i) {
-        chksumTb[v[i].rollingchksum] = v[i];
+    vector<Filechk> v = pworker.getchksums();
+    for (int i = 0; i < v.size(); ++i) {
+        chksumTb[v[i].rollchk] = v[i];
     }
 }
 
@@ -38,9 +40,9 @@ void SearchWorker::find() {
             l += bsize;
 
         if (!roll) 
-            brollstr = chkworker.rollingchksum1(blockstr,i,l,a,b);
+            brollstr = chkworker.rolling_chksum1(blockstr,i,l,a,b);
         else
-            brollstr = chkworker.rollingchksum2(aprev,bprev,i-1,l-1,fworker.getxChar(i-1),fworker.getxChar(l),a,b);
+            brollstr = chkworker.rolling_chksum2(aprev,bprev,i-1,l-1,fworker.getxChar(i-1),fworker.getxChar(l),a,b);
 
         int bNum;
         //find 1 level
@@ -55,11 +57,11 @@ void SearchWorker::find() {
             auto it = range.first;
             for (; it != range.second; ++it) {
                 //find 2 level, 有可能是不同key散落到了同一个地方
-                if (it->s == brollstr) {
+                if (it.second->rollchk == brollstr) {
                     //find 3 level
-                    if (it->md5sum == chkworker.md5_chksum(blockstr)) {                    
+                    if (it.second->md5chk == chkworker.md5_chksum(blockstr)) {                    
                         //get the same block
-                        bNum = it->blockNum;
+                        bNum = it.second->block;
                         //if (bsize < fsize - i)
                         i += bsize;
                         break;
@@ -68,20 +70,28 @@ void SearchWorker::find() {
             }
             if (it == range.second) {
                 flag = true;
-                ++i
+                ++i;
             }
         }
         if (flag) {
-            literal.push_back(fworker.getxChar(i);
+            literal.push_back(fworker.getxChar(i));
             aprev = a;
             bprev = b;
         } else {
             if (literal.size() > 0) {
-                ritem stritem(0,literal,0);
+                Filedes stritem;
+                stritem.__set_flag(0);
+                stritem.__set_content(literal);
+                stritem.__set_block(0);
+                
                 pworker.insert2Filedes(stritem);
                 literal = "";
             }
-            Filedes bitem(1,"",bNum);
+            Filedes bitem;
+            bitem.__set_flag(1);
+            bitem.__set_content("");
+            bitem.__set_block(bNum);
+            
             pworker.insert2Filedes(bitem);
         }
     }
@@ -101,14 +111,14 @@ Package SearchWorker::getpworker() {
     return pworker;
 }
 
-void SearchWorker::setpworker(const PackageWorker &worker) {
+void SearchWorker::setpworker(const Package &worker) {
     pworker = worker;
 }
 
-ChecksumWorker SearchWorker::getchkworker() {
+ChksumWorker SearchWorker::getchkworker() {
     return chkworker;
 }
 
-void SearchWorker::setchkworker(const ChecksumWorker &worker) {
+void SearchWorker::setchkworker(const ChksumWorker &worker) {
     chkworker = worker;
 }

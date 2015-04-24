@@ -2,6 +2,12 @@
 // You should copy it to another filename to avoid overwriting it.
 
 #include "SmartSync.h"
+#include "unistd.h"
+#include "checksum.hpp"
+#include "types.h"
+#include "package.hpp"
+#include "search.hpp"
+#include "file.hpp"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -14,20 +20,141 @@ using namespace ::apache::thrift::server;
 
 using boost::shared_ptr;
 
+FileWorker fworker;
+ChecksumWorker chkworker;
+Package pkgworker;
+SearchWorker seachworker;
+
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
   SmartSyncHandler() {
     // Your initialization goes here
   }
 
-  void writeFile(StatusReport& _return, const RFile& rfile) {
+  void writeFile(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
     printf("writeFile\n");
+    if (fworker.writefile(rFile) != -1) {
+        _return.__set_status(Status::SUCCESSFUL);
+    } else {
+        _return.__set_status(Status::FAILED);
+    }
   }
 
-  void checkFile(RFileMetadata& _return, const RFileMetadata& meta) {
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
+    // Your implementation goes here
+    printf("updateLocal\n");
+    pkgworker.initchksums(chks);
+
+    searchworker.setfWorker(fworker);
+    searchworker.setpworker(pkgworker);
+    searchworker.setchkworker(chkworker);
+    searchworker.init();
+
+    searchworker.find();
+    _return = pkgworker.getFiledes(); 
+  }
+
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
+    // Your implementation goes here
+    printf("updateServer\n");
+    if (fworker.updateFile(des)) {
+        _return.__set_status(Status::SUCCESS);
+    } else {
+        _return.__set_status(Status::FAIL);
+    }
+  }
+
+  void request(std::vector<Filechk> & _return) {
+    // Your implementation goes here
+    printf("request\n");
+    vector<string> file;
+    ifstream ifs(path.c_str());
+    if (ifs) {
+        for (int i = 0; i < (int)ceil((double)filesize/blocksize); ++i) {
+            char *buf = new char[blocksize];
+            ifs.read(buf,blocksize);
+            if (ifs) {
+                file.push_back(buf);
+            } else {
+                buf[ifs.gcount()] = '\0';
+                file.push_back(buf);
+            }
+            delete [] buf;
+        }
+        //ifs.close();
+    } else {
+        cerr<<"open file error"<<endl;
+        exit(-1);
+    }
+    ifs.close();
+    int l;
+    int bsize = fworker.getBlockSize();
+    int fsize = fworker.getFileSize();
+    for (int i = 0; i < file.size(); ++i) {
+        if (i == (int)file.size() - 1) {
+            l = fsize - (i+1)*bsize-1;
+        } else {
+            l = bsize-1;
+        }
+        checksum num1 = 1;
+        checksum num2 = 0;
+        checksum rchk = chkworker.rolling_chksum1(file[i],0,l,num1,num2);
+        checksum md5chk = chkworker.md5_chksum(file[i]);
+        Filechk temp;
+        temp.__set_rollchk(rchk);
+        temp.__set_md5chk(md5chk);
+        temp.__set_block(i);
+        temp.__set_num1(num1);
+        temp.__set_num2(num2);
+
+        _return.push_back(temp);
+    }
+  }
+
+  void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
     printf("checkFile\n");
+    string filename = meta.filename;
+    fworker.setPath(filename);
+    if (acccess(filename.c_str(),F_OK) == 0) {
+        //means exist
+        //check content whether is the same
+        string fcontent;
+        ifstream ifs(filename.c_str());
+        if (ifs) {
+            ifs.seekg(0,ifs.end);
+            int len = ifs.tellg();
+            ifs.seekg(0,ifs.beg);
+            char* buf = new char[leni+1];
+            buf[len] = '\0';
+            string fmd5 = md5(buf);
+            delete [] buf;
+            ifs.close();
+            if (fmd5 == meta.contenthash) {
+                //it means the same
+                _return.__set_status(Status::SAME);
+            } else {
+                struct stat st;
+                if (stat(filename.c_str(),&st) == -1) {
+                    SystemException se;
+                    se.__set_message("stat error");
+                    throw se;
+                }
+                Timestamp t = time(&st.st_mtime);
+                if (t < meta.updated) {
+                    //client newer
+                    _return.__set_status(Status::NEWER);
+                } else if (t > meta.updated) {
+                    //server newer
+                    _return.__set_status(Status::OLDER);
+                }
+            }
+        }
+    } else {
+        //not exist
+        _return.__set_status(Status::NOEXIST);
+    }
   }
 
 };

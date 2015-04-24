@@ -1,5 +1,7 @@
 #include "package.hpp"
 
+using namespace std;
+
 Package::~Package() {
     checksums.clear();
     filedes.clear();

@@ -8,32 +8,32 @@
 #include <cmath>
 #include "smartSync_types.h"
 #include "types.h"
+#include "md5.h"
+#include "file.hpp"
 
-using namespace std;
+class FileWorker {
+    private:
+        NameDataMap filemap;
+        string path;
+        int filesize;
+        int blocksize;
+        int write2Disk(string path, const string &content);
 
-namespace process{
-    class FileWorker {
-        private:
-            NameDataMap filemap;
-            string path;
-            int filesize;
-            int blocksize;
-
-            int write2Disk(string path, const string &content);
-
-        public:
-            FileWorker() :  blocksize(0),filesize(0),path("") {};
-            FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
-            ~FileWorker();
-            FileWorker(const FileWorker &worker);
-            int getBlockSize();
-            int getFileSize();
-            string getBlock(int pos);
-            char getxChar(int pos);
-            void setBlockSize(int val);
-            void updateFile(vector<Filedes> newdes);
-            void initFolder();
-            int writefile(const RFile &rfile);
-    };
-}
+    public:
+        FileWorker() :  blocksize(0),filesize(0),path("") {};
+        FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
+        ~FileWorker();
+        void setPath(const string &str);
+        string getPath();
+        void setFileSize(int val);
+        int getFileSize();
+        void setBlockSize(int val);
+        int getBlockSize();
+        FileWorker(const FileWorker &worker);
+        string getBlock(int pos);
+        char getxChar(int pos);
+        bool updateFile(vector<Filedes> newdes);
+        void initFolder();
+        int writefile(const RFile &rfile);
+};
 #endif

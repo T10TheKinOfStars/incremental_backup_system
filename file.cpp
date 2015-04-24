@@ -1,6 +1,6 @@
 #include "file.hpp"
 
-using namespace process;
+using namespace std;
 
 FileWorker::~FileWorker() {
     path = "";
@@ -18,6 +18,10 @@ int FileWorker::getBlockSize() {
     return blocksize;
 }
 
+void FileWorker::setFileSize(int val) {
+    filesize = val;
+}
+
 int FileWorker::getFileSize() {
     return filesize;
 }
@@ -32,6 +36,13 @@ string FileWorker::getBlock(int pos) {
     return retVal;
 }
 
+void FileWorker::setPath(const string &str) {
+    path = str;
+}
+
+string FileWorker::getPath() {
+    return path;
+}
 
 char FileWorker::getxChar(int pos) {
     ifstream ifs(path.c_str());
@@ -45,7 +56,7 @@ void FileWorker::setBlockSize(int val) {
     blocksize = val;
 }
 
-void FileWorker::updateFile(vector<Filedes> newdes) {
+bool FileWorker::updateFile(vector<Filedes> newdes) {
     //use to store the content of each block in old file
     vector<string> file;
     ifstream ifs(path.c_str());
@@ -60,25 +71,30 @@ void FileWorker::updateFile(vector<Filedes> newdes) {
                 file.push_back(buf);
             }
             delete [] buf;
+            ifs.close();
         }
-        //ifs.close();
     } else {
         cerr<<"open file error"<<endl;
-        exit(-1);
+        return false;
     }
-    ifs.close();
     //generate new file 
     ofstream ofs(path.c_str());
-    for (int i = 0; i < newdes.size(); ++i) {
-        if (newdes[i].flag == 0) {
-            //0 means it has content
-            ofs<<newdes[i].content;
-        } else {
-            ofs<<file[newdes[i].block];
+    if (ofs) {
+        for (int i = 0; i < (int)newdes.size(); ++i) {
+            if (newdes[i].flag == 0) {
+                //0 means it has content
+                ofs<<newdes[i].content;
+            } else {
+                ofs<<file[newdes[i].block];
+            }
         }
+        ofs.close();
+    } else {
+        cerr<<"open file error"<<endl;
+        return false;
     }
 
-    ofs.close();
+    return true;
 }
 
 void FileWorker::initFolder() {
@@ -110,11 +126,11 @@ int FileWorker::writefile(const RFile &_rfile) {
     std::string path = "./files/" + filename;
     SystemException exception;
     
-    if (filemap.find(filename) == files.end()) {
+    if (filemap.find(filename) == filemap.end()) {
         //std::cout<<"this file not exists, we need create a new one"<<std::endl;
         if (write2Disk(path,rfile.content) != -1) {
             rdata.__set_version(0);
-            rdata.__set_contentHash(md5(rfile.content));
+            rdata.__set_contenthash(md5(rfile.content));
             rdata.__set_created((Timestamp)time(NULL) * 1000);    //need to change
             rdata.__set_updated((Timestamp)time(NULL) * 1000);    //need to change                
         } else {

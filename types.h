@@ -5,8 +5,10 @@
 #include "smartSync_types.h"
 
 typedef unsigned long checksum;
-typedef unordered_multimap<unsigned long,package_item> FileDstTb;
+typedef std::unordered_multimap<unsigned long,Filechk> FileDstTb;
 typedef std::map<std::string, RFileMetadata> NameDataMap;
+
+using namespace std;
 /*
 typedef struct package_item {          
     checksum s;
