@@ -8,15 +8,16 @@
 namespace process {
     class Package {
         private:
-            vector<pitem> checksums;
-            vector<ritem> filedes;
+            vector<Filechk> checksums;
+            vector<Filedes> filedes;
         public:
             Package() {};
             ~Package();
-            void insert2Filedes(ritem val);
-            void insert2Chksums(pitem val);
-            vector<pitem> getchksums();
-            vector<ritem> getFiledes();
+            void initchksums(vector<Filechk> v);
+            void insert2Filedes(Filedes val);
+            void insert2Chksums(Filechk val);
+            vector<Filechk> getchksums();
+            vector<Filedes> getFiledes();
     };
 }
 #endif

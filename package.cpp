@@ -5,18 +5,22 @@ Package::~Package() {
     filedes.clear();
 }
 
-void Package::insert2Filedes(ritem val) {
+void Package::insert2Filedes(Filedes val) {
     filedes.push_back(val);
 }
 
-void Package::insert2Chksums(pitem val) {
+void Package::insert2Chksums(Filechk val) {
     checksums.push_back(val);
 }
 
-vector<pitem> Package::getchksums() {
+vector<Filechk> Package::getchksums() {
     return checksums;
 }
 
-vector<ritem> getFiledes() {
+vector<Filedes> Package::getFiledes() {
     return filedes;
+}
+
+void Package::initchksums(vector<Filechk> v) {
+    checksums = v;
 }

@@ -22,6 +22,8 @@ using boost::shared_ptr;
 
 FileWorker fworker;
 ChecksumWorker chkworker;
+Package pkgworker;
+SearchWorker seachworker;
 
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
@@ -42,6 +44,15 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
     // Your implementation goes here
     printf("updateLocal\n");
+    pkgworker.initchksums(chks);
+
+    searchworker.setfWorker(fworker);
+    searchworker.setpworker(pkgworker);
+    searchworker.setchkworker(chkworker);
+    searchworker.init();
+
+    searchworker.find();
+    _return = pkgworker.getFiledes(); 
   }
 
   void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
@@ -133,6 +144,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
                     _return.__set_status(Status::OLDER);
                 }
             }
+        }
     } else {
         //not exist
         _return.__set_status(Status::NOEXIST);

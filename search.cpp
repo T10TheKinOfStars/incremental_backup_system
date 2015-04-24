@@ -81,8 +81,8 @@ void SearchWorker::find() {
                 pworker.insert2Filedes(stritem);
                 literal = "";
             }
-            ritem bitem(1,"",bNum);
-            pworker.insert2Filedes(ritem);
+            Filedes bitem(1,"",bNum);
+            pworker.insert2Filedes(bitem);
         }
     }
 }

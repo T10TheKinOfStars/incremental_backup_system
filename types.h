@@ -2,10 +2,12 @@
 #define TYPES_H
 #include <unordered_map>
 #include <iostream>
+#include "smartSync_types.h"
 
 typedef unsigned long checksum;
 typedef unordered_multimap<unsigned long,package_item> FileDstTb;
 typedef std::map<std::string, RFileMetadata> NameDataMap;
+/*
 typedef struct package_item {          
     checksum s;
     checksum a;
@@ -21,5 +23,5 @@ typedef struct respond_item {
     int blockNum;
     respond_item(int val, string str, int bNum):isblock(val),content(str), blockNum(bNum) {}
 } ritem;
-
+*/
 #endif

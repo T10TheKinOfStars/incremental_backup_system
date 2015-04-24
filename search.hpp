@@ -15,9 +15,9 @@ namespace process {
             Package pworker;
             //FileDstTb is unordered_multimap<unsigned long, package_item>
             FileDstTb chksumTb;
-            void init();
         public:
-            SearchWorker() {init(); };
+            SearchWorker() {};
+            void init();
             void find();
             FileWorker getfWorker();
             void setfWorker(const FileWorker &worker); 
