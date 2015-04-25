@@ -7,8 +7,9 @@ using namespace std;
 void SearchWorker::init() {
     //根据B发来的package来构建hashtable
     vector<Filechk> v = pworker.getchksums();
-    for (int i = 0; i < v.size(); ++i) {
-        chksumTb[v[i].rollchk] = v[i];
+    for (int i = 0; i < (int)v.size(); ++i) {
+        pair<checksum,Filechk> mypair(v[i].rollchk,v[i]);
+        chksumTb.insert(mypair);
     }
 }
 
@@ -46,32 +47,26 @@ void SearchWorker::find() {
 
         int bNum;
         //find 1 level
-        auto range = chksumTb.equal_range(brollstr);
-        if (range.first == range.second) {
-            //not found, move to next byte
+        auto it = chksumTb.find(brollstr);
+        int num = chksumTb.count(brollstr);
+        int j = 0;
+        for (; j < num; ++j, ++it) {
+            flag = false;
+                //find 2 level, 有可能是不同key散落到了同一个地方
+            checksum rchk = it->second.rollchk;
+            if (rchk == brollstr) {
+                    //find 3 level
+                checksum mchk = it->second.md5chk;
+                if(mchk == chkworker.md5_chksum(blockstr)) {
+                    bNum = it -> second.block;
+                    i += bsize;
+                    break;
+                }
+            }
+        }
+        if (j == num) {
             flag = true;
             ++i;
-        } else {
-            //find the entry
-            flag = false;
-            auto it = range.first;
-            for (; it != range.second; ++it) {
-                //find 2 level, 有可能是不同key散落到了同一个地方
-                if (it.second->rollchk == brollstr) {
-                    //find 3 level
-                    if (it.second->md5chk == chkworker.md5_chksum(blockstr)) {                    
-                        //get the same block
-                        bNum = it.second->block;
-                        //if (bsize < fsize - i)
-                        i += bsize;
-                        break;
-                    }
-                } 
-            }
-            if (it == range.second) {
-                flag = true;
-                ++i;
-            }
         }
         if (flag) {
             literal.push_back(fworker.getxChar(i));

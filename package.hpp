@@ -4,7 +4,7 @@
 #include <vector>
 #include "smartSync_types.h"
 #include "md5.h"
-#include "types.h"
+#include "mytypes.h"
 
 class Package {
     private:

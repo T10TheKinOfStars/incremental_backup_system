@@ -3,7 +3,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <cmath>
-#include "types.h"
+#include <algorithm>
+#include "mytypes.h"
 #include "checksum.hpp"
 #include "file.hpp"
 #include "package.hpp"
@@ -18,7 +19,6 @@ class SearchWorker {
         //FileDstTb is unordered_multimap<unsigned long, package_item>
         FileDstTb chksumTb;
     public:
-        SearchWorker() {};
         void init();
         void find();
         FileWorker getfWorker();

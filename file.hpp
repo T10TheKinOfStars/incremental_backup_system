@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <cmath>
 #include "smartSync_types.h"
-#include "types.h"
+#include "mytypes.h"
 #include "md5.h"
 #include "file.hpp"
 
@@ -21,7 +21,7 @@ class FileWorker {
 
     public:
         FileWorker() :  blocksize(0),filesize(0),path("") {};
-        FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
+        //FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
         ~FileWorker();
         void setPath(const string &str);
         string getPath();

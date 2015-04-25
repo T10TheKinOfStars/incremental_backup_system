@@ -33,6 +33,6 @@ checksum ChksumWorker::rolling_chksum2(checksum aprev, checksum bprev, int k, in
     return num2 << 16 | num1;
 }
 
-string ChksumWorker::md5_chksum(const string &file_block) {
-    return md5(file_block);
+checksum ChksumWorker::md5_chksum(const string &file_block) {
+    return strtoul(md5(file_block).c_str(),NULL,0);
 }

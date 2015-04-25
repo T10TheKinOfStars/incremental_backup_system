@@ -2,9 +2,11 @@
 // You should copy it to another filename to avoid overwriting it.
 
 #include "SmartSync.h"
-#include "unistd.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "checksum.hpp"
-#include "types.h"
+#include "mytypes.h"
 #include "package.hpp"
 #include "search.hpp"
 #include "file.hpp"
@@ -21,9 +23,9 @@ using namespace ::apache::thrift::server;
 using boost::shared_ptr;
 
 FileWorker fworker;
-ChecksumWorker chkworker;
+ChksumWorker chkworker;
 Package pkgworker;
-SearchWorker seachworker;
+SearchWorker searchworker;
 
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
@@ -35,9 +37,9 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your implementation goes here
     printf("writeFile\n");
     if (fworker.writefile(rFile) != -1) {
-        _return.__set_status(Status::SUCCESSFUL);
+        _return.__set_status(Status::SUCCESS);
     } else {
-        _return.__set_status(Status::FAILED);
+        _return.__set_status(Status::FAIL);
     }
   }
 
@@ -69,9 +71,11 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your implementation goes here
     printf("request\n");
     vector<string> file;
-    ifstream ifs(path.c_str());
+    ifstream ifs(fworker.getPath().c_str());
+    double filesize = fworker.getFileSize();
+    int blocksize = fworker.getBlockSize();
     if (ifs) {
-        for (int i = 0; i < (int)ceil((double)filesize/blocksize); ++i) {
+        for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
             char *buf = new char[blocksize];
             ifs.read(buf,blocksize);
             if (ifs) {
@@ -117,7 +121,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     printf("checkFile\n");
     string filename = meta.filename;
     fworker.setPath(filename);
-    if (acccess(filename.c_str(),F_OK) == 0) {
+    if (access(filename.c_str(),F_OK) == 0) {
         //means exist
         //check content whether is the same
         string fcontent;
@@ -126,7 +130,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             ifs.seekg(0,ifs.end);
             int len = ifs.tellg();
             ifs.seekg(0,ifs.beg);
-            char* buf = new char[leni+1];
+            char* buf = new char[len+1];
             buf[len] = '\0';
             string fmd5 = md5(buf);
             delete [] buf;
