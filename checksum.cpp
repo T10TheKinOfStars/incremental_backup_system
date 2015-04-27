@@ -1,6 +1,5 @@
 #include "checksum.hpp"
 
-using namespace std; 
 /*   num1 = 1, num2 = 0
  *   input is the block of file that needs to compute rolling checksum
  *   output is the rolling checksum of this block
@@ -10,7 +9,7 @@ using namespace std;
  *   s(k,l) = a(k,l) + 2^16*b(k,l);
  *   M =  2^16
  */
-checksum ChksumWorker::rolling_chksum1(const string &file_block, int k, int l,checksum &num1, checksum &num2) {
+checksum ChksumWorker::rolling_chksum1(const std::string &file_block, int k, int l,checksum &num1, checksum &num2) {
     checksum M = 1 << 16;
 
     for (int i = k; i <= l; ++i) {
@@ -33,6 +32,6 @@ checksum ChksumWorker::rolling_chksum2(checksum aprev, checksum bprev, int k, in
     return num2 << 16 | num1;
 }
 
-checksum ChksumWorker::md5_chksum(const string &file_block) {
+checksum ChksumWorker::md5_chksum(const std::string &file_block) {
     return strtoul(md5(file_block).c_str(),NULL,0);
 }
