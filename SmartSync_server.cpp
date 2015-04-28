@@ -166,11 +166,11 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
 int main(int argc, char **argv) {
   int port = 9090;
-  shared_ptr<SmartSyncHandler> handler(new SmartSyncHandler());
-  shared_ptr<TProcessor> processor(new SmartSyncProcessor(handler));
-  shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-  shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-  shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+  boost::shared_ptr<SmartSyncHandler> handler(new SmartSyncHandler());
+  boost::shared_ptr<TProcessor> processor(new SmartSyncProcessor(handler));
+  boost::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+  boost::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
   server.serve();

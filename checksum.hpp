@@ -5,7 +5,6 @@
 #include "mytypes.h"
 #include "md5.h"
 
-
 class ChksumWorker {
     public:
         ChksumWorker(){}

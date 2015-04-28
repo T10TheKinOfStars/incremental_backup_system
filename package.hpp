@@ -6,6 +6,8 @@
 #include "md5.h"
 #include "mytypes.h"
 
+using namespace std;
+
 class Package {
     private:
         vector<Filechk> checksums;

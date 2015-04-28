@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     boost::shared_ptr<TMemoryBuffer> buffer(new TMemoryBuffer());
     TJSONProtocol jsonprotocol(buffer);
 
-    FileStoreClient client(protocol);
+    SmartSyncClient client(protocol);
     try {
         transport->open();
 
@@ -60,11 +60,10 @@ int main(int argc, char** argv) {
                     return -1;
             }
         }
-        bool needUpdate = false;
+        //bool needUpdate = false;
 
         struct stat st;
         if (stat(filename.c_str(),&st) == -1) {
-            cerr<"stat error"<<endl;
             return -1;
         }
 
@@ -91,7 +90,7 @@ int main(int argc, char** argv) {
                 data.__set_filename(filename);
                 data.__set_updated(lastmod);
              
-                statusReport = client.checkFile(data);                
+                client.checkFile(statusReport,data);                
             } catch (SystemException se) {
                 //format se in json format
                 std::cout<<ThriftJSONString(se)<<std::endl;
@@ -106,7 +105,7 @@ int main(int argc, char** argv) {
             //file doesn't exist on server
             data.__set_filename(filename);
             data.__set_version(0);
-            data.__set_owner(user);
+            //data.__set_owner(user);
             Timestamp lastmod = time(&st.st_mtime);
             data.__set_updated(lastmod);
             
@@ -120,7 +119,7 @@ int main(int argc, char** argv) {
                 ifs.read(buf,len);
                 buf[len] = '\0';
                 ifs.close();
-                data.__set_contentLength(len);
+                data.__set_contentLen(len);
                 rfile.__set_content(buf);
                 rfile.__set_meta(data);
                 delete []buf;
@@ -129,14 +128,14 @@ int main(int argc, char** argv) {
                 return -1;
             }
             try {
-                statusReport = client.writeFile(rfile);
+                client.writeFile(statusReport,rfile);
             } catch (SystemException se) {
                 //format se information in json format
                 std::cout<<ThriftJSONString(se)<<std::endl;
                 return -1;
             }
             //format status in json format
-            std::cout<<ThriftJSONString(status)<<std::endl;
+            std::cout<<ThriftJSONString(statusReport)<<std::endl;
         } else if (statusReport.status == 0) {
             //file is the same 
             std::cout<<"File is the same"<<std::endl;
@@ -147,7 +146,7 @@ int main(int argc, char** argv) {
             //gene v
             //...........
             try {
-                des = client.updateLocal(v);
+                client.updateLocal(des,v);
             } catch (SystemException se) {
                 std::cout<<ThriftJSONString(se)<<std::endl;
                 return -1;
@@ -157,12 +156,13 @@ int main(int argc, char** argv) {
             //...........
         } else if (statusReport.status == 3) {
             //if client is newer, it receives the des from server
-            vector<Filechk> fchks = client.request();
+            vector<Filechk> fchks;
+            client.request(fchks);
             vector<Filedes> v;
             //gene v
             //...........
             try {
-                statusReport = client.updateServer(v);
+                client.updateServer(statusReport,v);
             } catch (SystemException se) {
                 std::cout<<ThriftJSONString(se)<<std::endl;
                 return -1;

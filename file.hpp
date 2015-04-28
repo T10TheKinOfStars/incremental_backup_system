@@ -11,6 +11,8 @@
 #include "md5.h"
 #include "file.hpp"
 
+using namespace std;
+
 class FileWorker {
     private:
         NameDataMap filemap;

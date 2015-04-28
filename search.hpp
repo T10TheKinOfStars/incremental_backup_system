@@ -11,6 +11,7 @@
 #include "smartSync_types.h"
 
 using namespace std;
+
 class SearchWorker {
     private:
         ChksumWorker chkworker;
