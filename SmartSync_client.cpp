@@ -26,6 +26,9 @@ using namespace ::apache::thrift::transport;
 using boost::shared_ptr;
 
 int main(int argc, char** argv) {
+    if (argc < 5) {
+        cout<<"You should use it like ./client ip port 1024 --filename x.\n1024 stands for 1024Byte blocksize.\n";
+    }
     int opt;
     int optidx;
     std::string operation;
@@ -45,14 +48,15 @@ int main(int argc, char** argv) {
     TJSONProtocol jsonprotocol(buffer);
 
     SmartSyncClient client(protocol);
+    cout<<"try to open"<<endl;
     try {
         transport->open();
-
+        cout<<"after open"<<endl;
         static struct option long_options[] = {
             {"filename", required_argument, 0, 'f'},
             {0,0,0,0}
         };
-        while ((opt = getopt_long(argc-2,argv + 2, "f", long_options, &optidx)) != -1) {
+        while ((opt = getopt_long(argc-3,argv + 3, "f", long_options, &optidx)) != -1) {
             //-1 means it reaches end
             switch (opt) {
                 case 'f':
@@ -63,18 +67,19 @@ int main(int argc, char** argv) {
                     return -1;
             }
         }
-        //bool needUpdate = false;
+        cout<<"read argv finish"<<endl;
 
         struct stat st;
         if (stat(filename.c_str(),&st) == -1) {
             return -1;
         }
-
+        cout<<"get file stat"<<endl;
         fworker.setPath(filename);
-        fworker.setBlockSize(atoi(argv[2]));
+        fworker.setBlockSize(atoi(argv[3]));
 
         //first check whether need update
         {
+            cout<<"in check"<<endl;
             try {
                 ifstream ifs(filename.c_str());
                 if (ifs) {
@@ -96,9 +101,10 @@ int main(int argc, char** argv) {
                     return -1;
                 }
                 Timestamp lastmod = time(&st.st_mtime);
+                cout<<"time is "<<lastmod<<endl;
                 data.__set_filename(filename);
                 data.__set_updated(lastmod);
-             
+                cout<<"content hash is "<<data.contenthash<<endl;
                 client.checkFile(statusReport,data);                
             } catch (SystemException se) {
                 //format se in json format
@@ -109,7 +115,7 @@ int main(int argc, char** argv) {
             std::cout<<ThriftJSONString(rfile)<<std::endl;
         }
         
-             
+        cout<<"get status"<<endl; 
         if (statusReport.status == 1) {
             //file doesn't exist on server
             data.__set_filename(filename);
@@ -178,7 +184,7 @@ int main(int argc, char** argv) {
                 int l;
                 int bsize = fworker.getBlockSize();
                 int fsize = fworker.getFileSize();
-                for (int i = 0; i < file.size(); ++i) {
+                for (int i = 0; i < (int)file.size(); ++i) {
                     if (i == (int)file.size() - 1) {
                         l = fsize - (i+1)*bsize-1;
                     } else {

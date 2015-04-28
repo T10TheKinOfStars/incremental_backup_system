@@ -23,10 +23,10 @@ using namespace ::apache::thrift::server;
 
 using boost::shared_ptr;
 
-FileWorker fworker;
-ChksumWorker chkworker;
-Package pkgworker;
-SearchWorker searchworker;
+static FileWorker *fworker = NULL;
+static ChksumWorker *chkworker = NULL;
+static Package *pkgworker = NULL;
+static SearchWorker *searchworker = NULL;
 
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
@@ -37,7 +37,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void writeFile(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
     printf("writeFile\n");
-    if (fworker.writefile(rFile) != -1) {
+    if (fworker->writefile(rFile) != -1) {
         _return.__set_status(Status::SUCCESS);
     } else {
         _return.__set_status(Status::FAIL);
@@ -47,21 +47,22 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
     // Your implementation goes here
     printf("updateLocal\n");
-    pkgworker.initchksums(chks);
+    pkgworker->initchksums(chks);
+/*
+    searchworker->setfWorker(fworker);
+    searchworker->setpworker(pkgworker);
+    searchworker->setchkworker(chkworker);
+    */
+    searchworker->init();
 
-    searchworker.setfWorker(fworker);
-    searchworker.setpworker(pkgworker);
-    searchworker.setchkworker(chkworker);
-    searchworker.init();
-
-    searchworker.find();
-    _return = pkgworker.getFiledes(); 
+    searchworker->find();
+    _return = pkgworker->getFiledes(); 
   }
 
   void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
     // Your implementation goes here
     printf("updateServer\n");
-    if (fworker.updateFile(des)) {
+    if (fworker->updateFile(des)) {
         _return.__set_status(Status::SUCCESS);
     } else {
         _return.__set_status(Status::FAIL);
@@ -72,9 +73,9 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your implementation goes here
     printf("request\n");
     vector<string> file;
-    ifstream ifs(fworker.getPath().c_str());
-    double filesize = fworker.getFileSize();
-    int blocksize = fworker.getBlockSize();
+    ifstream ifs(fworker->getPath().c_str());
+    double filesize = fworker->getFileSize();
+    int blocksize = fworker->getBlockSize();
     if (ifs) {
         for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
             char *buf = new char[blocksize];
@@ -94,9 +95,9 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     }
     ifs.close();
     int l;
-    int bsize = fworker.getBlockSize();
-    int fsize = fworker.getFileSize();
-    for (int i = 0; i < file.size(); ++i) {
+    int bsize = fworker->getBlockSize();
+    int fsize = fworker->getFileSize();
+    for (int i = 0; i < (int)file.size(); ++i) {
         if (i == (int)file.size() - 1) {
             l = fsize - (i+1)*bsize-1;
         } else {
@@ -104,8 +105,8 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         }
         checksum num1 = 1;
         checksum num2 = 0;
-        checksum rchk = chkworker.rolling_chksum1(file[i],0,l,num1,num2);
-        checksum md5chk = chkworker.md5_chksum(file[i]);
+        checksum rchk = chkworker->rolling_chksum1(file[i],0,l,num1,num2);
+        checksum md5chk = chkworker->md5_chksum(file[i]);
         Filechk temp;
         temp.__set_rollchk(rchk);
         temp.__set_md5chk(md5chk);
@@ -120,22 +121,26 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
     printf("checkFile\n");
+    //clean pkgworker
+    pkgworker->~Package();
+
     string filename = meta.filename;
-    fworker.setPath(filename);
-    if (access(filename.c_str(),F_OK) == 0) {
+    fworker->setPath("./files/"+filename);
+    if (access(fworker->getPath().c_str(),F_OK) == 0) {
         //means exist
         //check content whether is the same
-        string fcontent;
+        //string fcontent;
         ifstream ifs(filename.c_str());
         if (ifs) {
             ifs.seekg(0,ifs.end);
             int len = ifs.tellg();
 
-            fworker.setFileSize(len);
+            fworker->setFileSize(len);
 
             ifs.seekg(0,ifs.beg);
             char* buf = new char[len+1];
             buf[len] = '\0';
+            cout<<"file content is "<<buf<<endl;
             string fmd5 = md5(buf);
             delete [] buf;
             ifs.close();
@@ -168,6 +173,10 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 };
 
 int main(int argc, char **argv) {
+  if (argc < 1) {
+    cout<<"You should exec like ./server 1024\n 1024 stands for blocksize is 1024Byte.\n";
+    return 0;
+  }
   int port = 9090;
   boost::shared_ptr<SmartSyncHandler> handler(new SmartSyncHandler());
   boost::shared_ptr<TProcessor> processor(new SmartSyncProcessor(handler));
@@ -176,9 +185,14 @@ int main(int argc, char **argv) {
   boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+  
+  fworker = new FileWorker();
+  chkworker = new ChksumWorker();
+  pkgworker = new Package();
+  searchworker = new SearchWorker(chkworker,fworker,pkgworker);  
 
-  fworker.initFolder();
-  fworker.setBlockSize(atoi(argv[2]));
+  fworker->initFolder();
+  fworker->setBlockSize(atoi(argv[1]));
 
   server.serve();
   return 0;

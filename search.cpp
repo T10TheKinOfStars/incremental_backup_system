@@ -2,11 +2,23 @@
 
 using namespace std;
 
+SearchWorker::SearchWorker() {
+    chkworker = NULL;
+    fworker = NULL;
+    pworker = NULL;
+}
+
+SearchWorker::SearchWorker(ChksumWorker *chkval, FileWorker *fval, Package *pval) {
+    chkworker = chkval;
+    fworker = fval;
+    pworker = pval;
+}
+
 //init unordered_map<rollingchksum,blockNumber> rollchksum
 //read all the the file blocks and add checksum to map
 void SearchWorker::init() {
     //根据B发来的package来构建hashtable
-    vector<Filechk> v = pworker.getchksums();
+    vector<Filechk> v = pworker->getchksums();
     for (int i = 0; i < (int)v.size(); ++i) {
         pair<checksum,Filechk> mypair(v[i].rollchk,v[i]);
         chksumTb.insert(mypair);
@@ -23,12 +35,12 @@ void SearchWorker::find() {
     //when needs rolling, roll is true
     //else false
     bool roll = false;
-    int bsize = fworker.getBlockSize();
-    int fsize = fworker.getFileSize();
+    int bsize = fworker->getBlockSize();
+    int fsize = fworker->getFileSize();
     string literal = "";
 
     while (i < fsize) {
-        string blockstr = fworker.getBlock(i);
+        string blockstr = fworker->getBlock(i);
         checksum aprev = 0;
         checksum bprev = 0;
         checksum a = 1;
@@ -41,11 +53,11 @@ void SearchWorker::find() {
             l += bsize;
 
         if (!roll) 
-            brollstr = chkworker.rolling_chksum1(blockstr,i,l,a,b);
+            brollstr = chkworker->rolling_chksum1(blockstr,i,l,a,b);
         else
-            brollstr = chkworker.rolling_chksum2(aprev,bprev,i-1,l-1,fworker.getxChar(i-1),fworker.getxChar(l),a,b);
+            brollstr = chkworker->rolling_chksum2(aprev,bprev,i-1,l-1,fworker->getxChar(i-1),fworker->getxChar(l),a,b);
 
-        int bNum;
+        int bNum = -1;
         //find 1 level
         auto it = chksumTb.find(brollstr);
         int num = chksumTb.count(brollstr);
@@ -57,7 +69,7 @@ void SearchWorker::find() {
             if (rchk == brollstr) {
                     //find 3 level
                 checksum mchk = it->second.md5chk;
-                if(mchk == chkworker.md5_chksum(blockstr)) {
+                if(mchk == chkworker->md5_chksum(blockstr)) {
                     bNum = it -> second.block;
                     i += bsize;
                     break;
@@ -69,7 +81,7 @@ void SearchWorker::find() {
             ++i;
         }
         if (flag) {
-            literal.push_back(fworker.getxChar(i));
+            literal.push_back(fworker->getxChar(i));
             aprev = a;
             bprev = b;
         } else {
@@ -79,7 +91,7 @@ void SearchWorker::find() {
                 stritem.__set_content(literal);
                 stritem.__set_block(0);
                 
-                pworker.insert2Filedes(stritem);
+                pworker->insert2Filedes(stritem);
                 literal = "";
             }
             Filedes bitem;
@@ -87,33 +99,33 @@ void SearchWorker::find() {
             bitem.__set_content("");
             bitem.__set_block(bNum);
             
-            pworker.insert2Filedes(bitem);
+            pworker->insert2Filedes(bitem);
         }
     }
 }
 
 
 
-FileWorker SearchWorker::getfWorker() {
+FileWorker* SearchWorker::getfWorker() {
     return fworker;
 }
 
-void SearchWorker::setfWorker(const FileWorker &worker) {
+void SearchWorker::setfWorker(FileWorker *worker) {
     fworker = worker;
 }
 
-Package SearchWorker::getpworker() {
+Package* SearchWorker::getpworker() {
     return pworker;
 }
 
-void SearchWorker::setpworker(const Package &worker) {
+void SearchWorker::setpworker(Package *worker) {
     pworker = worker;
 }
 
-ChksumWorker SearchWorker::getchkworker() {
+ChksumWorker* SearchWorker::getchkworker() {
     return chkworker;
 }
 
-void SearchWorker::setchkworker(const ChksumWorker &worker) {
+void SearchWorker::setchkworker(ChksumWorker *worker) {
     chkworker = worker;
 }

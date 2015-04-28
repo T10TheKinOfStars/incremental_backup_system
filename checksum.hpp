@@ -7,7 +7,7 @@
 
 class ChksumWorker {
     public:
-        ChksumWorker(){}
+        ChksumWorker(){};
         checksum rolling_chksum1(const std::string &file_block, int k, int l, checksum &num1, checksum &num2);
         checksum rolling_chksum2(checksum aprev, checksum bprev, int k, int l, char ck, char cl1, checksum &num1, checksum &num2);
         checksum md5_chksum(const std::string &file_block);

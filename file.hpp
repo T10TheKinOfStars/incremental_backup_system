@@ -14,13 +14,6 @@
 using namespace std;
 
 class FileWorker {
-    private:
-        NameDataMap filemap;
-        string path;
-        int filesize;
-        int blocksize;
-        int write2Disk(string path, const string &content);
-
     public:
         FileWorker() :  blocksize(0),filesize(0),path("") {};
         //FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
@@ -37,5 +30,11 @@ class FileWorker {
         bool updateFile(vector<Filedes> newdes);
         void initFolder();
         int writefile(const RFile &rfile);
+    private:
+        NameDataMap filemap;
+        int blocksize;
+        int filesize;
+        string path;
+        int write2Disk(string path, const string &content);
 };
 #endif
