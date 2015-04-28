@@ -130,6 +130,9 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         if (ifs) {
             ifs.seekg(0,ifs.end);
             int len = ifs.tellg();
+
+            fworker.setFileSize(len);
+
             ifs.seekg(0,ifs.beg);
             char* buf = new char[len+1];
             buf[len] = '\0';
@@ -173,6 +176,10 @@ int main(int argc, char **argv) {
   boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+
+  fworker.initFolder();
+  fworker.setBlockSize(atoi(argv[2]));
+
   server.serve();
   return 0;
 }

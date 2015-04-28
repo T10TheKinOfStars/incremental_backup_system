@@ -4,7 +4,8 @@
 #include <getopt.h>
 #include "checksum.hpp"
 #include "package.hpp"
-#include "search.h"
+#include "file.hpp"
+#include "search.hpp"
 #include <vector>
 #include <fstream>
 #include <cstdlib>
@@ -33,7 +34,9 @@ int main(int argc, char** argv) {
     RFile rfile;
     RFileMetadata data;
     StatusReport statusReport;
+
     ChksumWorker chkworker;
+    FileWorker fworker;
     
     boost::shared_ptr<TSocket> socket(new TSocket(argv[1], atoi(argv[2])));
     boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
@@ -67,6 +70,9 @@ int main(int argc, char** argv) {
             return -1;
         }
 
+        fworker.setPath(filename);
+        fworker.setBlockSize(atoi(argv[2]));
+
         //first check whether need update
         {
             try {
@@ -74,6 +80,9 @@ int main(int argc, char** argv) {
                 if (ifs) {
                     ifs.seekg(0,ifs.end);
                     int len = ifs.tellg();
+
+                    fworker.setFileSize(len);
+
                     ifs.seekg(0,ifs.beg);
                     char* buf = new char[len+1];
                     ifs.read(buf,len);
@@ -141,28 +150,76 @@ int main(int argc, char** argv) {
             std::cout<<"File is the same"<<std::endl;
         } else if (statusReport.status == 2) {
             //if client is older, it sends des to server
-            vector<Filechk> v;
+            vector<Filechk> vchk;
             vector<Filedes> des;
-            //gene v
-            //...........
+            //generate vector<Filechk> vchk
+            {
+                vector<string> file;
+                ifstream ifs(fworker.getPath().c_str());
+                double filesize = fworker.getFileSize();
+                int blocksize = fworker.getBlockSize();
+                if (ifs) {
+                    for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
+                        char *buf = new char[blocksize];
+                        ifs.read(buf,blocksize);
+                        if (ifs) {
+                            file.push_back(buf);
+                        } else {
+                            buf[ifs.gcount()] = '\0';
+                            file.push_back(buf);
+                        }
+                        delete [] buf;
+                    }
+                } else {
+                    cerr<<"open file error"<<endl;
+                    exit(-1);
+                }
+                ifs.close();
+                int l;
+                int bsize = fworker.getBlockSize();
+                int fsize = fworker.getFileSize();
+                for (int i = 0; i < file.size(); ++i) {
+                    if (i == (int)file.size() - 1) {
+                        l = fsize - (i+1)*bsize-1;
+                    } else {
+                        l = bsize-1;
+                    }
+                    checksum num1 = 1;
+                    checksum num2 = 0;
+                    checksum rchk = chkworker.rolling_chksum1(file[i],0,l,num1,num2);
+                    checksum md5chk = chkworker.md5_chksum(file[i]);
+                    Filechk temp;
+                    temp.__set_rollchk(rchk);
+                    temp.__set_md5chk(md5chk);
+                    temp.__set_block(i);
+                    temp.__set_num1(num1);
+                    temp.__set_num2(num2);
+
+                    vchk.push_back(temp);
+                }
+            }
             try {
-                client.updateLocal(des,v);
+                client.updateLocal(des,vchk);
             } catch (SystemException se) {
                 std::cout<<ThriftJSONString(se)<<std::endl;
                 return -1;
             }
 
             //generate new file based on des
-            //...........
+            if (fworker.updateFile(des)) 
+                cout<<"update finished\n";
+            else
+                cout<<"update failed\n";
         } else if (statusReport.status == 3) {
             //if client is newer, it receives the des from server
             vector<Filechk> fchks;
             client.request(fchks);
-            vector<Filedes> v;
-            //gene v
+            vector<Filedes> vdes;
+            //generate vector<Filedes> vdes
             //...........
+
             try {
-                client.updateServer(statusReport,v);
+                client.updateServer(statusReport,vdes);
             } catch (SystemException se) {
                 std::cout<<ThriftJSONString(se)<<std::endl;
                 return -1;
