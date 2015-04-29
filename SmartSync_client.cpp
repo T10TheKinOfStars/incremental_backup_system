@@ -159,6 +159,8 @@ int main(int argc, char** argv) {
                 ifstream ifs(fworker.getPath().c_str());
                 double filesize = fworker.getFileSize();
                 int blocksize = fworker.getBlockSize();
+                cout<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
+                cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                 if (ifs) {
                     for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
                         char *buf = new char[blocksize];
@@ -176,6 +178,12 @@ int main(int argc, char** argv) {
                     exit(-1);
                 }
                 ifs.close();
+                //show files---------------------------
+                for (int i = 0; i < (int)file.size(); ++i) {
+                    cout<<file[i];
+                }
+                cout<<endl;
+                //------------------------------------
                 int l;
                 int bsize = fworker.getBlockSize();
                 int fsize = fworker.getFileSize();

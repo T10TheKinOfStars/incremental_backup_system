@@ -129,10 +129,6 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     NameDataMap mymap = fworker->getMap();
 
     Timestamp t = mymap[meta.filename].updated;
-    /*
-    if (stat(fworker->getPath().c_str(),&st) != -1) {
-        t = time(&st.st_atime);
-    }*/
     cout<<"Time of file on server is "<<t<<"\nTime of send from client is "<<meta.updated<<endl;
 
     //string filename = meta.filename;
