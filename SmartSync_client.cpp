@@ -48,10 +48,8 @@ int main(int argc, char** argv) {
     TJSONProtocol jsonprotocol(buffer);
 
     SmartSyncClient client(protocol);
-    cout<<"try to open"<<endl;
     try {
         transport->open();
-        cout<<"after open"<<endl;
         static struct option long_options[] = {
             {"filename", required_argument, 0, 'f'},
             {0,0,0,0}
@@ -67,20 +65,21 @@ int main(int argc, char** argv) {
                     return -1;
             }
         }
-        cout<<"read argv finish"<<endl;
 
         struct stat st;
         if (stat(filename.c_str(),&st) == -1) {
             return -1;
         }
-        cout<<"get file stat"<<endl;
         fworker.setPath(filename);
         fworker.setBlockSize(atoi(argv[3]));
 
+        Timestamp lastmod = time(&st.st_atime);
+        cout<<"Time of file will send to server is "<<lastmod<<endl;
+        data.__set_updated(lastmod);
         //first check whether need update
         {
-            cout<<"in check"<<endl;
             try {
+                cout<<filename<<endl;
                 ifstream ifs(filename.c_str());
                 if (ifs) {
                     ifs.seekg(0,ifs.end);
@@ -100,11 +99,7 @@ int main(int argc, char** argv) {
                     cerr<<"open file error"<<endl;
                     return -1;
                 }
-                Timestamp lastmod = time(&st.st_mtime);
-                cout<<"time is "<<lastmod<<endl;
                 data.__set_filename(filename);
-                data.__set_updated(lastmod);
-                cout<<"content hash is "<<data.contenthash<<endl;
                 client.checkFile(statusReport,data);                
             } catch (SystemException se) {
                 //format se in json format
@@ -115,14 +110,14 @@ int main(int argc, char** argv) {
             std::cout<<ThriftJSONString(rfile)<<std::endl;
         }
         
-        cout<<"get status"<<endl; 
+        cout<<"get status is "<<statusReport.status<<endl; 
         if (statusReport.status == 1) {
-            //file doesn't exist on server
-            data.__set_filename(filename);
+            cout<<"file doesn't exist on server and write to server"<<endl;
+            //data.__set_filename(filename);
             data.__set_version(0);
             //data.__set_owner(user);
-            Timestamp lastmod = time(&st.st_mtime);
-            data.__set_updated(lastmod);
+            //Timestamp lastmod = time(&st.st_atime);
+            //data.__set_updated(lastmod);
             
             //read data from disk            
             std::ifstream ifs(filename.c_str(),std::ios::binary);

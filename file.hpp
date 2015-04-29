@@ -30,6 +30,7 @@ class FileWorker {
         bool updateFile(vector<Filedes> newdes);
         void initFolder();
         int writefile(const RFile &rfile);
+        NameDataMap getMap();
     private:
         NameDataMap filemap;
         int blocksize;

@@ -120,17 +120,27 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
-    printf("checkFile\n");
+    printf("checkFile.................\n");
     //clean pkgworker
     pkgworker->~Package();
+    fworker->setPath("./files/"+meta.filename);
+        
+    //struct stat st;
+    NameDataMap mymap = fworker->getMap();
 
-    string filename = meta.filename;
-    fworker->setPath("./files/"+filename);
+    Timestamp t = mymap[meta.filename].updated;
+    /*
+    if (stat(fworker->getPath().c_str(),&st) != -1) {
+        t = time(&st.st_atime);
+    }*/
+    cout<<"Time of file on server is "<<t<<"\nTime of send from client is "<<meta.updated<<endl;
+
+    //string filename = meta.filename;
     if (access(fworker->getPath().c_str(),F_OK) == 0) {
         //means exist
         //check content whether is the same
         //string fcontent;
-        ifstream ifs(filename.c_str());
+        ifstream ifs(fworker->getPath().c_str());
         if (ifs) {
             ifs.seekg(0,ifs.end);
             int len = ifs.tellg();
@@ -139,28 +149,28 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
             ifs.seekg(0,ifs.beg);
             char* buf = new char[len+1];
+            ifs.read(buf,len);
             buf[len] = '\0';
-            cout<<"file content is "<<buf<<endl;
             string fmd5 = md5(buf);
             delete [] buf;
             ifs.close();
+            cout<<(fmd5 == meta.contenthash)<<endl;
             if (fmd5 == meta.contenthash) {
                 //it means the same
+                cout<<"same"<<endl;
                 _return.__set_status(Status::SAME);
             } else {
-                struct stat st;
-                if (stat(filename.c_str(),&st) == -1) {
-                    SystemException se;
-                    se.__set_message("stat error");
-                    throw se;
-                }
-                Timestamp t = time(&st.st_mtime);
+                cout<<"not same"<<endl;
                 if (t < meta.updated) {
                     //client newer
+                    cout<<"newer"<<endl;
                     _return.__set_status(Status::NEWER);
                 } else if (t > meta.updated) {
                     //server newer
+                    cout<<"older"<<endl;
                     _return.__set_status(Status::OLDER);
+                } else {
+                    cout<<"hahaha"<<endl;
                 }
             }
         }

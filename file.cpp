@@ -133,6 +133,8 @@ int FileWorker::writefile(const RFile &_rfile) {
             rdata.__set_contenthash(md5(rfile.content));
             rdata.__set_created((Timestamp)time(NULL) * 1000);    //need to change
             rdata.__set_updated((Timestamp)time(NULL) * 1000);    //need to change                
+
+            filemap[filename] = rdata;
         } else {
             return -1;
         }
@@ -151,4 +153,8 @@ int FileWorker::writefile(const RFile &_rfile) {
             }
         }
     */
+}
+
+NameDataMap FileWorker::getMap() {
+    return filemap;
 }
