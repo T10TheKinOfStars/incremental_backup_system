@@ -131,9 +131,15 @@ int FileWorker::writefile(const RFile &_rfile) {
         if (write2Disk(path,rfile.content) != -1) {
             rdata.__set_version(0);
             rdata.__set_contenthash(md5(rfile.content));
+            struct stat st;
+            if (stat(path.c_str(),&st) != -1) {
+                Timestamp temp = time(&st.st_mtime);
+                rdata.__set_updated(temp);
+            }
+            /*
             rdata.__set_created((Timestamp)time(NULL) * 1000);    //need to change
             rdata.__set_updated((Timestamp)time(NULL) * 1000);    //need to change                
-
+            */
             filemap[filename] = rdata;
         } else {
             return -1;

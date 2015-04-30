@@ -10,6 +10,9 @@
 #include "mytypes.h"
 #include "md5.h"
 #include "file.hpp"
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace std;
 
