@@ -16,9 +16,9 @@ SearchWorker::SearchWorker(ChksumWorker *chkval, FileWorker *fval, Package *pval
 
 //init unordered_map<rollingchksum,blockNumber> rollchksum
 //read all the the file blocks and add checksum to map
-void SearchWorker::init() {
+void SearchWorker::init(vector<Filechk> v) {
     //根据B发来的package来构建hashtable
-    vector<Filechk> v = pworker->getchksums();
+    //vector<Filechk> v = pworker->getchksums();
     for (int i = 0; i < (int)v.size(); ++i) {
         pair<checksum,Filechk> mypair(v[i].rollchk,v[i]);
         chksumTb.insert(mypair);

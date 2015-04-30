@@ -53,7 +53,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     searchworker->setpworker(pkgworker);
     searchworker->setchkworker(chkworker);
     */
-    searchworker->init();
+    searchworker->init(pkgworker->getchksums());
 
     searchworker->find();
     _return = pkgworker->getFiledes(); 

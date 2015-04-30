@@ -38,8 +38,10 @@ int main(int argc, char** argv) {
     RFileMetadata data;
     StatusReport statusReport;
 
-    ChksumWorker chkworker;
-    FileWorker fworker;
+    ChksumWorker* chkworker = new ChksumWorker();
+    FileWorker* fworker = new FileWorker();
+    Package* pkgworker = new Package();
+    SearchWorker* searchworker = new SearchWorker(chkworker,fworker,pkgworker);
     
     boost::shared_ptr<TSocket> socket(new TSocket(argv[1], atoi(argv[2])));
     boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
@@ -70,8 +72,8 @@ int main(int argc, char** argv) {
         if (stat(filename.c_str(),&st) == -1) {
             return -1;
         }
-        fworker.setPath(filename);
-        fworker.setBlockSize(atoi(argv[3]));
+        fworker->setPath(filename);
+        fworker->setBlockSize(atoi(argv[3]));
 
         Timestamp lastmod = time(&st.st_atime);
         cout<<"Time of file will send to server is "<<lastmod<<endl;
@@ -85,7 +87,7 @@ int main(int argc, char** argv) {
                     ifs.seekg(0,ifs.end);
                     int len = ifs.tellg();
 
-                    fworker.setFileSize(len);
+                    fworker->setFileSize(len);
 
                     ifs.seekg(0,ifs.beg);
                     char* buf = new char[len+1];
@@ -156,9 +158,9 @@ int main(int argc, char** argv) {
             //generate vector<Filechk> vchk
             {
                 vector<string> file;
-                ifstream ifs(fworker.getPath().c_str());
-                double filesize = fworker.getFileSize();
-                int blocksize = fworker.getBlockSize();
+                ifstream ifs(fworker->getPath().c_str());
+                double filesize = fworker->getFileSize();
+                int blocksize = fworker->getBlockSize();
                 cout<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
                 cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                 if (ifs) {
@@ -185,8 +187,8 @@ int main(int argc, char** argv) {
                 cout<<endl;
                 //------------------------------------
                 int l;
-                int bsize = fworker.getBlockSize();
-                int fsize = fworker.getFileSize();
+                int bsize = fworker->getBlockSize();
+                int fsize = fworker->getFileSize();
                 for (int i = 0; i < (int)file.size(); ++i) {
                     if (i == (int)file.size() - 1) {
                         l = fsize - (i+1)*bsize-1;
@@ -195,8 +197,8 @@ int main(int argc, char** argv) {
                     }
                     checksum num1 = 1;
                     checksum num2 = 0;
-                    checksum rchk = chkworker.rolling_chksum1(file[i],0,l,num1,num2);
-                    string md5chk = chkworker.md5_chksum(file[i]);
+                    checksum rchk = chkworker->rolling_chksum1(file[i],0,l,num1,num2);
+                    string md5chk = chkworker->md5_chksum(file[i]);
                     Filechk temp;
                     temp.__set_rollchk(rchk);
                     temp.__set_md5chk(md5chk);
@@ -215,7 +217,7 @@ int main(int argc, char** argv) {
             }
 
             //generate new file based on des
-            if (fworker.updateFile(des)) 
+            if (fworker->updateFile(des)) 
                 cout<<"update finished\n";
             else
                 cout<<"update failed\n";
@@ -225,7 +227,10 @@ int main(int argc, char** argv) {
             client.request(fchks);
             vector<Filedes> vdes;
             //generate vector<Filedes> vdes
-            //...........
+            //..........
+            searchworker->init(fchks);
+            searchworker->find();
+            vdes = pkgworker->getFiledes();
 
             try {
                 client.updateServer(statusReport,vdes);

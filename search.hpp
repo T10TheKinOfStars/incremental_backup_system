@@ -17,12 +17,12 @@ class SearchWorker {
         ChksumWorker *chkworker;
         FileWorker *fworker;
         Package *pworker;
-        //FileDstTb is unordered_multimap<unsigned long, package_item>
+        //FileDstTb is unordered_multimap<checksum,Filechk>
         FileDstTb chksumTb;
     public:
         SearchWorker();
         SearchWorker(ChksumWorker *chkval, FileWorker *fval, Package *pval);
-        void init();
+        void init(vector<Filechk> v);
         void find();
         FileWorker* getfWorker();
         void setfWorker(FileWorker *worker); 
