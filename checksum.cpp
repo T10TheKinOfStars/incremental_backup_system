@@ -3,6 +3,7 @@
 /*   num1 = 1, num2 = 0
  *   input is the block of file that needs to compute rolling checksum
  *   output is the rolling checksum of this block
+ *   k and l are positions in the string
  *   the checksum is defined by:
  *   a(k,l) = (sigma(Xi) % M;
  *   b(k,l) = (sigma(l-i+1)*Xi) % M;
@@ -13,8 +14,8 @@ checksum ChksumWorker::rolling_chksum1(const std::string &file_block, int k, int
     checksum M = 1 << 16;
 
     for (int i = k; i <= l; ++i) {
-        num1 = (num1 + file_block[i]) % M;
-        num2 = (num1 + num2) % M;
+        num1 = (num1 + file_block[i-k]) % M;
+        num2 = (num1 + (l-i) * num1) % M;
     }
 
     return num2 << 16 | num1;

@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
                         delete [] buf;
                     }
                 } else {
-                    cerr<<"open file error"<<endl;
+                    cout<<"open file error"<<endl;
                     exit(-1);
                 }
                 ifs.close();
@@ -225,13 +225,26 @@ int main(int argc, char** argv) {
             //if client is newer, it receives the des from server
             vector<Filechk> fchks;
             client.request(fchks);
+            cout<<"start show fchks:\n";
+            for (int i = 0; i < (int)fchks.size();++i) {
+                cout<<i<< " roll:"<<fchks[i].rollchk
+                    <<" num1:"<<fchks[i].num1
+                    <<" num2:"<<fchks[i].num2
+                    <<" md5:"<<fchks[i].md5chk
+                    <<" block:"<<fchks[i].block
+                    <<endl;
+            }
+            cout<<"end show fchks\n";
             vector<Filedes> vdes;
             //generate vector<Filedes> vdes
-            //..........
             searchworker->init(fchks);
             searchworker->find();
             vdes = pkgworker->getFiledes();
-
+            cout<<"start show vdes"<<endl;
+            for (int i = 0; i < (int)vdes.size(); ++i) {
+                cout<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
+            }
+            cout<<"end show vdes"<<endl;
             try {
                 client.updateServer(statusReport,vdes);
             } catch (SystemException se) {

@@ -78,14 +78,10 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     int blocksize = fworker->getBlockSize();
     if (ifs) {
         for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
-            char *buf = new char[blocksize];
+            char *buf = new char[blocksize+1];
             ifs.read(buf,blocksize);
-            if (ifs) {
-                file.push_back(buf);
-            } else {
-                buf[ifs.gcount()] = '\0';
-                file.push_back(buf);
-            }
+            //buf[ifs.gcount()] = '\0';
+            file.push_back(buf);
             delete [] buf;
         }
         //ifs.close();
@@ -99,13 +95,14 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     int fsize = fworker->getFileSize();
     for (int i = 0; i < (int)file.size(); ++i) {
         if (i == (int)file.size() - 1) {
-            l = fsize - (i+1)*bsize-1;
+            l = fsize - i*bsize-1;
         } else {
             l = bsize-1;
         }
+        cout<<"len is "<<l+1<<" file block content is "<<file[i]<<endl;
         checksum num1 = 1;
         checksum num2 = 0;
-        checksum rchk = chkworker->rolling_chksum1(file[i],0,l,num1,num2);
+        checksum rchk = chkworker->rolling_chksum1(file[i],i*bsize,i*bsize + l,num1,num2);
         string md5chk = chkworker->md5_chksum(file[i]);
         Filechk temp;
         temp.__set_rollchk(rchk);
@@ -116,6 +113,16 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
         _return.push_back(temp);
     }
+    cout<<"in request show _return "<<endl;
+    for (int i = 0; i < (int)_return.size();++i) {
+        cout<<i<< " roll:"<<_return[i].rollchk
+            <<" num1:"<<_return[i].num1
+            <<" num2:"<<_return[i].num2
+            <<" md5:"<<_return[i].md5chk
+            <<" block:"<<_return[i].block
+            <<endl;
+    }
+    cout<<"in request end show"<<endl;
   }
 
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {

@@ -22,6 +22,7 @@ void SearchWorker::init(vector<Filechk> v) {
     for (int i = 0; i < (int)v.size(); ++i) {
         pair<checksum,Filechk> mypair(v[i].rollchk,v[i]);
         chksumTb.insert(mypair);
+        cout<<"insert\n";
     }
 }
 
@@ -37,6 +38,7 @@ void SearchWorker::find() {
     bool roll = false;
     int bsize = fworker->getBlockSize();
     int fsize = fworker->getFileSize();
+    cout<<"blocksize:"<<bsize<<" filesize:"<<fsize<<endl;
     string literal = "";
 
     while (i < fsize) {
@@ -46,28 +48,32 @@ void SearchWorker::find() {
         checksum a = 1;
         checksum b = 0;
         checksum brollstr;
-        int l = i;
+        //int l = i;
+        int len;
         if (bsize > fsize - i)
-            l = fsize-1;
+            len = fsize - i - 1;
         else
-            l += bsize;
-
+            len = bsize;
+        cout<<"blockstr is "<<blockstr<<endl;
         if (!roll) 
-            brollstr = chkworker->rolling_chksum1(blockstr,i,l,a,b);
+            brollstr = chkworker->rolling_chksum1(blockstr,i,i+len,a,b);
         else
-            brollstr = chkworker->rolling_chksum2(aprev,bprev,i-1,l-1,fworker->getxChar(i-1),fworker->getxChar(l),a,b);
+            brollstr = chkworker->rolling_chksum2(aprev,bprev,i-1,i+len-1,fworker->getxChar(i-1),fworker->getxChar(i+len),a,b);
 
         int bNum = -1;
         //find 1 level
+        cout<<"lv 1\n";
         auto it = chksumTb.find(brollstr);
         int num = chksumTb.count(brollstr);
         int j = 0;
         for (; j < num; ++j, ++it) {
             flag = false;
-                //find 2 level, 有可能是不同key散落到了同一个地方
+            //find 2 level, 有可能是不同key散落到了同一个地方
+            cout<<"in lv 2"<<endl;
             checksum rchk = it->second.rollchk;
             if (rchk == brollstr) {
-                    //find 3 level
+                //find 3 level
+                cout<<"in lv 3\n";
                 string mchk = it->second.md5chk;
                 if(mchk == chkworker->md5_chksum(blockstr)) {
                     bNum = it -> second.block;
