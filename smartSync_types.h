@@ -286,19 +286,19 @@ typedef struct _Filechk__isset {
 class Filechk {
  public:
 
-  static const char* ascii_fingerprint; // = "FFDBCAA33A4A102D0D255736822CC22F";
-  static const uint8_t binary_fingerprint[16]; // = {0xFF,0xDB,0xCA,0xA3,0x3A,0x4A,0x10,0x2D,0x0D,0x25,0x57,0x36,0x82,0x2C,0xC2,0x2F};
+  static const char* ascii_fingerprint; // = "878E63FD1BE8911E810E69D016B3BA19";
+  static const uint8_t binary_fingerprint[16]; // = {0x87,0x8E,0x63,0xFD,0x1B,0xE8,0x91,0x1E,0x81,0x0E,0x69,0xD0,0x16,0xB3,0xBA,0x19};
 
   Filechk(const Filechk&);
   Filechk& operator=(const Filechk&);
-  Filechk() : rollchk(0), num1(0), num2(0), md5chk(0), block(0) {
+  Filechk() : rollchk(0), num1(0), num2(0), md5chk(), block(0) {
   }
 
   virtual ~Filechk() throw();
   int64_t rollchk;
   int64_t num1;
   int64_t num2;
-  int64_t md5chk;
+  std::string md5chk;
   int32_t block;
 
   _Filechk__isset __isset;
@@ -309,7 +309,7 @@ class Filechk {
 
   void __set_num2(const int64_t val);
 
-  void __set_md5chk(const int64_t val);
+  void __set_md5chk(const std::string& val);
 
   void __set_block(const int32_t val);
 

@@ -136,10 +136,6 @@ int FileWorker::writefile(const RFile &_rfile) {
                 Timestamp temp = time(&st.st_mtime);
                 rdata.__set_updated(temp);
             }
-            /*
-            rdata.__set_created((Timestamp)time(NULL) * 1000);    //need to change
-            rdata.__set_updated((Timestamp)time(NULL) * 1000);    //need to change                
-            */
             filemap[filename] = rdata;
         } else {
             return -1;

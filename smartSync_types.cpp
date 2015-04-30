@@ -573,7 +573,7 @@ void Filechk::__set_num2(const int64_t val) {
 __isset.num2 = true;
 }
 
-void Filechk::__set_md5chk(const int64_t val) {
+void Filechk::__set_md5chk(const std::string& val) {
   this->md5chk = val;
 __isset.md5chk = true;
 }
@@ -583,8 +583,8 @@ void Filechk::__set_block(const int32_t val) {
 __isset.block = true;
 }
 
-const char* Filechk::ascii_fingerprint = "FFDBCAA33A4A102D0D255736822CC22F";
-const uint8_t Filechk::binary_fingerprint[16] = {0xFF,0xDB,0xCA,0xA3,0x3A,0x4A,0x10,0x2D,0x0D,0x25,0x57,0x36,0x82,0x2C,0xC2,0x2F};
+const char* Filechk::ascii_fingerprint = "878E63FD1BE8911E810E69D016B3BA19";
+const uint8_t Filechk::binary_fingerprint[16] = {0x87,0x8E,0x63,0xFD,0x1B,0xE8,0x91,0x1E,0x81,0x0E,0x69,0xD0,0x16,0xB3,0xBA,0x19};
 
 uint32_t Filechk::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -631,8 +631,8 @@ uint32_t Filechk::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 4:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->md5chk);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->md5chk);
           this->__isset.md5chk = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -679,8 +679,8 @@ uint32_t Filechk::write(::apache::thrift::protocol::TProtocol* oprot) const {
     xfer += oprot->writeFieldEnd();
   }
   if (this->__isset.md5chk) {
-    xfer += oprot->writeFieldBegin("md5chk", ::apache::thrift::protocol::T_I64, 4);
-    xfer += oprot->writeI64(this->md5chk);
+    xfer += oprot->writeFieldBegin("md5chk", ::apache::thrift::protocol::T_STRING, 4);
+    xfer += oprot->writeString(this->md5chk);
     xfer += oprot->writeFieldEnd();
   }
   if (this->__isset.block) {

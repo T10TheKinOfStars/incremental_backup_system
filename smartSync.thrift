@@ -35,7 +35,7 @@ struct Filechk {
     1: optional i64 rollchk;
     2: optional i64 num1;
     3: optional i64 num2;
-    4: optional i64 md5chk;
+    4: optional string md5chk;
     5: optional i32 block;
 }
 

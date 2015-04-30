@@ -196,7 +196,7 @@ int main(int argc, char** argv) {
                     checksum num1 = 1;
                     checksum num2 = 0;
                     checksum rchk = chkworker.rolling_chksum1(file[i],0,l,num1,num2);
-                    checksum md5chk = chkworker.md5_chksum(file[i]);
+                    string md5chk = chkworker.md5_chksum(file[i]);
                     Filechk temp;
                     temp.__set_rollchk(rchk);
                     temp.__set_md5chk(md5chk);

@@ -32,6 +32,6 @@ checksum ChksumWorker::rolling_chksum2(checksum aprev, checksum bprev, int k, in
     return num2 << 16 | num1;
 }
 
-checksum ChksumWorker::md5_chksum(const std::string &file_block) {
-    return strtoul(md5(file_block).c_str(),NULL,0);
+std::string ChksumWorker::md5_chksum(const std::string &file_block) {
+    return md5(file_block);
 }

@@ -68,7 +68,7 @@ void SearchWorker::find() {
             checksum rchk = it->second.rollchk;
             if (rchk == brollstr) {
                     //find 3 level
-                checksum mchk = it->second.md5chk;
+                string mchk = it->second.md5chk;
                 if(mchk == chkworker->md5_chksum(blockstr)) {
                     bNum = it -> second.block;
                     i += bsize;
