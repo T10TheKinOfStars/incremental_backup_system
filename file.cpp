@@ -60,24 +60,33 @@ void FileWorker::setBlockSize(int val) {
 bool FileWorker::updateFile(vector<Filedes> newdes) {
     //use to store the content of each block in old file
     vector<string> file;
+    cout<<"file path is "<<path<<endl;
     ifstream ifs(path.c_str());
     if (ifs) {
         for (int i = 0; i < (int)ceil((double)filesize/blocksize); ++i) {
             char *buf = new char[blocksize];
             ifs.read(buf,blocksize);
-            if (ifs) {
-                file.push_back(buf);
-            } else {
-                buf[ifs.gcount()] = '\0';
-                file.push_back(buf);
-            }
+            buf[ifs.gcount()] = '\0';
+            file.push_back(buf);
             delete [] buf;
-            ifs.close();
         }
+        ifs.close();
     } else {
         cerr<<"open file error"<<endl;
         return false;
     }
+    cout<<"show vector of file:\n";
+    for (int i = 0; i < (int)file.size(); ++i) {
+        cout<<"Block "<<i<<" content is: "<<file[i]<<endl;
+    }
+    cout<<"end show file---------------------------\n";
+
+    cout<<"show newdes:\n";
+    for (int i = 0; i < (int)newdes.size(); ++i) {
+        cout<<"Flag:"<<newdes[i].flag<<" content:"<<newdes[i].content<<" block:"<<newdes[i].block<<endl;
+    }
+    cout<<"end show newdes--------------------------\n";
+
     //generate new file 
     ofstream ofs(path.c_str());
     if (ofs) {
