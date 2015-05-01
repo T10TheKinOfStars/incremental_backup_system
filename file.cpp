@@ -29,8 +29,9 @@ string FileWorker::getBlock(int pos) {
     int len = (filesize - pos) > blocksize ? blocksize : (filesize - pos);
     ifstream ifs(path.c_str());
     ifs.seekg(pos,ifs.beg);
-    char* buf = new char[len];
+    char* buf = new char[len+1];
     ifs.read(buf,len);
+    buf[len] = '\0';
     string retVal = buf;
     ifs.close();
     return retVal;

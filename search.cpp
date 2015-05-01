@@ -53,18 +53,20 @@ void SearchWorker::find() {
         if (bsize > fsize - i)
             len = fsize - i - 1;
         else
-            len = bsize;
+            len = bsize - 1;
         cout<<"blockstr is "<<blockstr<<endl;
+        cout<<"k is "<<i<<" l is "<<i+len<<endl;
         if (!roll) 
             brollstr = chkworker->rolling_chksum1(blockstr,i,i+len,a,b);
         else
             brollstr = chkworker->rolling_chksum2(aprev,bprev,i-1,i+len-1,fworker->getxChar(i-1),fworker->getxChar(i+len),a,b);
-
+        cout<<"computed rolling check is "<<brollstr<<endl;
         int bNum = -1;
         //find 1 level
         cout<<"lv 1\n";
         auto it = chksumTb.find(brollstr);
         int num = chksumTb.count(brollstr);
+        cout<<"there are "<<num<<" "<<brollstr<<" in hashtable"<<endl;
         int j = 0;
         for (; j < num; ++j, ++it) {
             flag = false;
@@ -75,6 +77,7 @@ void SearchWorker::find() {
                 //find 3 level
                 cout<<"in lv 3\n";
                 string mchk = it->second.md5chk;
+                cout<<"md5 in hashtable is "<<it->second.md5chk<<" md5 of fileblock is "<<chkworker->md5_chksum(blockstr)<<endl;
                 if(mchk == chkworker->md5_chksum(blockstr)) {
                     bNum = it -> second.block;
                     i += bsize;
@@ -96,7 +99,7 @@ void SearchWorker::find() {
                 stritem.__set_flag(0);
                 stritem.__set_content(literal);
                 stritem.__set_block(0);
-                
+                cout<<"insert into vector of Filedes\n"; 
                 pworker->insert2Filedes(stritem);
                 literal = "";
             }

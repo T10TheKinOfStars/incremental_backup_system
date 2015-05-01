@@ -80,7 +80,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
             char *buf = new char[blocksize+1];
             ifs.read(buf,blocksize);
-            //buf[ifs.gcount()] = '\0';
+            buf[ifs.gcount()] = '\0';
             file.push_back(buf);
             delete [] buf;
         }
@@ -102,6 +102,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         cout<<"len is "<<l+1<<" file block content is "<<file[i]<<endl;
         checksum num1 = 1;
         checksum num2 = 0;
+        cout<<"k is "<<i*bsize<<" l is "<<i*bsize+l<<endl;
         checksum rchk = chkworker->rolling_chksum1(file[i],i*bsize,i*bsize + l,num1,num2);
         string md5chk = chkworker->md5_chksum(file[i]);
         Filechk temp;
