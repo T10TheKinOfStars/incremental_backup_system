@@ -86,23 +86,27 @@ void SearchWorker::find() {
             }
         }
         if (j == num) {
+            //not find in hashtable, need rolling
             flag = true;
             ++i;
         }
         if (flag) {
+            //rolling and add char to literal
             literal.push_back(fworker->getxChar(i));
             aprev = a;
             bprev = b;
         } else {
+            //first add literal to des
             if (literal.size() > 0) {
                 Filedes stritem;
                 stritem.__set_flag(0);
                 stritem.__set_content(literal);
-                stritem.__set_block(0);
+                stritem.__set_block(-1);
                 cout<<"insert into vector of Filedes\n"; 
                 pworker->insert2Filedes(stritem);
                 literal = "";
             }
+            //second process block
             Filedes bitem;
             bitem.__set_flag(1);
             bitem.__set_content("");
@@ -110,6 +114,15 @@ void SearchWorker::find() {
             
             pworker->insert2Filedes(bitem);
         }
+    }
+    //in case of add at the end of file or filesize is less than block size
+    if (literal.size() > 0) {
+        Filedes stritem;
+        stritem.__set_flag(0);
+        stritem.__set_content(literal);
+        stritem.__set_block(-1);
+        pworker->insert2Filedes(stritem);
+        literal = "";
     }
 }
 
