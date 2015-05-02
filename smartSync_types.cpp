@@ -225,12 +225,12 @@ void RFileMetadata::__set_filename(const std::string& val) {
 __isset.filename = true;
 }
 
-void RFileMetadata::__set_created(const Timestamp val) {
+void RFileMetadata::__set_created(const Timestamp& val) {
   this->created = val;
 __isset.created = true;
 }
 
-void RFileMetadata::__set_updated(const Timestamp val) {
+void RFileMetadata::__set_updated(const Timestamp& val) {
   this->updated = val;
 __isset.updated = true;
 }
@@ -250,8 +250,8 @@ void RFileMetadata::__set_contentLen(const int32_t val) {
 __isset.contentLen = true;
 }
 
-const char* RFileMetadata::ascii_fingerprint = "E4CFBC1301040562F64C075EE28E8B53";
-const uint8_t RFileMetadata::binary_fingerprint[16] = {0xE4,0xCF,0xBC,0x13,0x01,0x04,0x05,0x62,0xF6,0x4C,0x07,0x5E,0xE2,0x8E,0x8B,0x53};
+const char* RFileMetadata::ascii_fingerprint = "F1C63F6875828F1556A46159A5ADBF13";
+const uint8_t RFileMetadata::binary_fingerprint[16] = {0xF1,0xC6,0x3F,0x68,0x75,0x82,0x8F,0x15,0x56,0xA4,0x61,0x59,0xA5,0xAD,0xBF,0x13};
 
 uint32_t RFileMetadata::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -282,16 +282,16 @@ uint32_t RFileMetadata::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 2:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->created);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->created);
           this->__isset.created = true;
         } else {
           xfer += iprot->skip(ftype);
         }
         break;
       case 3:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->updated);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->updated);
           this->__isset.updated = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -344,13 +344,13 @@ uint32_t RFileMetadata::write(::apache::thrift::protocol::TProtocol* oprot) cons
     xfer += oprot->writeFieldEnd();
   }
   if (this->__isset.created) {
-    xfer += oprot->writeFieldBegin("created", ::apache::thrift::protocol::T_I64, 2);
-    xfer += oprot->writeI64(this->created);
+    xfer += oprot->writeFieldBegin("created", ::apache::thrift::protocol::T_STRING, 2);
+    xfer += oprot->writeString(this->created);
     xfer += oprot->writeFieldEnd();
   }
   if (this->__isset.updated) {
-    xfer += oprot->writeFieldBegin("updated", ::apache::thrift::protocol::T_I64, 3);
-    xfer += oprot->writeI64(this->updated);
+    xfer += oprot->writeFieldBegin("updated", ::apache::thrift::protocol::T_STRING, 3);
+    xfer += oprot->writeString(this->updated);
     xfer += oprot->writeFieldEnd();
   }
   if (this->__isset.version) {
@@ -748,8 +748,8 @@ void RFile::__set_content(const std::string& val) {
 __isset.content = true;
 }
 
-const char* RFile::ascii_fingerprint = "804A806F307222AB98994824DBA02B04";
-const uint8_t RFile::binary_fingerprint[16] = {0x80,0x4A,0x80,0x6F,0x30,0x72,0x22,0xAB,0x98,0x99,0x48,0x24,0xDB,0xA0,0x2B,0x04};
+const char* RFile::ascii_fingerprint = "59AA2CB40CDAF76C63E16E6F1052390B";
+const uint8_t RFile::binary_fingerprint[16] = {0x59,0xAA,0x2C,0xB4,0x0C,0xDA,0xF7,0x6C,0x63,0xE1,0x6E,0x6F,0x10,0x52,0x39,0x0B};
 
 uint32_t RFile::read(::apache::thrift::protocol::TProtocol* iprot) {
 
