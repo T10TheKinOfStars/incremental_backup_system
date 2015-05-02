@@ -1,4 +1,4 @@
-typedef i64 Timestamp
+typedef string Timestamp
 
 exception SystemException {
   1: optional string message

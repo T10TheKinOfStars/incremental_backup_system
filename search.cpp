@@ -22,7 +22,6 @@ void SearchWorker::init(vector<Filechk> v) {
     for (int i = 0; i < (int)v.size(); ++i) {
         pair<checksum,Filechk> mypair(v[i].rollchk,v[i]);
         chksumTb.insert(mypair);
-        cout<<"insert\n";
     }
 }
 
@@ -54,30 +53,30 @@ void SearchWorker::find() {
             len = fsize - i - 1;
         else
             len = bsize - 1;
-        cout<<"blockstr is "<<blockstr<<endl;
-        cout<<"k is "<<i<<" l is "<<i+len<<endl;
+        //cout<<"blockstr is "<<blockstr<<endl;
+        //cout<<"k is "<<i<<" l is "<<i+len<<endl;
         if (!roll) 
             brollstr = chkworker->rolling_chksum1(blockstr,i,i+len,a,b);
         else
             brollstr = chkworker->rolling_chksum2(aprev,bprev,i-1,i+len-1,fworker->getxChar(i-1),fworker->getxChar(i+len),a,b);
-        cout<<"computed rolling check is "<<brollstr<<endl;
+        //cout<<"computed rolling check is "<<brollstr<<endl;
         int bNum = -1;
         //find 1 level
-        cout<<"lv 1\n";
+        //cout<<"lv 1\n";
         auto it = chksumTb.find(brollstr);
         int num = chksumTb.count(brollstr);
-        cout<<"there are "<<num<<" "<<brollstr<<" in hashtable"<<endl;
+        //cout<<"there are "<<num<<" "<<brollstr<<" in hashtable"<<endl;
         int j = 0;
         for (; j < num; ++j, ++it) {
             flag = false;
             //find 2 level, 有可能是不同key散落到了同一个地方
-            cout<<"in lv 2"<<endl;
+            //cout<<"in lv 2"<<endl;
             checksum rchk = it->second.rollchk;
             if (rchk == brollstr) {
                 //find 3 level
-                cout<<"in lv 3\n";
+                //cout<<"in lv 3\n";
                 string mchk = it->second.md5chk;
-                cout<<"md5 in hashtable is "<<it->second.md5chk<<" md5 of fileblock is "<<chkworker->md5_chksum(blockstr)<<endl;
+                //cout<<"md5 in hashtable is "<<it->second.md5chk<<" md5 of fileblock is "<<chkworker->md5_chksum(blockstr)<<endl;
                 if(mchk == chkworker->md5_chksum(blockstr)) {
                     bNum = it -> second.block;
                     i += bsize;

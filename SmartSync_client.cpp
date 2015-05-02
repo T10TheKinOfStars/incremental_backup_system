@@ -1,6 +1,9 @@
 #include <iostream>
+#include <sstream>
 #include "SmartSync.h"
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <getopt.h>
 #include "checksum.hpp"
 #include "package.hpp"
@@ -12,7 +15,6 @@
 #include <climits>
 #include <ctime>
 #include <string>
-#include <sys/stat.h>
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/protocol/TBinaryProtocol.h>
@@ -69,19 +71,27 @@ int main(int argc, char** argv) {
         }
 
         struct stat st;
+        time_t t;
+        struct tm lt;
+        stringstream ss;
         if (stat(filename.c_str(),&st) == -1) {
             return -1;
         }
         fworker->setPath(filename);
         fworker->setBlockSize(atoi(argv[3]));
+        //Timestamp is string type
+        t = st.st_mtime;
+        localtime_r(&t,&lt);
+        ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
+        Timestamp lastmod = ss.str();
+        ss.str("");
 
-        Timestamp lastmod = time(&st.st_atime);
         cout<<"Time of file will send to server is "<<lastmod<<endl;
         data.__set_updated(lastmod);
         //first check whether need update
         {
             try {
-                cout<<filename<<endl;
+                cout<<"path of file is "<<filename<<endl;
                 ifstream ifs(filename.c_str());
                 if (ifs) {
                     ifs.seekg(0,ifs.end);
@@ -115,11 +125,7 @@ int main(int argc, char** argv) {
         cout<<"get status is "<<statusReport.status<<endl; 
         if (statusReport.status == 1) {
             cout<<"file doesn't exist on server and write to server"<<endl;
-            //data.__set_filename(filename);
             data.__set_version(0);
-            //data.__set_owner(user);
-            //Timestamp lastmod = time(&st.st_atime);
-            //data.__set_updated(lastmod);
             
             //read data from disk            
             std::ifstream ifs(filename.c_str(),std::ios::binary);
@@ -153,6 +159,7 @@ int main(int argc, char** argv) {
             std::cout<<"File is the same"<<std::endl;
         } else if (statusReport.status == 2) {
             //if client is older, it sends des to server
+            cout<<"file on client is older\n";
             vector<Filechk> vchk;
             vector<Filedes> des;
             //generate vector<Filechk> vchk
@@ -162,7 +169,7 @@ int main(int argc, char** argv) {
                 double filesize = fworker->getFileSize();
                 int blocksize = fworker->getBlockSize();
                 cout<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
-                cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
+                //cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                 if (ifs) {
                     for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
                         char *buf = new char[blocksize];
@@ -180,11 +187,13 @@ int main(int argc, char** argv) {
                     exit(-1);
                 }
                 ifs.close();
+                #ifdef DEBUG
                 //show files---------------------------
                 for (int i = 0; i < (int)file.size(); ++i) {
                     cout<<file[i];
                 }
                 cout<<endl;
+                #endif
                 //------------------------------------
                 int l;
                 int bsize = fworker->getBlockSize();
@@ -223,8 +232,10 @@ int main(int argc, char** argv) {
                 cout<<"update failed\n";
         } else if (statusReport.status == 3) {
             //if client is newer, it receives the des from server
+            cout<<"File on client is newer\n";
             vector<Filechk> fchks;
             client.request(fchks);
+            #ifdef DEBUG
             cout<<"start show fchks:\n";
             for (int i = 0; i < (int)fchks.size();++i) {
                 cout<<i<< " roll:"<<fchks[i].rollchk
@@ -235,37 +246,40 @@ int main(int argc, char** argv) {
                     <<endl;
             }
             cout<<"end show fchks\n";
+            #endif
             vector<Filedes> vdes;
             //generate vector<Filedes> vdes
             searchworker->init(fchks);
             searchworker->find();
             vdes = pkgworker->getFiledes();
+            #ifdef DEBUG
             cout<<"start show vdes"<<endl;
             for (int i = 0; i < (int)vdes.size(); ++i) {
                 cout<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
             }
             cout<<"end show vdes"<<endl;
+            #endif
             try {
                 client.updateServer(statusReport,vdes);
             } catch (SystemException se) {
-                std::cout<<ThriftJSONString(se)<<std::endl;
+                cout<<ThriftJSONString(se)<<endl;
                 return -1;
             }
             if (statusReport.status == 5) {
-                std::cout<<"Success"<<std::endl;
+                cout<<"Success"<<endl;
             } else if (statusReport.status == 4) {
-                std::cout<<"Fail"<<std::endl;
+                cout<<"Fail"<<endl;
             } else {
-                std::cout<<"undefined status"<<std::endl;
+                cout<<"undefined status"<<endl;
             }
         } else {
-            std::cerr<<"operation argument error"<<std::endl;
+            cerr<<"operation argument error"<<endl;
             return 0;
         }
 
         transport->close();
     } catch (TException &tx) {
-        std::cout<<"ERROR: "<<tx.what()<<std::endl;
+        cout<<"ERROR: "<<tx.what()<<endl;
         return -1;
     }
 

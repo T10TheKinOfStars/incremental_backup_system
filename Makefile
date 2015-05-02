@@ -2,7 +2,7 @@
 
 OPT=-O2
 #TEST=-DTEST
-DEBUG=-g #-DDEBUG 
+#DEBUG=-g -DDEBUG
 THRIFT_PATH=/usr/local
 
 

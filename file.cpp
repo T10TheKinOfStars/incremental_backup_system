@@ -75,6 +75,7 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
         cerr<<"open file error"<<endl;
         return false;
     }
+    #ifdef DEBUG
     cout<<"show vector of file:\n";
     for (int i = 0; i < (int)file.size(); ++i) {
         cout<<"Block "<<i<<" content is: "<<file[i]<<endl;
@@ -86,7 +87,7 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
         cout<<"Flag:"<<newdes[i].flag<<" content:"<<newdes[i].content<<" block:"<<newdes[i].block<<endl;
     }
     cout<<"end show newdes--------------------------\n";
-
+    #endif
     //generate new file 
     ofstream ofs(path.c_str());
     if (ofs) {
@@ -139,11 +140,19 @@ int FileWorker::writefile(const RFile &_rfile) {
     if (filemap.find(filename) == filemap.end()) {
         //std::cout<<"this file not exists, we need create a new one"<<std::endl;
         if (write2Disk(path,rfile.content) != -1) {
+            //means write complete
             rdata.__set_version(0);
             rdata.__set_contenthash(md5(rfile.content));
             struct stat st;
+            time_t t;
+            struct tm lt;
+            stringstream ss;
             if (stat(path.c_str(),&st) != -1) {
-                Timestamp temp = time(&st.st_mtime);
+                t = st.st_mtime;
+                localtime_r(&t,&lt);
+                ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
+                Timestamp temp = ss.str();
+                ss.str("");
                 rdata.__set_updated(temp);
             }
             filemap[filename] = rdata;

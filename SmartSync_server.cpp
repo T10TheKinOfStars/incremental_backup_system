@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sstream>
 #include "checksum.hpp"
 #include "mytypes.h"
 #include "package.hpp"
@@ -48,11 +49,6 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your implementation goes here
     printf("updateLocal\n");
     pkgworker->initchksums(chks);
-/*
-    searchworker->setfWorker(fworker);
-    searchworker->setpworker(pkgworker);
-    searchworker->setchkworker(chkworker);
-    */
     searchworker->init(pkgworker->getchksums());
 
     searchworker->find();
@@ -84,7 +80,6 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             file.push_back(buf);
             delete [] buf;
         }
-        //ifs.close();
     } else {
         cerr<<"open file error"<<endl;
         exit(-1);
@@ -99,10 +94,10 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         } else {
             l = bsize-1;
         }
-        cout<<"len is "<<l+1<<" file block content is "<<file[i]<<endl;
+        //cout<<"len is "<<l+1<<" file block content is "<<file[i]<<endl;
         checksum num1 = 1;
         checksum num2 = 0;
-        cout<<"k is "<<i*bsize<<" l is "<<i*bsize+l<<endl;
+        //cout<<"k is "<<i*bsize<<" l is "<<i*bsize+l<<endl;
         checksum rchk = chkworker->rolling_chksum1(file[i],i*bsize,i*bsize + l,num1,num2);
         string md5chk = chkworker->md5_chksum(file[i]);
         Filechk temp;
@@ -114,6 +109,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
         _return.push_back(temp);
     }
+    /*
     cout<<"in request show _return "<<endl;
     for (int i = 0; i < (int)_return.size();++i) {
         cout<<i<< " roll:"<<_return[i].rollchk
@@ -124,6 +120,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             <<endl;
     }
     cout<<"in request end show"<<endl;
+    */
   }
 
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {
@@ -158,7 +155,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             string fmd5 = md5(buf);
             delete [] buf;
             ifs.close();
-            cout<<(fmd5 == meta.contenthash)<<endl;
+            //cout<<(fmd5 == meta.contenthash)<<endl;
             if (fmd5 == meta.contenthash) {
                 //it means the same
                 cout<<"same"<<endl;
@@ -167,11 +164,11 @@ class SmartSyncHandler : virtual public SmartSyncIf {
                 cout<<"not same"<<endl;
                 if (t < meta.updated) {
                     //client newer
-                    cout<<"newer"<<endl;
+                    cout<<"client is newer"<<endl;
                     _return.__set_status(Status::NEWER);
                 } else if (t > meta.updated) {
                     //server newer
-                    cout<<"older"<<endl;
+                    cout<<"client is older"<<endl;
                     _return.__set_status(Status::OLDER);
                 } else {
                     cout<<"hahaha"<<endl;
