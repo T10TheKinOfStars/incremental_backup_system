@@ -61,21 +61,28 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
     //use to store the content of each block in old file
     vector<string> file;
     cout<<"file path is "<<path<<endl;
+    try {
     ifstream ifs(path.c_str());
     if (ifs) {
         for (int i = 0; i < (int)ceil((double)filesize/blocksize); ++i) {
-            char *buf = new char[blocksize];
+            char *buf = new char[blocksize+1];
             ifs.read(buf,blocksize);
             buf[ifs.gcount()] = '\0';
             file.push_back(buf);
-            delete [] buf;
+            if (buf)
+                delete []buf;
         }
         ifs.close();
     } else {
         cerr<<"open file error"<<endl;
         return false;
     }
-    #ifdef DEBUG
+    } catch (SystemException se) {
+        cout<<"init vector of file error happens in updateFile fun\n";
+        exit(-1);
+    }
+    //#ifdef DEBUG
+    /*
     cout<<"show vector of file:\n";
     for (int i = 0; i < (int)file.size(); ++i) {
         cout<<"Block "<<i<<" content is: "<<file[i]<<endl;
@@ -87,7 +94,8 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
         cout<<"Flag:"<<newdes[i].flag<<" content:"<<newdes[i].content<<" block:"<<newdes[i].block<<endl;
     }
     cout<<"end show newdes--------------------------\n";
-    #endif
+    //#endif
+    */
     //generate new file 
     ofstream ofs(path.c_str());
     if (ofs) {
