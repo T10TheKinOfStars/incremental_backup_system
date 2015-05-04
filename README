@@ -9,6 +9,11 @@ md5.h/cpp               generate md5 string
 package.hpp/cpp         generate send information and process rececive information
 file.hpp/cpp            file operations
 search.hpp/cpp          search rolling checksum
-types.h                 define all the types
+mytypes.h               define typedef things
 SmartSync_client.cpp    client
 SmertSync_server.cpp    server
+smartSync.thrift        thrift file
+client1/client2         test folder
+files                   folder to store server files
+
+The first version has completed on May 3 2015
