@@ -73,7 +73,8 @@ int main(int argc, char** argv) {
         struct stat st;
         time_t t;
         struct tm lt;
-        stringstream ss;
+        //stringstream ss;
+        char timebuf[80];
         if (stat(filename.c_str(),&st) == -1) {
             return -1;
         }
@@ -82,12 +83,13 @@ int main(int argc, char** argv) {
         //Timestamp is string type
         t = st.st_mtime;
         localtime_r(&t,&lt);
-        ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
-        Timestamp lastmod = ss.str();
-        ss.str("");
+        strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
+        //ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
+        //Timestamp lastmod = ss.str();
+        //ss.str("");
 
-        cout<<"Time of file will send to server is "<<lastmod<<endl;
-        data.__set_updated(lastmod);
+        cout<<"Time of file will send to server is "<<timebuf<<endl;
+        data.__set_updated(timebuf);
         //first check whether need update
         {
             try {
@@ -102,9 +104,9 @@ int main(int argc, char** argv) {
                     ifs.seekg(0,ifs.beg);
                     char* buf = new char[len+1];
                     ifs.read(buf,len);
-                    buf[len] = '\0';
+                    buf[ifs.gcount()] = '\0';
                     data.__set_contenthash(md5(buf));
-                    data.__set_contentLen(len);
+                    data.__set_contentLen(ifs.gcount());
                     delete [] buf;
                     ifs.close();
                 } else {
@@ -135,9 +137,9 @@ int main(int argc, char** argv) {
                 ifs.seekg(0,ifs.beg);
                 char *buf = new char[len+1];
                 ifs.read(buf,len);
-                buf[len] = '\0';
+                buf[ifs.gcount()] = '\0';
                 ifs.close();
-                data.__set_contentLen(len);
+                data.__set_contentLen(ifs.gcount());
                 rfile.__set_content(buf);
                 rfile.__set_meta(data);
                 delete []buf;
@@ -172,14 +174,10 @@ int main(int argc, char** argv) {
                 //cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                 if (ifs) {
                     for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
-                        char *buf = new char[blocksize];
+                        char *buf = new char[blocksize+1];
                         ifs.read(buf,blocksize);
-                        if (ifs) {
-                            file.push_back(buf);
-                        } else {
-                            buf[ifs.gcount()] = '\0';
-                            file.push_back(buf);
-                        }
+                        buf[ifs.gcount()] = '\0';
+                        file.push_back(buf);
                         delete [] buf;
                     }
                 } else {
@@ -187,17 +185,16 @@ int main(int argc, char** argv) {
                     exit(-1);
                 }
                 ifs.close();
-                #ifdef DEBUG
                 //show files---------------------------
                 for (int i = 0; i < (int)file.size(); ++i) {
                     cout<<file[i];
                 }
                 cout<<endl;
-                #endif
                 //------------------------------------
                 int l;
                 int bsize = fworker->getBlockSize();
                 int fsize = fworker->getFileSize();
+                cout<<"file.size() :"<<file.size()<<" bsize is "<<bsize<<" fsize is "<<fsize<<endl;
                 for (int i = 0; i < (int)file.size(); ++i) {
                     if (i == (int)file.size() - 1) {
                         l = fsize - (i+1)*bsize-1;
@@ -216,7 +213,9 @@ int main(int argc, char** argv) {
                     temp.__set_num2(num2);
 
                     vchk.push_back(temp);
+                    cout<<i<<endl;
                 }
+                cout<<"end for loop\n";
             }
             try {
                 client.updateLocal(des,vchk);
@@ -235,7 +234,9 @@ int main(int argc, char** argv) {
             cout<<"File on client is newer\n";
             vector<Filechk> fchks;
             client.request(fchks);
-            #ifdef DEBUG
+            cout<<"fchks size from server is "<<fchks.size()<<endl;
+            //#ifdef DEBUG
+            /*
             cout<<"start show fchks:\n";
             for (int i = 0; i < (int)fchks.size();++i) {
                 cout<<i<< " roll:"<<fchks[i].rollchk
@@ -247,11 +248,13 @@ int main(int argc, char** argv) {
             }
             cout<<"end show fchks\n";
             #endif
+            */
             vector<Filedes> vdes;
             //generate vector<Filedes> vdes
             searchworker->init(fchks);
             searchworker->find();
             vdes = pkgworker->getFiledes();
+            
             #ifdef DEBUG
             cout<<"start show vdes"<<endl;
             for (int i = 0; i < (int)vdes.size(); ++i) {
@@ -259,6 +262,7 @@ int main(int argc, char** argv) {
             }
             cout<<"end show vdes"<<endl;
             #endif
+            
             try {
                 client.updateServer(statusReport,vdes);
             } catch (SystemException se) {

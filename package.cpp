@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Package::~Package() {
+void Package::clean() {
     checksums.clear();
     filedes.clear();
 }

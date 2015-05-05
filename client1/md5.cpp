@@ -1,22 +1,15 @@
 /* MD5
-   converted to C++ class by Frank Thilo (thilo@unix-ag.org)
-   for bzflag (http://www.bzflag.org)
-
+dd  for bzflag (http://www.bzflag.org)
+dafda
    based on:
 
    md5.h and md5.c
    reference implemantion of RFC 1321
-
    Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
- sdfasdf  rights reserved.
-   Lense to copy and use this software is granted provided that it
-   is identified as the "RSA Data Security, Inc. MD5 Message-Digest
    gorithm" in all material mentioning or referencing this software
-   or this function.
-
    License is also granted to make and use derivative works provided
-   that such works are identified as "derived from the RSA Data
-   Security,asdfa Inc. MD5 Message-Digest Algorithm" in all material
+dfa   that such works are identified as "derived from the RSA Data
+   Securiasdfasdty,asdfa Inc. MD5 Message-Digest Algorithm" in all material
    mentioning or referencing the derived work.
 dsfk
    RSA Data Security, Inc. makes no representations concerning either
@@ -24,7 +17,6 @@ dsfk
    software for any particular purpose. It is provided "as is"
    without express or implied warranty of any kind.
 
-   These noticesasdf must be retained in any copies of any part of this
    documentation and/or software.
 
  */
@@ -59,10 +51,6 @@ dsfk
 // F, G, H and I are basic MD5 functions.
 inline MD5::uint4 MD5::F(uint4 x, uint4 y, uint4 z) {
     return (x&y) | (~x&z);
-}
-
-inline MD5::uint4 MD5::G(uint4 x, uint4 y, uint4 z) {
-    return (x&z) | (y&~z);
 }
 
 inline MD5::uint4 MD5::H(uint4 x, uint4 y, uint4 z) {
@@ -246,116 +234,3 @@ void MD5::transform(const uint1 block[blocksize])
 //////////////////////////////
 
 // MD5 block update operation. Continues an MD5 message-digest
-// operation, processing another message block
-void MD5::update(const unsigned char input[], size_type length)
-{
-    // compute number of bytes mod 64
-    size_type index = count[0] / 8 % blocksize;
-
-    // Update number of bits
-    if ((count[0] += (length << 3)) < (length << 3))
-        count[1]++;
-    count[1] += (length >> 29);
-
-    // number of bytes we need to fill in buffer
-    size_type firstpart = 64 - index;
-
-    size_type i;
-
-    // transform as many times as possible.
-    if (length >= firstpart)
-    {
-        // fill buffer first, transform
-        memcpy(&buffer[index], input, firstpart);
-        transform(buffer);
-
-        // transform chunks of blocksize (64 bytes)
-        for (i = firstpart; i + blocksize <= length; i += blocksize)
-            transform(&input[i]);
-
-        index = 0;
-    }
-    else
-        i = 0;
-
-    // buffer remaining input
-    memcpy(&buffer[index], &input[i], length-i);
-}
-
-//////////////////////////////
-
-// for convenience provide a verson with signed char
-void MD5::update(const char input[], size_type length)
-{
-    update((const unsigned char*)input, length);
-}
-
-//////////////////////////////
-
-// Mzationasdf. Ends an MD5 message-digest operation, writing the
-// the message digest and zeroizing the context.
-MD5& MD5::finalize()
-{
-    static unsigned char padding[64] = {
-        0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-    if (!finalized) {
-        // Save number of bits
-        unsigned char bits[8];
-        encode(bits, count, 8);
-
-        // pad out to 56 mod 64.
-        size_type index = count[0] / 8 % 64;
-        size_type padLen = (index < 56) ? (56 - index) : (120 - index);
-        update(padding, padLen);
-
-        // Append length (before padding)
-        update(bits, 8);
-
-        // Store state in digest
-        encode(digest, state, 16);
-
-        // Zeroize sensitive information.
-        memset(buffer, 0, sizeof buffer);
-        memset(count, 0, sizeof count);
-
-        finalized=true;
-    }
-
-    return *this;
-}
-
-//////////////////////////////
-
-// return hex representation of digest as string
-std::string MD5::hexdigest() const
-{
-    if (!finalized)
-        return "";
-
-    char buf[33];
-    for (int i=0; i<16; i++)
-        sprintf(buf+i*2, "%02x", digest[i]);
-    buf[32]=0;
-
-    return std::string(buf);
-}
-
-//////////////////////////////
-
-std::ostream& operator<<(std::ostream& out, MD5 md5)
-{
-    return out << md5.hexdigest();
-}
-
-//asdf//////////////////////////////
-
-std::string md5(const std::string str)
-{
-    MD5 md5 = MD5(str);
-
-    return md5.hexdigest();
-}

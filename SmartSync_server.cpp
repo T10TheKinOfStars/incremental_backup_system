@@ -48,6 +48,9 @@ class SmartSyncHandler : virtual public SmartSyncIf {
   void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
     // Your implementation goes here
     printf("updateLocal\n");
+    //要多传一个参数
+    //分两种情况，一种是filesize小于blocksize，直接把文件写到客户端去
+    //否则执行rolling checksum
     pkgworker->initchksums(chks);
     searchworker->init(pkgworker->getchksums());
 
@@ -127,7 +130,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your implementation goes here
     printf("checkFile.................\n");
     //clean pkgworker
-    pkgworker->~Package();
+    pkgworker->clean();
     fworker->setPath("./files/"+meta.filename);
         
     //struct stat st;
@@ -141,6 +144,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         //means exist
         //check content whether is the same
         //string fcontent;
+        cout<<"file path is "<<fworker->getPath()<<endl;
         ifstream ifs(fworker->getPath().c_str());
         if (ifs) {
             ifs.seekg(0,ifs.end);
@@ -149,11 +153,14 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             fworker->setFileSize(len);
 
             ifs.seekg(0,ifs.beg);
+            cout<<"new buf\n";
             char* buf = new char[len+1];
             ifs.read(buf,len);
-            buf[len] = '\0';
+            buf[ifs.gcount()] = '\0';
             string fmd5 = md5(buf);
-            delete [] buf;
+            cout<<"before del buf\n";
+            delete []buf;
+            cout<<"end del buf\n";
             ifs.close();
             //cout<<(fmd5 == meta.contenthash)<<endl;
             if (fmd5 == meta.contenthash) {
@@ -179,6 +186,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         //not exist
         _return.__set_status(Status::NOEXIST);
     }
+    cout<<"end check"<<endl;
   }
 
 };

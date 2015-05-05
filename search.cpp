@@ -113,6 +113,7 @@ void SearchWorker::find() {
             
             pworker->insert2Filedes(bitem);
         }
+        cout<<i<<endl;
     }
     //in case of add at the end of file or filesize is less than block size
     if (literal.size() > 0) {

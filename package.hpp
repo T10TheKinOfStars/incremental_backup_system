@@ -14,7 +14,7 @@ class Package {
         vector<Filedes> filedes;
     public:
         Package() {};
-        ~Package();
+        void clean();
         void initchksums(vector<Filechk> v);
         void insert2Filedes(Filedes val);
         void insert2Chksums(Filechk val);

@@ -31,7 +31,7 @@ string FileWorker::getBlock(int pos) {
     ifs.seekg(pos,ifs.beg);
     char* buf = new char[len+1];
     ifs.read(buf,len);
-    buf[len] = '\0';
+    buf[ifs.gcount()] = '\0';
     string retVal = buf;
     ifs.close();
     return retVal;
@@ -117,7 +117,13 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
 }
 
 void FileWorker::initFolder() {
-    std::string cmd = "rm -rf files | mkdir files";    
+    string cmd = "rm -rf files";    
+    if (system(cmd.c_str()) == -1) {
+        SystemException se;
+        se.__set_message("remove folder failed");
+        throw se;
+    }
+    cmd = "mkdir files";
     if (system(cmd.c_str()) == -1) {
         SystemException se;
         se.__set_message("create folder failed");
@@ -153,15 +159,18 @@ int FileWorker::writefile(const RFile &_rfile) {
             rdata.__set_contenthash(md5(rfile.content));
             struct stat st;
             time_t t;
+            char timebuf[80];
             struct tm lt;
-            stringstream ss;
+            //stringstream ss;
             if (stat(path.c_str(),&st) != -1) {
                 t = st.st_mtime;
                 localtime_r(&t,&lt);
-                ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
-                Timestamp temp = ss.str();
-                ss.str("");
-                rdata.__set_updated(temp);
+                strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
+                //ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
+                //Timestamp temp = ss.str();
+                //ss.str("");
+                cout<<"time is "<<timebuf<<endl;
+                rdata.__set_updated(timebuf);
             }
             filemap[filename] = rdata;
         } else {
