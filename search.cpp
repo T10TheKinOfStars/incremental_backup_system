@@ -101,7 +101,6 @@ void SearchWorker::find() {
                 stritem.__set_flag(0);
                 stritem.__set_content(literal);
                 stritem.__set_block(-1);
-                cout<<"insert into vector of Filedes\n"; 
                 pworker->insert2Filedes(stritem);
                 literal = "";
             }
@@ -113,7 +112,7 @@ void SearchWorker::find() {
             
             pworker->insert2Filedes(bitem);
         }
-        cout<<i<<endl;
+        //cout<<i<<endl;
     }
     //in case of add at the end of file or filesize is less than block size
     if (literal.size() > 0) {

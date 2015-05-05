@@ -4,12 +4,10 @@ dafda
    based on:
 
    md5.h and md5.c
-   reference implemantion of RFC 1321
    Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
    gorithm" in all material mentioning or referencing this software
    License is also granted to make and use derivative works provided
 dfa   that such works are identified as "derived from the RSA Data
-   Securiasdfasdty,asdfa Inc. MD5 Message-Digest Algorithm" in all material
    mentioning or referencing the derived work.
 dsfk
    RSA Data Security, Inc. makes no representations concerning either
@@ -26,7 +24,7 @@ dsfk
 
 /* system implemensadftation headers */
 #include <cstdio>
-
+adsfsadf
 
 // Constants for MD5Torm routine.
 #define S11 7

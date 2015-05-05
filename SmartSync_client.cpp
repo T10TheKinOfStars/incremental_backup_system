@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
                 ifstream ifs(fworker->getPath().c_str());
                 double filesize = fworker->getFileSize();
                 int blocksize = fworker->getBlockSize();
-                cout<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
+                //cout<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
                 //cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                 if (ifs) {
                     for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
@@ -185,16 +185,17 @@ int main(int argc, char** argv) {
                     exit(-1);
                 }
                 ifs.close();
+                /*
                 //show files---------------------------
                 for (int i = 0; i < (int)file.size(); ++i) {
                     cout<<file[i];
                 }
                 cout<<endl;
+                */
                 //------------------------------------
                 int l;
                 int bsize = fworker->getBlockSize();
                 int fsize = fworker->getFileSize();
-                cout<<"file.size() :"<<file.size()<<" bsize is "<<bsize<<" fsize is "<<fsize<<endl;
                 for (int i = 0; i < (int)file.size(); ++i) {
                     if (i == (int)file.size() - 1) {
                         l = fsize - (i+1)*bsize-1;
@@ -215,7 +216,6 @@ int main(int argc, char** argv) {
                     vchk.push_back(temp);
                     cout<<i<<endl;
                 }
-                cout<<"end for loop\n";
             }
             try {
                 client.updateLocal(des,vchk);
@@ -234,7 +234,7 @@ int main(int argc, char** argv) {
             cout<<"File on client is newer\n";
             vector<Filechk> fchks;
             client.request(fchks);
-            cout<<"fchks size from server is "<<fchks.size()<<endl;
+            //cout<<"fchks size from server is "<<fchks.size()<<endl;
             //#ifdef DEBUG
             /*
             cout<<"start show fchks:\n";
@@ -254,7 +254,7 @@ int main(int argc, char** argv) {
             searchworker->init(fchks);
             searchworker->find();
             vdes = pkgworker->getFiledes();
-            
+            /* 
             #ifdef DEBUG
             cout<<"start show vdes"<<endl;
             for (int i = 0; i < (int)vdes.size(); ++i) {
@@ -262,7 +262,7 @@ int main(int argc, char** argv) {
             }
             cout<<"end show vdes"<<endl;
             #endif
-            
+           */ 
             try {
                 client.updateServer(statusReport,vdes);
             } catch (SystemException se) {
