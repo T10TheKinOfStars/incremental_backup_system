@@ -52,7 +52,10 @@ struct NodeID {
 */
 
 service SmartSync {
-    StatusReport writeFile(1:RFile rFile)
+    StatusReport writeFile2Server(1:RFile rFile)
+        throws (1: SystemException systemException),
+
+    StatusReport getFileFromServer(1:string fName)
         throws (1: SystemException systemException),
 
     list<Filedes> updateLocal(1: list<Filechk> chks)

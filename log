@@ -1,0 +1,4 @@
+c1 更新，然后 c1修改后更新，然后c2获取更新，c2再更新后上传s。c1再更新，出bug
+----------------------------------------find reason and fixed----------------------------
+
+update thrift, but not generate new files yet.
