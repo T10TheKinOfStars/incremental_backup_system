@@ -9,11 +9,11 @@
 
 
 
-SmartSync_writeFile_args::~SmartSync_writeFile_args() throw() {
+SmartSync_writeFile2Server_args::~SmartSync_writeFile2Server_args() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t SmartSync_writeFile2Server_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -53,10 +53,10 @@ uint32_t SmartSync_writeFile_args::read(::apache::thrift::protocol::TProtocol* i
   return xfer;
 }
 
-uint32_t SmartSync_writeFile_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t SmartSync_writeFile2Server_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   oprot->incrementRecursionDepth();
-  xfer += oprot->writeStructBegin("SmartSync_writeFile_args");
+  xfer += oprot->writeStructBegin("SmartSync_writeFile2Server_args");
 
   xfer += oprot->writeFieldBegin("rFile", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += this->rFile.write(oprot);
@@ -69,14 +69,14 @@ uint32_t SmartSync_writeFile_args::write(::apache::thrift::protocol::TProtocol* 
 }
 
 
-SmartSync_writeFile_pargs::~SmartSync_writeFile_pargs() throw() {
+SmartSync_writeFile2Server_pargs::~SmartSync_writeFile2Server_pargs() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t SmartSync_writeFile2Server_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   oprot->incrementRecursionDepth();
-  xfer += oprot->writeStructBegin("SmartSync_writeFile_pargs");
+  xfer += oprot->writeStructBegin("SmartSync_writeFile2Server_pargs");
 
   xfer += oprot->writeFieldBegin("rFile", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += (*(this->rFile)).write(oprot);
@@ -89,11 +89,11 @@ uint32_t SmartSync_writeFile_pargs::write(::apache::thrift::protocol::TProtocol*
 }
 
 
-SmartSync_writeFile_result::~SmartSync_writeFile_result() throw() {
+SmartSync_writeFile2Server_result::~SmartSync_writeFile2Server_result() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t SmartSync_writeFile2Server_result::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -141,11 +141,11 @@ uint32_t SmartSync_writeFile_result::read(::apache::thrift::protocol::TProtocol*
   return xfer;
 }
 
-uint32_t SmartSync_writeFile_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t SmartSync_writeFile2Server_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
 
   uint32_t xfer = 0;
 
-  xfer += oprot->writeStructBegin("SmartSync_writeFile_result");
+  xfer += oprot->writeStructBegin("SmartSync_writeFile2Server_result");
 
   if (this->__isset.success) {
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
@@ -162,11 +162,11 @@ uint32_t SmartSync_writeFile_result::write(::apache::thrift::protocol::TProtocol
 }
 
 
-SmartSync_writeFile_presult::~SmartSync_writeFile_presult() throw() {
+SmartSync_writeFile2Server_presult::~SmartSync_writeFile2Server_presult() throw() {
 }
 
 
-uint32_t SmartSync_writeFile_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t SmartSync_writeFile2Server_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -189,6 +189,212 @@ uint32_t SmartSync_writeFile_presult::read(::apache::thrift::protocol::TProtocol
       case 0:
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += (*(this->success)).read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+
+SmartSync_getFileFromServer_args::~SmartSync_getFileFromServer_args() throw() {
+}
+
+
+uint32_t SmartSync_getFileFromServer_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->fName);
+          this->__isset.fName = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t SmartSync_getFileFromServer_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("SmartSync_getFileFromServer_args");
+
+  xfer += oprot->writeFieldBegin("fName", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->fName);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+
+SmartSync_getFileFromServer_pargs::~SmartSync_getFileFromServer_pargs() throw() {
+}
+
+
+uint32_t SmartSync_getFileFromServer_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("SmartSync_getFileFromServer_pargs");
+
+  xfer += oprot->writeFieldBegin("fName", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->fName)));
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+
+SmartSync_getFileFromServer_result::~SmartSync_getFileFromServer_result() throw() {
+}
+
+
+uint32_t SmartSync_getFileFromServer_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t SmartSync_getFileFromServer_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("SmartSync_getFileFromServer_result");
+
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+
+SmartSync_getFileFromServer_presult::~SmartSync_getFileFromServer_presult() throw() {
+}
+
+
+uint32_t SmartSync_getFileFromServer_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1137,18 +1343,18 @@ uint32_t SmartSync_checkFile_presult::read(::apache::thrift::protocol::TProtocol
   return xfer;
 }
 
-void SmartSyncClient::writeFile(StatusReport& _return, const RFile& rFile)
+void SmartSyncClient::writeFile2Server(StatusReport& _return, const RFile& rFile)
 {
-  send_writeFile(rFile);
-  recv_writeFile(_return);
+  send_writeFile2Server(rFile);
+  recv_writeFile2Server(_return);
 }
 
-void SmartSyncClient::send_writeFile(const RFile& rFile)
+void SmartSyncClient::send_writeFile2Server(const RFile& rFile)
 {
   int32_t cseqid = 0;
-  oprot_->writeMessageBegin("writeFile", ::apache::thrift::protocol::T_CALL, cseqid);
+  oprot_->writeMessageBegin("writeFile2Server", ::apache::thrift::protocol::T_CALL, cseqid);
 
-  SmartSync_writeFile_pargs args;
+  SmartSync_writeFile2Server_pargs args;
   args.rFile = &rFile;
   args.write(oprot_);
 
@@ -1157,7 +1363,7 @@ void SmartSyncClient::send_writeFile(const RFile& rFile)
   oprot_->getTransport()->flush();
 }
 
-void SmartSyncClient::recv_writeFile(StatusReport& _return)
+void SmartSyncClient::recv_writeFile2Server(StatusReport& _return)
 {
 
   int32_t rseqid = 0;
@@ -1177,12 +1383,12 @@ void SmartSyncClient::recv_writeFile(StatusReport& _return)
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  if (fname.compare("writeFile") != 0) {
+  if (fname.compare("writeFile2Server") != 0) {
     iprot_->skip(::apache::thrift::protocol::T_STRUCT);
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  SmartSync_writeFile_presult result;
+  SmartSync_writeFile2Server_presult result;
   result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
@@ -1195,7 +1401,68 @@ void SmartSyncClient::recv_writeFile(StatusReport& _return)
   if (result.__isset.systemException) {
     throw result.systemException;
   }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "writeFile failed: unknown result");
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "writeFile2Server failed: unknown result");
+}
+
+void SmartSyncClient::getFileFromServer(std::string& _return, const std::string& fName)
+{
+  send_getFileFromServer(fName);
+  recv_getFileFromServer(_return);
+}
+
+void SmartSyncClient::send_getFileFromServer(const std::string& fName)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("getFileFromServer", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  SmartSync_getFileFromServer_pargs args;
+  args.fName = &fName;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->writeEnd();
+  oprot_->getTransport()->flush();
+}
+
+void SmartSyncClient::recv_getFileFromServer(std::string& _return)
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+  }
+  if (fname.compare("getFileFromServer") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+  }
+  SmartSync_getFileFromServer_presult result;
+  result.success = &_return;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getFileFromServer failed: unknown result");
 }
 
 void SmartSyncClient::updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks)
@@ -1460,41 +1727,41 @@ bool SmartSyncProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* ipr
   return true;
 }
 
-void SmartSyncProcessor::process_writeFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+void SmartSyncProcessor::process_writeFile2Server(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
 {
   void* ctx = NULL;
   if (this->eventHandler_.get() != NULL) {
-    ctx = this->eventHandler_->getContext("SmartSync.writeFile", callContext);
+    ctx = this->eventHandler_->getContext("SmartSync.writeFile2Server", callContext);
   }
-  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "SmartSync.writeFile");
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "SmartSync.writeFile2Server");
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preRead(ctx, "SmartSync.writeFile");
+    this->eventHandler_->preRead(ctx, "SmartSync.writeFile2Server");
   }
 
-  SmartSync_writeFile_args args;
+  SmartSync_writeFile2Server_args args;
   args.read(iprot);
   iprot->readMessageEnd();
   uint32_t bytes = iprot->getTransport()->readEnd();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postRead(ctx, "SmartSync.writeFile", bytes);
+    this->eventHandler_->postRead(ctx, "SmartSync.writeFile2Server", bytes);
   }
 
-  SmartSync_writeFile_result result;
+  SmartSync_writeFile2Server_result result;
   try {
-    iface_->writeFile(result.success, args.rFile);
+    iface_->writeFile2Server(result.success, args.rFile);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;
     result.__isset.systemException = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
-      this->eventHandler_->handlerError(ctx, "SmartSync.writeFile");
+      this->eventHandler_->handlerError(ctx, "SmartSync.writeFile2Server");
     }
 
     ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("writeFile", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    oprot->writeMessageBegin("writeFile2Server", ::apache::thrift::protocol::T_EXCEPTION, seqid);
     x.write(oprot);
     oprot->writeMessageEnd();
     oprot->getTransport()->writeEnd();
@@ -1503,17 +1770,74 @@ void SmartSyncProcessor::process_writeFile(int32_t seqid, ::apache::thrift::prot
   }
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preWrite(ctx, "SmartSync.writeFile");
+    this->eventHandler_->preWrite(ctx, "SmartSync.writeFile2Server");
   }
 
-  oprot->writeMessageBegin("writeFile", ::apache::thrift::protocol::T_REPLY, seqid);
+  oprot->writeMessageBegin("writeFile2Server", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   bytes = oprot->getTransport()->writeEnd();
   oprot->getTransport()->flush();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postWrite(ctx, "SmartSync.writeFile", bytes);
+    this->eventHandler_->postWrite(ctx, "SmartSync.writeFile2Server", bytes);
+  }
+}
+
+void SmartSyncProcessor::process_getFileFromServer(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+{
+  void* ctx = NULL;
+  if (this->eventHandler_.get() != NULL) {
+    ctx = this->eventHandler_->getContext("SmartSync.getFileFromServer", callContext);
+  }
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "SmartSync.getFileFromServer");
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->preRead(ctx, "SmartSync.getFileFromServer");
+  }
+
+  SmartSync_getFileFromServer_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  uint32_t bytes = iprot->getTransport()->readEnd();
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->postRead(ctx, "SmartSync.getFileFromServer", bytes);
+  }
+
+  SmartSync_getFileFromServer_result result;
+  try {
+    iface_->getFileFromServer(result.success, args.fName);
+    result.__isset.success = true;
+  } catch (SystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (const std::exception& e) {
+    if (this->eventHandler_.get() != NULL) {
+      this->eventHandler_->handlerError(ctx, "SmartSync.getFileFromServer");
+    }
+
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("getFileFromServer", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->writeEnd();
+    oprot->getTransport()->flush();
+    return;
+  }
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->preWrite(ctx, "SmartSync.getFileFromServer");
+  }
+
+  oprot->writeMessageBegin("getFileFromServer", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  bytes = oprot->getTransport()->writeEnd();
+  oprot->getTransport()->flush();
+
+  if (this->eventHandler_.get() != NULL) {
+    this->eventHandler_->postWrite(ctx, "SmartSync.getFileFromServer", bytes);
   }
 }
 
