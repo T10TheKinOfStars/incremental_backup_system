@@ -20,10 +20,11 @@ using namespace std;
 class FileWorker {
     public:
         FileWorker() :  blocksize(0),filesize(0),path("") {};
-        //FileWorker(int bsize, int fsize, string fpath) : blocksize(bsize),filesize(fsize), path(fpath) {};
         ~FileWorker();
         void setPath(const string &str);
         string getPath();
+        vector<Filedes> getFiledes();
+        string getWholeFile();
         void setFileSize(int val);
         int getFileSize();
         void setBlockSize(int val);

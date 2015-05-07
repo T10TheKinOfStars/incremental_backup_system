@@ -35,7 +35,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     // Your initialization goes here
   }
 
-  void writeFile(StatusReport& _return, const RFile& rFile) {
+  void writeFile2Server(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
     printf("writeFile\n");
     if (fworker->writefile(rFile) != -1) {
@@ -45,17 +45,24 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     }
   }
 
+  void getFileFromServer(std::string& _return, const std::string& fName) {
+    // Your implementation goes here
+    printf("getFileFromServer\n");
+  }
+
   void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
     // Your implementation goes here
     printf("updateLocal\n");
-    //要多传一个参数
-    //分两种情况，一种是filesize小于blocksize，直接把文件写到客户端去
-    //否则执行rolling checksum
-    pkgworker->initchksums(chks);
-    searchworker->init(pkgworker->getchksums());
+    
+    if ((int)chks.size() * 1000000 < fworker->getFileSize()) {
+        _return = fworker->getFiledes();     
+    } else {
+        pkgworker->initchksums(chks);
+        searchworker->init(pkgworker->getchksums());
 
-    searchworker->find();
-    _return = pkgworker->getFiledes(); 
+        searchworker->find();
+        _return = pkgworker->getFiledes(); 
+    }
   }
 
   void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {

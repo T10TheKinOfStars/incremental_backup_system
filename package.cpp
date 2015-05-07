@@ -26,3 +26,4 @@ vector<Filedes> Package::getFiledes() {
 void Package::initchksums(vector<Filechk> v) {
     checksums = v;
 }
+

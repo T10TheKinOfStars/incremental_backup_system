@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
             data.__set_version(0);
             
             //read data from disk            
-            std::ifstream ifs(filename.c_str(),std::ios::binary);
+            ifstream ifs(filename.c_str(),std::ios::binary);
             if (ifs) {
                 ifs.seekg(0,ifs.end);
                 int len = ifs.tellg();
@@ -140,18 +140,19 @@ int main(int argc, char** argv) {
                 buf[ifs.gcount()] = '\0';
                 ifs.close();
                 data.__set_contentLen(ifs.gcount());
+                data.__set_contenthash(md5(buf));
                 rfile.__set_content(buf);
                 rfile.__set_meta(data);
                 delete []buf;
             } else {
-                std::cerr<<"read file error!\n";
+                cerr<<"read file error!\n";
                 return -1;
             }
             try {
-                client.writeFile(statusReport,rfile);
+                client.writeFile2Server(statusReport,rfile);
             } catch (SystemException se) {
                 //format se information in json format
-                std::cout<<ThriftJSONString(se)<<std::endl;
+                cout<<ThriftJSONString(se)<<endl;
                 return -1;
             }
             //format status in json format
@@ -249,32 +250,47 @@ int main(int argc, char** argv) {
             cout<<"end show fchks\n";
             #endif
             */
-            vector<Filedes> vdes;
-            //generate vector<Filedes> vdes
-            searchworker->init(fchks);
-            searchworker->find();
-            vdes = pkgworker->getFiledes();
-            /* 
-            #ifdef DEBUG
-            cout<<"start show vdes"<<endl;
-            for (int i = 0; i < (int)vdes.size(); ++i) {
-                cout<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
-            }
-            cout<<"end show vdes"<<endl;
-            #endif
-           */ 
-            try {
-                client.updateServer(statusReport,vdes);
-            } catch (SystemException se) {
-                cout<<ThriftJSONString(se)<<endl;
-                return -1;
-            }
-            if (statusReport.status == 5) {
-                cout<<"Success"<<endl;
-            } else if (statusReport.status == 4) {
-                cout<<"Fail"<<endl;
+            if (fworker->getFileSize() / 1000000 > fworker->getBlockSize() * (int)fchks.size()) {
+                //directly write file to server
+                t = st.st_mtime;
+                localtime_r(&t,&lt);
+                strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
+                string content = fworker->getWholeFile();
+                data.__set_contentLen(content.size());
+                data.__set_contenthash(md5(content));
+                rfile.__set_content(content);
+                rfile.__set_meta(data);
+                data.__set_updated(timebuf);
+
+                client.writeFile2Server(statusReport,rfile); 
             } else {
-                cout<<"undefined status"<<endl;
+                vector<Filedes> vdes;
+                //generate vector<Filedes> vdes
+                searchworker->init(fchks);
+                searchworker->find();
+                vdes = pkgworker->getFiledes();
+                /* 
+                #ifdef DEBUG
+                    cout<<"start show vdes"<<endl;
+                    for (int i = 0; i < (int)vdes.size(); ++i) {
+                        cout<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
+                    }
+                    cout<<"end show vdes"<<endl;
+                #endif
+                 */ 
+                try {
+                    client.updateServer(statusReport,vdes);
+                } catch (SystemException se) {
+                    cout<<ThriftJSONString(se)<<endl;
+                    return -1;
+                }
+                if (statusReport.status == 5) {
+                    cout<<"Success"<<endl;
+                } else if (statusReport.status == 4) {
+                    cout<<"Fail"<<endl;
+                } else {
+                    cout<<"undefined status"<<endl;
+                }
             }
         } else {
             cerr<<"operation argument error"<<endl;

@@ -18,6 +18,48 @@ int FileWorker::getBlockSize() {
     return blocksize;
 }
 
+vector<Filedes> FileWorker::getFiledes() {
+    vector<Filedes> retVal;
+    ifstream ifs(path.c_str());
+    if (ifs) {
+        int count = 0;
+        while (count < filesize) {
+            char *buf = new char[blocksize+1];
+            ifs.read(buf,blocksize);
+            buf[ifs.gcount()] = '\0';
+            Filedes temp;
+            temp.__set_flag(0);
+            temp.__set_content(buf);
+            temp.__set_block(-1);
+            retVal.push_back(temp);
+            count += blocksize;
+            delete []buf;
+        }
+        ifs.close();
+    }
+
+    return retVal;
+}
+
+string FileWorker::getWholeFile() {
+    string ret = "";
+    ifstream ifs(path.c_str(),std::ios::binary);
+    if (ifs) {
+        ifs.seekg(0,ifs.end);
+        int len = ifs.tellg();
+        ifs.seekg(0,ifs.beg);
+        char *buf = new char[len+1];
+        ifs.read(buf,len);
+        buf[ifs.gcount()] = '\0';
+        ifs.close();
+        delete []buf;
+
+        ret = buf;
+    }
+
+    return ret;
+}
+
 void FileWorker::setFileSize(int val) {
     filesize = val;
 }
