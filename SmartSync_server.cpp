@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
   boost::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
   boost::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
   boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-
+  //Only accept one client at a time
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
   
   fworker = new FileWorker();
