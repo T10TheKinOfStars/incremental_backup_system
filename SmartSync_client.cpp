@@ -81,7 +81,9 @@ int main(int argc, char** argv) {
         }
         vector<string> files;
         while ((dirp = readdir(dp)) != NULL) 
-            files.push_back(dirp->d_name);
+            if (dirp->d_type == 8)
+                files.push_back(dirp->d_name);
+
         int idx = 0; 
         while (true) {
             filename = files[idx];
