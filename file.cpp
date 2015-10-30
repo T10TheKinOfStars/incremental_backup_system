@@ -2,6 +2,9 @@
 
 using namespace std;
 
+std::mutex mtx;
+std::unordered_map<std::string,int> filestatus;
+
 FileWorker::~FileWorker() {
     path = "";
     blocksize = 0;
@@ -102,7 +105,9 @@ void FileWorker::setBlockSize(int val) {
 bool FileWorker::updateFile(vector<Filedes> newdes) {
     //use to store the content of each block in old file
     vector<string> file;
-    cout<<"file path is "<<path<<endl;
+    string filename = path.substr(path.find_last_of('/'));
+    dprintf("update filename is %s\n",filename.c_str());
+    dprintf("file path is %s\n",path.c_str());
     try {
     ifstream ifs(path.c_str());
     if (ifs) {
@@ -120,7 +125,7 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
         return false;
     }
     } catch (SystemException se) {
-        cout<<"init vector of file error happens in updateFile fun\n";
+        dprintf("init vector of file error happens in updateFile fun\n");
         exit(-1);
     }
     //#ifdef DEBUG
@@ -149,6 +154,10 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
                 ofs<<file[newdes[i].block];
             }
         }
+        mtx.lock();
+        filestatus[filename] = 0;
+        mtx.unlock();
+        dprintf("After update, file %s's file status is %d\n",filename.c_str(),filestatus[filename]);
         ofs.close();
     } else {
         cerr<<"open file error"<<endl;
@@ -203,15 +212,11 @@ int FileWorker::writefile(const RFile &_rfile) {
             time_t t;
             char timebuf[80];
             struct tm lt;
-            //stringstream ss;
             if (stat(path.c_str(),&st) != -1) {
                 t = st.st_mtime;
                 localtime_r(&t,&lt);
                 strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
-                //ss<<lt.tm_year<<lt.tm_mon<<lt.tm_mday<<lt.tm_hour<<lt.tm_min<<lt.tm_sec;
-                //Timestamp temp = ss.str();
-                //ss.str("");
-                cout<<"time is "<<timebuf<<endl;
+                dprintf("time is %s\n",timebuf);
                 rdata.__set_updated(timebuf);
             }
             filemap[filename] = rdata;
@@ -219,6 +224,11 @@ int FileWorker::writefile(const RFile &_rfile) {
             return -1;
         }
     }
+    mtx.lock();
+    filestatus[filename] = 0;
+    mtx.unlock();
+    dprintf("After writefile, file %s's file status is %d\n",filename.c_str(),filestatus[filename]);
+
     return 0;
         /* when do update, can review this
          else {

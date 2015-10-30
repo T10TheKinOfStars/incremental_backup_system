@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include "common.h"
 #include "SmartSync.h"
 #include <unistd.h>
 #include <sys/stat.h>
@@ -34,9 +35,11 @@ int main(int argc, char** argv) {
     }
     int opt;
     int optidx;
-    std::string operation;
-    std::string filename;
-    std::string dirname;
+    string operation;
+    string filepath;
+    string filename;
+    string dirname;
+
     DIR *dp;
     struct dirent *dirp;
 
@@ -70,27 +73,31 @@ int main(int argc, char** argv) {
                     dirname = optarg;
                     break;
                 default:
-                    std::cout<<"operation error"<<std::endl;
+                    dprintf("operation error\n");
                     return -1;
             }
         }
-
+        dprintf("dir is %s\n",dirname.c_str());
         if ((dp = opendir(dirname.c_str())) == NULL) {
             std::cout<< "can't open "<<dirname<<std::endl;
             exit(1);
         }
         vector<string> files;
-        while ((dirp = readdir(dp)) != NULL) 
-            if (dirp->d_type == 8)
+        while ((dirp = readdir(dp)) != NULL) {
+            if (dirp->d_type == 8) {
                 files.push_back(dirp->d_name);
+            }
+        }
 
         int idx = 0; 
         while (true) {
+            filepath = dirname + files[idx];
             filename = files[idx];
             ++idx;
             //when go through all the files in directory
             //sleep 5 seconds and reset idx to 0
             if (idx == (int)files.size()) {
+                dprintf("reset idx and sleep 5s\n");
                 sleep(5);
                 idx = 0;
             }
@@ -98,23 +105,24 @@ int main(int argc, char** argv) {
             time_t t;
             struct tm lt;
             char timebuf[80];
-            if (stat(filename.c_str(),&st) == -1) {
+            if (stat(filepath.c_str(),&st) == -1) {
+                cout<<"stat error\n";
                 return -1;
             }
-            fworker->setPath(filename);
+            fworker->setPath(filepath);
             fworker->setBlockSize(atoi(argv[3]));
             //Timestamp is string type
             t = st.st_mtime;
             localtime_r(&t,&lt);
             strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
 
-            cout<<"Time of file will send to server is "<<timebuf<<endl;
+            dprintf("Time of file will send to server is %s\n",timebuf);
             data.__set_updated(timebuf);
             //first check whether need update
             {
                 try {
-                    cout<<"path of file is "<<filename<<endl;
-                    ifstream ifs(filename.c_str());
+                    dprintf("path of file is %s\n",filepath.c_str());
+                    ifstream ifs(filepath.c_str());
                     if (ifs) {
                         ifs.seekg(0,ifs.end);
                         int len = ifs.tellg();
@@ -134,6 +142,7 @@ int main(int argc, char** argv) {
                         return -1;
                     }
                     data.__set_filename(filename);
+                    data.__set_target(0);
                     client.checkFile(statusReport,data);                
                 } catch (SystemException se) {
                     //format se in json format
@@ -141,17 +150,19 @@ int main(int argc, char** argv) {
                     return -1;
                 }
                 //format rfile in json format
-                std::cout<<ThriftJSONString(rfile)<<std::endl;
+                //std::cout<<ThriftJSONString(rfile)<<std::endl;
             }
+            
             if (statusReport.status != 0) {        
                 //file is not the same, need update
-                cout<<"get status is "<<statusReport.status<<endl; 
+                dprintf("[%s] gets status is %d\n",filename.c_str(),statusReport.status); 
                 if (statusReport.status == 1) {
-                    cout<<"file doesn't exist on server and write to server"<<endl;
+                    dprintf("file doesn't exist on server and write to server\n");
                     data.__set_version(0);
+                    data.__set_target(1);
                     
                     //read data from disk            
-                    ifstream ifs(filename.c_str(),std::ios::binary);
+                    ifstream ifs(filepath.c_str(),std::ios::binary);
                     if (ifs) {
                         ifs.seekg(0,ifs.end);
                         int len = ifs.tellg();
@@ -177,10 +188,12 @@ int main(int argc, char** argv) {
                         return -1;
                     }
                     //format status in json format
-                    std::cout<<ThriftJSONString(statusReport)<<std::endl;
+                    dprintf("write 2 server is %d\n",statusReport.status);
+                    //std::cout<<ThriftJSONString(statusReport)<<std::endl;
                 } else if (statusReport.status == 2) {
                     //if client is older, it sends des to server
-                    cout<<"file on client is older\n";
+                    dprintf("file on client is older\n");
+                    data.__set_target(1);
                     vector<Filechk> vchk;
                     vector<Filedes> des;
                     //generate vector<Filechk> vchk
@@ -189,8 +202,8 @@ int main(int argc, char** argv) {
                         ifstream ifs(fworker->getPath().c_str());
                         double filesize = fworker->getFileSize();
                         int blocksize = fworker->getBlockSize();
-                        //cout<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
-                        //cout<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
+                        //dprintf<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
+                        //dprintf<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                         if (ifs) {
                             for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
                                 char *buf = new char[blocksize+1];
@@ -207,9 +220,9 @@ int main(int argc, char** argv) {
                         /*
                         //show files---------------------------
                         for (int i = 0; i < (int)file.size(); ++i) {
-                            cout<<file[i];
+                            dprintf<<file[i];
                         }
-                        cout<<endl;
+                        dprintf<<endl;
                         */
                         //------------------------------------
                         int l;
@@ -233,7 +246,7 @@ int main(int argc, char** argv) {
                             temp.__set_num2(num2);
 
                             vchk.push_back(temp);
-                            cout<<i<<endl;
+                            dprintf("%d\n",i);
                         }
                     }
                     try {
@@ -245,27 +258,28 @@ int main(int argc, char** argv) {
 
                     //generate new file based on des
                     if (fworker->updateFile(des)) 
-                        cout<<"update finished\n";
+                        dprintf("update finished\n");
                     else
-                        cout<<"update failed\n";
+                        dprintf("update failed\n");
                 } else if (statusReport.status == 3) {
                     //if client is newer, it receives the des from server
-                    cout<<"File on client is newer\n";
+                    dprintf("File on client is newer\n");
+                    data.__set_target(1);
                     vector<Filechk> fchks;
                     client.request(fchks);
-                    //cout<<"fchks size from server is "<<fchks.size()<<endl;
+                    //dprintf<<"fchks size from server is "<<fchks.size()<<endl;
                     //#ifdef DEBUG
                     /*
-                    cout<<"start show fchks:\n";
+                    dprintf<<"start show fchks:\n";
                     for (int i = 0; i < (int)fchks.size();++i) {
-                        cout<<i<< " roll:"<<fchks[i].rollchk
+                        dprintf<<i<< " roll:"<<fchks[i].rollchk
                             <<" num1:"<<fchks[i].num1
                             <<" num2:"<<fchks[i].num2
                             <<" md5:"<<fchks[i].md5chk
                             <<" block:"<<fchks[i].block
                             <<endl;
                     }
-                    cout<<"end show fchks\n";
+                    dprintf<<"end show fchks\n";
                     #endif
                     */
                     if (fworker->getFileSize() / 1000000 > fworker->getBlockSize() * (int)fchks.size()) {
@@ -289,11 +303,11 @@ int main(int argc, char** argv) {
                         vdes = pkgworker->getFiledes();
                         /* 
                         #ifdef DEBUG
-                            cout<<"start show vdes"<<endl;
+                            dprintf<<"start show vdes"<<endl;
                             for (int i = 0; i < (int)vdes.size(); ++i) {
-                                cout<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
+                                dprintf<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
                             }
-                            cout<<"end show vdes"<<endl;
+                            dprintf<<"end show vdes"<<endl;
                         #endif
                          */ 
                         try {
@@ -310,17 +324,21 @@ int main(int argc, char** argv) {
                             cout<<"undefined status"<<endl;
                         }
                     }
+                } else if (statusReport.status == 6) {
+                    data.__set_target(0);
+                    dprintf("server modify\n");
                 } else {
                     cerr<<"operation argument error"<<endl;
                     return 0;
                 }
             }
 
-            transport->close();
             sleep(5);
         }
+        transport->close();
         } catch (TException &tx) {
             cout<<"ERROR: "<<tx.what()<<endl;
+            transport->close();
             return -1;
         }
 

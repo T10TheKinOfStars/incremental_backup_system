@@ -19,7 +19,8 @@ int _kStatusValues[] = {
   Status::OLDER,
   Status::NEWER,
   Status::FAIL,
-  Status::SUCCESS
+  Status::SUCCESS,
+  Status::BLOCK
 };
 const char* _kStatusNames[] = {
   "SAME",
@@ -27,9 +28,10 @@ const char* _kStatusNames[] = {
   "OLDER",
   "NEWER",
   "FAIL",
-  "SUCCESS"
+  "SUCCESS",
+  "BLOCK"
 };
-const std::map<int, const char*> _Status_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(6, _kStatusValues, _kStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
+const std::map<int, const char*> _Status_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(7, _kStatusValues, _kStatusNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
 
 
 SystemException::~SystemException() throw() {
@@ -250,8 +252,13 @@ void RFileMetadata::__set_contentLen(const int32_t val) {
 __isset.contentLen = true;
 }
 
-const char* RFileMetadata::ascii_fingerprint = "F1C63F6875828F1556A46159A5ADBF13";
-const uint8_t RFileMetadata::binary_fingerprint[16] = {0xF1,0xC6,0x3F,0x68,0x75,0x82,0x8F,0x15,0x56,0xA4,0x61,0x59,0xA5,0xAD,0xBF,0x13};
+void RFileMetadata::__set_target(const int32_t val) {
+  this->target = val;
+__isset.target = true;
+}
+
+const char* RFileMetadata::ascii_fingerprint = "DBB8948E4D873A586EB24FE4EC7147A0";
+const uint8_t RFileMetadata::binary_fingerprint[16] = {0xDB,0xB8,0x94,0x8E,0x4D,0x87,0x3A,0x58,0x6E,0xB2,0x4F,0xE4,0xEC,0x71,0x47,0xA0};
 
 uint32_t RFileMetadata::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -321,6 +328,14 @@ uint32_t RFileMetadata::read(::apache::thrift::protocol::TProtocol* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
+      case 7:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->target);
+          this->__isset.target = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -368,6 +383,11 @@ uint32_t RFileMetadata::write(::apache::thrift::protocol::TProtocol* oprot) cons
     xfer += oprot->writeI32(this->contentLen);
     xfer += oprot->writeFieldEnd();
   }
+  if (this->__isset.target) {
+    xfer += oprot->writeFieldBegin("target", ::apache::thrift::protocol::T_I32, 7);
+    xfer += oprot->writeI32(this->target);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   oprot->decrementRecursionDepth();
@@ -382,6 +402,7 @@ void swap(RFileMetadata &a, RFileMetadata &b) {
   swap(a.version, b.version);
   swap(a.contenthash, b.contenthash);
   swap(a.contentLen, b.contentLen);
+  swap(a.target, b.target);
   swap(a.__isset, b.__isset);
 }
 
@@ -392,6 +413,7 @@ RFileMetadata::RFileMetadata(const RFileMetadata& other5) {
   version = other5.version;
   contenthash = other5.contenthash;
   contentLen = other5.contentLen;
+  target = other5.target;
   __isset = other5.__isset;
 }
 RFileMetadata& RFileMetadata::operator=(const RFileMetadata& other6) {
@@ -401,6 +423,7 @@ RFileMetadata& RFileMetadata::operator=(const RFileMetadata& other6) {
   version = other6.version;
   contenthash = other6.contenthash;
   contentLen = other6.contentLen;
+  target = other6.target;
   __isset = other6.__isset;
   return *this;
 }
@@ -413,6 +436,7 @@ std::ostream& operator<<(std::ostream& out, const RFileMetadata& obj) {
   out << ", " << "version="; (obj.__isset.version ? (out << to_string(obj.version)) : (out << "<null>"));
   out << ", " << "contenthash="; (obj.__isset.contenthash ? (out << to_string(obj.contenthash)) : (out << "<null>"));
   out << ", " << "contentLen="; (obj.__isset.contentLen ? (out << to_string(obj.contentLen)) : (out << "<null>"));
+  out << ", " << "target="; (obj.__isset.target ? (out << to_string(obj.target)) : (out << "<null>"));
   out << ")";
   return out;
 }
@@ -748,8 +772,8 @@ void RFile::__set_content(const std::string& val) {
 __isset.content = true;
 }
 
-const char* RFile::ascii_fingerprint = "59AA2CB40CDAF76C63E16E6F1052390B";
-const uint8_t RFile::binary_fingerprint[16] = {0x59,0xAA,0x2C,0xB4,0x0C,0xDA,0xF7,0x6C,0x63,0xE1,0x6E,0x6F,0x10,0x52,0x39,0x0B};
+const char* RFile::ascii_fingerprint = "2FFDB3206AEEC8CBA8C0712AFEE639EE";
+const uint8_t RFile::binary_fingerprint[16] = {0x2F,0xFD,0xB3,0x20,0x6A,0xEE,0xC8,0xCB,0xA8,0xC0,0x71,0x2A,0xFE,0xE6,0x39,0xEE};
 
 uint32_t RFile::read(::apache::thrift::protocol::TProtocol* iprot) {
 

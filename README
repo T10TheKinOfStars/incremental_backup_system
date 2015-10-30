@@ -19,4 +19,12 @@ files                   folder to store server files
 The first version has completed on May 3 2015
 
 You can run server as ./server
-You can run client as ./client ip port --filename xxxxxx
+You can run client as ./client ip port --dir xxxxxx
+
+Once you run the server, the server will listen the requesets from clients.
+Once you run the client, it will automatically check all the files in directory and compare
+them with files on server. If they are different, they will be synchronized to the latest
+version. The lateset version is based on the file modify time.
+
+The synchronization algorithm is based on rsync, which will use rolling checksum and md5 checksum
+to tell which part should be sent as content and which part should be only sent identification.

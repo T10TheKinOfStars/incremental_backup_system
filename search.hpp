@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "mytypes.h"
 #include "checksum.hpp"
+#include "common.h"
 #include "file.hpp"
 #include "package.hpp"
 #include "smartSync_types.h"

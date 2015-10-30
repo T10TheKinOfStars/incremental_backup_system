@@ -26,7 +26,8 @@ struct Status {
     OLDER = 2,
     NEWER = 3,
     FAIL = 4,
-    SUCCESS = 5
+    SUCCESS = 5,
+    BLOCK = 6
   };
 };
 
@@ -129,24 +130,25 @@ class StatusReport {
 void swap(StatusReport &a, StatusReport &b);
 
 typedef struct _RFileMetadata__isset {
-  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false), contentLen(false) {}
+  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false), contentLen(false), target(false) {}
   bool filename :1;
   bool created :1;
   bool updated :1;
   bool version :1;
   bool contenthash :1;
   bool contentLen :1;
+  bool target :1;
 } _RFileMetadata__isset;
 
 class RFileMetadata {
  public:
 
-  static const char* ascii_fingerprint; // = "F1C63F6875828F1556A46159A5ADBF13";
-  static const uint8_t binary_fingerprint[16]; // = {0xF1,0xC6,0x3F,0x68,0x75,0x82,0x8F,0x15,0x56,0xA4,0x61,0x59,0xA5,0xAD,0xBF,0x13};
+  static const char* ascii_fingerprint; // = "DBB8948E4D873A586EB24FE4EC7147A0";
+  static const uint8_t binary_fingerprint[16]; // = {0xDB,0xB8,0x94,0x8E,0x4D,0x87,0x3A,0x58,0x6E,0xB2,0x4F,0xE4,0xEC,0x71,0x47,0xA0};
 
   RFileMetadata(const RFileMetadata&);
   RFileMetadata& operator=(const RFileMetadata&);
-  RFileMetadata() : filename(), created(), updated(), version(0), contenthash(), contentLen(0) {
+  RFileMetadata() : filename(), created(), updated(), version(0), contenthash(), contentLen(0), target(0) {
   }
 
   virtual ~RFileMetadata() throw();
@@ -156,6 +158,7 @@ class RFileMetadata {
   int32_t version;
   std::string contenthash;
   int32_t contentLen;
+  int32_t target;
 
   _RFileMetadata__isset __isset;
 
@@ -170,6 +173,8 @@ class RFileMetadata {
   void __set_contenthash(const std::string& val);
 
   void __set_contentLen(const int32_t val);
+
+  void __set_target(const int32_t val);
 
   bool operator == (const RFileMetadata & rhs) const
   {
@@ -196,6 +201,10 @@ class RFileMetadata {
     if (__isset.contentLen != rhs.__isset.contentLen)
       return false;
     else if (__isset.contentLen && !(contentLen == rhs.contentLen))
+      return false;
+    if (__isset.target != rhs.__isset.target)
+      return false;
+    else if (__isset.target && !(target == rhs.target))
       return false;
     return true;
   }
@@ -360,8 +369,8 @@ typedef struct _RFile__isset {
 class RFile {
  public:
 
-  static const char* ascii_fingerprint; // = "59AA2CB40CDAF76C63E16E6F1052390B";
-  static const uint8_t binary_fingerprint[16]; // = {0x59,0xAA,0x2C,0xB4,0x0C,0xDA,0xF7,0x6C,0x63,0xE1,0x6E,0x6F,0x10,0x52,0x39,0x0B};
+  static const char* ascii_fingerprint; // = "2FFDB3206AEEC8CBA8C0712AFEE639EE";
+  static const uint8_t binary_fingerprint[16]; // = {0x2F,0xFD,0xB3,0x20,0x6A,0xEE,0xC8,0xCB,0xA8,0xC0,0x71,0x2A,0xFE,0xE6,0x39,0xEE};
 
   RFile(const RFile&);
   RFile& operator=(const RFile&);

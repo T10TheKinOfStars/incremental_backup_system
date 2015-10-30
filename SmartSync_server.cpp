@@ -8,19 +8,25 @@
 #include <sstream>
 #include "checksum.hpp"
 #include "mytypes.h"
+#include "common.h"
 #include "package.hpp"
 #include "search.hpp"
 #include "file.hpp"
+#include <mutex>
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TBufferTransports.h>
+#include <thrift/concurrency/ThreadManager.h>
+#include <thrift/concurrency/PosixThreadFactory.h>
+#include <thrift/server/TThreadedServer.h>
 
 //cannot use namespace std, since it will lead to shared_ptr ambiguous
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
+using namespace ::apache::thrift::concurrency;
 
 using boost::shared_ptr;
 
@@ -37,7 +43,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void writeFile2Server(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
-    printf("writeFile\n");
+    dprintf("writeFile\n");
     if (fworker->writefile(rFile) != -1) {
         _return.__set_status(Status::SUCCESS);
     } else {
@@ -47,12 +53,12 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void getFileFromServer(std::string& _return, const std::string& fName) {
     // Your implementation goes here
-    printf("getFileFromServer\n");
+    dprintf("getFileFromServer\n");
   }
 
   void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
     // Your implementation goes here
-    printf("updateLocal\n");
+    dprintf("updateLocal\n");
     
     if ((int)chks.size() * 1000000 < fworker->getFileSize()) {
         _return = fworker->getFiledes();     
@@ -67,7 +73,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
     // Your implementation goes here
-    printf("updateServer\n");
+    dprintf("updateServer\n");
     if (fworker->updateFile(des)) {
         _return.__set_status(Status::SUCCESS);
     } else {
@@ -77,7 +83,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void request(std::vector<Filechk> & _return) {
     // Your implementation goes here
-    printf("request\n");
+    dprintf("request filechecks list\n");
     vector<string> file;
     ifstream ifs(fworker->getPath().c_str());
     double filesize = fworker->getFileSize();
@@ -135,7 +141,18 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
-    printf("checkFile.................\n");
+    std::string filename = meta.filename;
+    dprintf("checkFile %s's status is %d\n",meta.filename.c_str(),filestatus[meta.filename]);
+    //check file status, if it exists and is modifying by other client, if will do nothing
+    mtx.lock();
+    if (filestatus.find(meta.filename) == filestatus.end())
+        filestatus[filename] = 1;
+    mtx.unlock();
+    if (filestatus.find(meta.filename) != filestatus.end() && filestatus[meta.filename] != 0 && meta.target == 0) {
+        dprintf("%s is modifying by server\n",meta.filename.c_str());
+        _return.__set_status(Status::BLOCK);
+        return;
+    }
     //clean pkgworker
     pkgworker->clean();
     fworker->setPath("./files/"+meta.filename);
@@ -144,14 +161,15 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     NameDataMap mymap = fworker->getMap();
 
     Timestamp t = mymap[meta.filename].updated;
-    cout<<"Time of file on server is "<<t<<"\nTime of send from client is "<<meta.updated<<endl;
+    //dprintf("Time of file on server is %s\nTime of send from client is %s\n",t.c_str(),meta.updated.c_str());
 
     //string filename = meta.filename;
     if (access(fworker->getPath().c_str(),F_OK) == 0) {
         //means exist
         //check content whether is the same
         //string fcontent;
-        cout<<"file path is "<<fworker->getPath()<<endl;
+        //first check md5, if not same, then check update time
+        //dprintf("file path is %s\n",fworker->getPath().c_str());
         ifstream ifs(fworker->getPath().c_str());
         if (ifs) {
             ifs.seekg(0,ifs.end);
@@ -160,32 +178,33 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             fworker->setFileSize(len);
 
             ifs.seekg(0,ifs.beg);
-            cout<<"new buf\n";
             char* buf = new char[len+1];
             ifs.read(buf,len);
             buf[ifs.gcount()] = '\0';
             string fmd5 = md5(buf);
-            cout<<"before del buf\n";
             delete []buf;
-            cout<<"end del buf\n";
             ifs.close();
             //cout<<(fmd5 == meta.contenthash)<<endl;
             if (fmd5 == meta.contenthash) {
                 //it means the same
-                cout<<"same"<<endl;
+                dprintf("same\n");
                 _return.__set_status(Status::SAME);
             } else {
-                cout<<"not same"<<endl;
+                dprintf("not same and before lock\n");
+                mtx.lock();
+                filestatus[meta.filename] = 1;
+                mtx.unlock(); 
+                dprintf("after unlock\n");
                 if (t < meta.updated) {
                     //client newer
-                    cout<<"client is newer"<<endl;
+                    dprintf("client is newer\n");
                     _return.__set_status(Status::NEWER);
                 } else if (t > meta.updated) {
                     //server newer
-                    cout<<"client is older"<<endl;
+                    dprintf("client is older\n");
                     _return.__set_status(Status::OLDER);
                 } else {
-                    cout<<"hahaha"<<endl;
+                    ;
                 }
             }
         }
@@ -193,7 +212,7 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         //not exist
         _return.__set_status(Status::NOEXIST);
     }
-    cout<<"end check"<<endl;
+    dprintf("end check\n");
   }
 
 };
@@ -209,8 +228,13 @@ int main(int argc, char **argv) {
   boost::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
   boost::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
   boost::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-  //Only accept one client at a time
-  TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+
+  boost::shared_ptr<ThreadManager> threadManager(ThreadManager::newSimpleThreadManager(4));
+  boost::shared_ptr<PosixThreadFactory> threadFactory(new PosixThreadFactory());
+  threadManager->threadFactory(threadFactory);
+  threadManager->start();
+
+  TThreadedServer server(processor, serverTransport, transportFactory, protocolFactory);
   
   fworker = new FileWorker();
   chkworker = new ChksumWorker();

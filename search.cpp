@@ -37,7 +37,7 @@ void SearchWorker::find() {
     bool roll = false;
     int bsize = fworker->getBlockSize();
     int fsize = fworker->getFileSize();
-    cout<<"blocksize:"<<bsize<<" filesize:"<<fsize<<endl;
+    dprintf("blocksize: %d filesize: %d\n",bsize,fsize);
     string literal = "";
 
     while (i < fsize) {

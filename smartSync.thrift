@@ -11,6 +11,7 @@ enum Status {
     NEWER = 3;
     FAIL = 4;
     SUCCESS = 5;
+    BLOCK = 6;
 }
 
 struct StatusReport {
@@ -24,6 +25,7 @@ struct RFileMetadata {
     4: optional i32 version;
     5: optional string contenthash;
     6: optional i32 contentLen;
+    7: optional i32 target;
 }
 
 struct Filedes {

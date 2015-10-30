@@ -8,6 +8,7 @@ using namespace std;
 
 typedef unsigned long checksum;
 typedef unordered_multimap<checksum,Filechk> FileDstTb;
+//map<filename, metadata>
 typedef map<string, RFileMetadata> NameDataMap;
 
 #endif

@@ -9,13 +9,18 @@
 #include <cmath>
 #include "smartSync_types.h"
 #include "mytypes.h"
+#include "common.h"
 #include "md5.h"
 #include "file.hpp"
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <mutex>
 
 using namespace std;
+
+extern std::mutex mtx;
+extern std::unordered_map<std::string,int> filestatus;
 
 class FileWorker {
     public:
