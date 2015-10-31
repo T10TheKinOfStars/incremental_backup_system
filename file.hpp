@@ -19,9 +19,6 @@
 
 using namespace std;
 
-extern std::mutex mtx;
-extern std::unordered_map<std::string,int> filestatus;
-
 class FileWorker {
     public:
         FileWorker() :  blocksize(0),filesize(0),path("") {};

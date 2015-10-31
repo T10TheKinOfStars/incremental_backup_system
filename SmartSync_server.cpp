@@ -35,6 +35,9 @@ static ChksumWorker *chkworker = NULL;
 static Package *pkgworker = NULL;
 static SearchWorker *searchworker = NULL;
 
+extern std::mutex filemtx;
+extern std::unordered_map<std::string,int> filestatus;
+
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
   SmartSyncHandler() {
@@ -144,25 +147,36 @@ class SmartSyncHandler : virtual public SmartSyncIf {
     std::string filename = meta.filename;
     dprintf("checkFile %s's status is %d\n",meta.filename.c_str(),filestatus[meta.filename]);
     //check file status, if it exists and is modifying by other client, if will do nothing
-    mtx.lock();
-    if (filestatus.find(meta.filename) == filestatus.end())
+    filemtx.lock();
+    dprintf("\nProcessing %s ..........\n\n",filename.c_str());
+    if (filestatus.find(meta.filename) == filestatus.end()) {
+        dprintf("file doesnt exist, filestatus[%s] set to 1\n",filename.c_str());
         filestatus[filename] = 1;
-    mtx.unlock();
-    if (filestatus.find(meta.filename) != filestatus.end() && filestatus[meta.filename] != 0 && meta.target == 0) {
-        dprintf("%s is modifying by server\n",meta.filename.c_str());
-        _return.__set_status(Status::BLOCK);
-        return;
+    } else {
+        dprintf("[%s]'s filestatus is %d \n",filename.c_str(),filestatus[filename]);
+        if (filestatus[filename] == 1) {
+            dprintf("file is processing, other clients cannot access to check file\n");
+            filemtx.unlock();
+            _return.__set_status(Status::BLOCK);
+            return;    
+        } else {
+            if (filestatus[filename] != 0) {
+                //means server is still doing work, client cannot do other things
+                dprintf("Server is updating file, the same client cannot do anything to the same file\n");
+                _return.__set_status(Status::BLOCK);
+                filemtx.unlock();
+                return;
+            }
+        }
     }
+    filemtx.unlock();
     //clean pkgworker
     pkgworker->clean();
     fworker->setPath("./files/"+meta.filename);
-        
     //struct stat st;
     NameDataMap mymap = fworker->getMap();
-
     Timestamp t = mymap[meta.filename].updated;
     //dprintf("Time of file on server is %s\nTime of send from client is %s\n",t.c_str(),meta.updated.c_str());
-
     //string filename = meta.filename;
     if (access(fworker->getPath().c_str(),F_OK) == 0) {
         //means exist
@@ -190,22 +204,21 @@ class SmartSyncHandler : virtual public SmartSyncIf {
                 dprintf("same\n");
                 _return.__set_status(Status::SAME);
             } else {
-                dprintf("not same and before lock\n");
-                mtx.lock();
-                filestatus[meta.filename] = 1;
-                mtx.unlock(); 
-                dprintf("after unlock\n");
+                filemtx.lock();
                 if (t < meta.updated) {
                     //client newer
-                    dprintf("client is newer\n");
+                    dprintf("client is newer, the server needs update\n");
+                    filestatus[meta.filename] = 2;
                     _return.__set_status(Status::NEWER);
                 } else if (t > meta.updated) {
                     //server newer
-                    dprintf("client is older\n");
+                    dprintf("client is older, client needs update\n");
+                    filestatus[meta.filename] = 3;
                     _return.__set_status(Status::OLDER);
                 } else {
                     ;
                 }
+                filemtx.unlock(); 
             }
         }
     } else {

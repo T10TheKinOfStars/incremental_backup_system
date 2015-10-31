@@ -2,7 +2,7 @@
 
 using namespace std;
 
-std::mutex mtx;
+std::mutex filemtx;
 std::unordered_map<std::string,int> filestatus;
 
 FileWorker::~FileWorker() {
@@ -105,9 +105,9 @@ void FileWorker::setBlockSize(int val) {
 bool FileWorker::updateFile(vector<Filedes> newdes) {
     //use to store the content of each block in old file
     vector<string> file;
-    string filename = path.substr(path.find_last_of('/'));
-    dprintf("update filename is %s\n",filename.c_str());
-    dprintf("file path is %s\n",path.c_str());
+    string filename = path.substr(path.find_last_of('/')+1);
+    dprintf("update filename is [%s]\n",filename.c_str());
+    dprintf("file path is [%s]\n",path.c_str());
     try {
     ifstream ifs(path.c_str());
     if (ifs) {
@@ -154,10 +154,11 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
                 ofs<<file[newdes[i].block];
             }
         }
-        mtx.lock();
+        filemtx.lock();
+        dprintf("Before change filestaus value, [%s]'s status is %d\n",filename.c_str(),filestatus[filename]);
         filestatus[filename] = 0;
-        mtx.unlock();
-        dprintf("After update, file %s's file status is %d\n",filename.c_str(),filestatus[filename]);
+        dprintf("After update, file [%s]'s file status is %d\n",filename.c_str(),filestatus[filename]);
+        filemtx.unlock();
         ofs.close();
     } else {
         cerr<<"open file error"<<endl;
@@ -224,10 +225,11 @@ int FileWorker::writefile(const RFile &_rfile) {
             return -1;
         }
     }
-    mtx.lock();
+    filemtx.lock();
+    dprintf("Before change filestaus value, [%s]'s status is %d\n",filename.c_str(),filestatus[filename]);
     filestatus[filename] = 0;
-    mtx.unlock();
     dprintf("After writefile, file %s's file status is %d\n",filename.c_str(),filestatus[filename]);
+    filemtx.unlock();
 
     return 0;
         /* when do update, can review this

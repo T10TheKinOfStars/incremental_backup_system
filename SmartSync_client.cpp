@@ -39,11 +39,12 @@ int main(int argc, char** argv) {
     string filepath;
     string filename;
     string dirname;
+    unordered_map<string,int> status;
 
     DIR *dp;
     struct dirent *dirp;
 
-    std::string user;
+    string user;
     RFile rfile;
     RFileMetadata data;
     StatusReport statusReport;
@@ -86,9 +87,10 @@ int main(int argc, char** argv) {
         while ((dirp = readdir(dp)) != NULL) {
             if (dirp->d_type == 8) {
                 files.push_back(dirp->d_name);
+                status[dirp->d_name] = 0;
             }
         }
-
+        dprintf("There are %lu files in directory\n",files.size());
         int idx = 0; 
         while (true) {
             filepath = dirname + files[idx];
@@ -97,16 +99,17 @@ int main(int argc, char** argv) {
             //when go through all the files in directory
             //sleep 5 seconds and reset idx to 0
             if (idx == (int)files.size()) {
-                dprintf("reset idx and sleep 5s\n");
-                sleep(5);
+                dprintf("reset idx and sleep 20s\n");
+                sleep(20);
                 idx = 0;
             }
+            dprintf("Processing %s .......\n",filename.c_str());
             struct stat st;
             time_t t;
             struct tm lt;
             char timebuf[80];
             if (stat(filepath.c_str(),&st) == -1) {
-                cout<<"stat error\n";
+                dprintf("stat error\n");
                 return -1;
             }
             fworker->setPath(filepath);
@@ -116,12 +119,10 @@ int main(int argc, char** argv) {
             localtime_r(&t,&lt);
             strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
 
-            dprintf("Time of file will send to server is %s\n",timebuf);
             data.__set_updated(timebuf);
             //first check whether need update
             {
                 try {
-                    dprintf("path of file is %s\n",filepath.c_str());
                     ifstream ifs(filepath.c_str());
                     if (ifs) {
                         ifs.seekg(0,ifs.end);
@@ -142,25 +143,19 @@ int main(int argc, char** argv) {
                         return -1;
                     }
                     data.__set_filename(filename);
-                    data.__set_target(0);
                     client.checkFile(statusReport,data);                
                 } catch (SystemException se) {
                     //format se in json format
                     std::cout<<ThriftJSONString(se)<<std::endl;
                     return -1;
                 }
-                //format rfile in json format
-                //std::cout<<ThriftJSONString(rfile)<<std::endl;
             }
             
             if (statusReport.status != 0) {        
                 //file is not the same, need update
-                dprintf("[%s] gets status is %d\n",filename.c_str(),statusReport.status); 
                 if (statusReport.status == 1) {
-                    dprintf("file doesn't exist on server and write to server\n");
+                    dprintf("[%s] file doesn't exist on server and write to server\n",filename.c_str());
                     data.__set_version(0);
-                    data.__set_target(1);
-                    
                     //read data from disk            
                     ifstream ifs(filepath.c_str(),std::ios::binary);
                     if (ifs) {
@@ -193,7 +188,6 @@ int main(int argc, char** argv) {
                 } else if (statusReport.status == 2) {
                     //if client is older, it sends des to server
                     dprintf("file on client is older\n");
-                    data.__set_target(1);
                     vector<Filechk> vchk;
                     vector<Filedes> des;
                     //generate vector<Filechk> vchk
@@ -246,7 +240,6 @@ int main(int argc, char** argv) {
                             temp.__set_num2(num2);
 
                             vchk.push_back(temp);
-                            dprintf("%d\n",i);
                         }
                     }
                     try {
@@ -264,7 +257,6 @@ int main(int argc, char** argv) {
                 } else if (statusReport.status == 3) {
                     //if client is newer, it receives the des from server
                     dprintf("File on client is newer\n");
-                    data.__set_target(1);
                     vector<Filechk> fchks;
                     client.request(fchks);
                     //dprintf<<"fchks size from server is "<<fchks.size()<<endl;
@@ -324,16 +316,14 @@ int main(int argc, char** argv) {
                             cout<<"undefined status"<<endl;
                         }
                     }
+                    status[filename] = 0;
                 } else if (statusReport.status == 6) {
-                    data.__set_target(0);
-                    dprintf("server modify\n");
+                    dprintf("server modifying\n");
                 } else {
-                    cerr<<"operation argument error"<<endl;
+                    dprintf("operation argument error\n");
                     return 0;
                 }
             }
-
-            sleep(5);
         }
         transport->close();
         } catch (TException &tx) {
