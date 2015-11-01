@@ -17,6 +17,7 @@
 #include <ctime>
 #include <string>
 #include <dirent.h>
+#include <sys/types.h>
 #include <thrift/transport/TSocket.h>
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/protocol/TBinaryProtocol.h>
@@ -40,6 +41,8 @@ int main(int argc, char** argv) {
     string filename;
     string dirname;
     unordered_map<string,int> status;
+    int targetid = getpid();
+    dprintf("This client target id is %d\n",targetid);
 
     DIR *dp;
     struct dirent *dirp;
@@ -92,6 +95,7 @@ int main(int argc, char** argv) {
         }
         dprintf("There are %lu files in directory\n",files.size());
         int idx = 0; 
+        data.__set_target(targetid);
         while (true) {
             filepath = dirname + files[idx];
             filename = files[idx];
@@ -99,8 +103,8 @@ int main(int argc, char** argv) {
             //when go through all the files in directory
             //sleep 5 seconds and reset idx to 0
             if (idx == (int)files.size()) {
-                dprintf("reset idx and sleep 20s\n");
-                sleep(20);
+                dprintf("reset idx and sleep for several seconds\n");
+                sleep(5);
                 idx = 0;
             }
             dprintf("Processing %s .......\n",filename.c_str());
@@ -143,6 +147,7 @@ int main(int argc, char** argv) {
                         return -1;
                     }
                     data.__set_filename(filename);
+                    dprintf("send checkfile request\n");
                     client.checkFile(statusReport,data);                
                 } catch (SystemException se) {
                     //format se in json format
@@ -243,7 +248,7 @@ int main(int argc, char** argv) {
                         }
                     }
                     try {
-                        client.updateLocal(des,vchk);
+                        client.updateLocal(des,vchk,targetid);
                     } catch (SystemException se) {
                         std::cout<<ThriftJSONString(se)<<std::endl;
                         return -1;
@@ -258,7 +263,7 @@ int main(int argc, char** argv) {
                     //if client is newer, it receives the des from server
                     dprintf("File on client is newer\n");
                     vector<Filechk> fchks;
-                    client.request(fchks);
+                    client.request(fchks,targetid);
                     //dprintf<<"fchks size from server is "<<fchks.size()<<endl;
                     //#ifdef DEBUG
                     /*
@@ -303,7 +308,7 @@ int main(int argc, char** argv) {
                         #endif
                          */ 
                         try {
-                            client.updateServer(statusReport,vdes);
+                            client.updateServer(statusReport,vdes,targetid);
                         } catch (SystemException se) {
                             cout<<ThriftJSONString(se)<<endl;
                             return -1;

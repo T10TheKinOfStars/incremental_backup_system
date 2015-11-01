@@ -257,8 +257,28 @@ void RFileMetadata::__set_target(const int32_t val) {
 __isset.target = true;
 }
 
-const char* RFileMetadata::ascii_fingerprint = "DBB8948E4D873A586EB24FE4EC7147A0";
-const uint8_t RFileMetadata::binary_fingerprint[16] = {0xDB,0xB8,0x94,0x8E,0x4D,0x87,0x3A,0x58,0x6E,0xB2,0x4F,0xE4,0xEC,0x71,0x47,0xA0};
+void RFileMetadata::__set_vali321(const int32_t val) {
+  this->vali321 = val;
+__isset.vali321 = true;
+}
+
+void RFileMetadata::__set_vali322(const int32_t val) {
+  this->vali322 = val;
+__isset.vali322 = true;
+}
+
+void RFileMetadata::__set_valstr1(const std::string& val) {
+  this->valstr1 = val;
+__isset.valstr1 = true;
+}
+
+void RFileMetadata::__set_valstr2(const std::string& val) {
+  this->valstr2 = val;
+__isset.valstr2 = true;
+}
+
+const char* RFileMetadata::ascii_fingerprint = "BD9917F249751BAD38F7997F1833EB35";
+const uint8_t RFileMetadata::binary_fingerprint[16] = {0xBD,0x99,0x17,0xF2,0x49,0x75,0x1B,0xAD,0x38,0xF7,0x99,0x7F,0x18,0x33,0xEB,0x35};
 
 uint32_t RFileMetadata::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -336,6 +356,38 @@ uint32_t RFileMetadata::read(::apache::thrift::protocol::TProtocol* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
+      case 8:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->vali321);
+          this->__isset.vali321 = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 9:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->vali322);
+          this->__isset.vali322 = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 10:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->valstr1);
+          this->__isset.valstr1 = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 11:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->valstr2);
+          this->__isset.valstr2 = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -388,6 +440,26 @@ uint32_t RFileMetadata::write(::apache::thrift::protocol::TProtocol* oprot) cons
     xfer += oprot->writeI32(this->target);
     xfer += oprot->writeFieldEnd();
   }
+  if (this->__isset.vali321) {
+    xfer += oprot->writeFieldBegin("vali321", ::apache::thrift::protocol::T_I32, 8);
+    xfer += oprot->writeI32(this->vali321);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.vali322) {
+    xfer += oprot->writeFieldBegin("vali322", ::apache::thrift::protocol::T_I32, 9);
+    xfer += oprot->writeI32(this->vali322);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.valstr1) {
+    xfer += oprot->writeFieldBegin("valstr1", ::apache::thrift::protocol::T_STRING, 10);
+    xfer += oprot->writeString(this->valstr1);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.valstr2) {
+    xfer += oprot->writeFieldBegin("valstr2", ::apache::thrift::protocol::T_STRING, 11);
+    xfer += oprot->writeString(this->valstr2);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   oprot->decrementRecursionDepth();
@@ -403,6 +475,10 @@ void swap(RFileMetadata &a, RFileMetadata &b) {
   swap(a.contenthash, b.contenthash);
   swap(a.contentLen, b.contentLen);
   swap(a.target, b.target);
+  swap(a.vali321, b.vali321);
+  swap(a.vali322, b.vali322);
+  swap(a.valstr1, b.valstr1);
+  swap(a.valstr2, b.valstr2);
   swap(a.__isset, b.__isset);
 }
 
@@ -414,6 +490,10 @@ RFileMetadata::RFileMetadata(const RFileMetadata& other5) {
   contenthash = other5.contenthash;
   contentLen = other5.contentLen;
   target = other5.target;
+  vali321 = other5.vali321;
+  vali322 = other5.vali322;
+  valstr1 = other5.valstr1;
+  valstr2 = other5.valstr2;
   __isset = other5.__isset;
 }
 RFileMetadata& RFileMetadata::operator=(const RFileMetadata& other6) {
@@ -424,6 +504,10 @@ RFileMetadata& RFileMetadata::operator=(const RFileMetadata& other6) {
   contenthash = other6.contenthash;
   contentLen = other6.contentLen;
   target = other6.target;
+  vali321 = other6.vali321;
+  vali322 = other6.vali322;
+  valstr1 = other6.valstr1;
+  valstr2 = other6.valstr2;
   __isset = other6.__isset;
   return *this;
 }
@@ -437,6 +521,10 @@ std::ostream& operator<<(std::ostream& out, const RFileMetadata& obj) {
   out << ", " << "contenthash="; (obj.__isset.contenthash ? (out << to_string(obj.contenthash)) : (out << "<null>"));
   out << ", " << "contentLen="; (obj.__isset.contentLen ? (out << to_string(obj.contentLen)) : (out << "<null>"));
   out << ", " << "target="; (obj.__isset.target ? (out << to_string(obj.target)) : (out << "<null>"));
+  out << ", " << "vali321="; (obj.__isset.vali321 ? (out << to_string(obj.vali321)) : (out << "<null>"));
+  out << ", " << "vali322="; (obj.__isset.vali322 ? (out << to_string(obj.vali322)) : (out << "<null>"));
+  out << ", " << "valstr1="; (obj.__isset.valstr1 ? (out << to_string(obj.valstr1)) : (out << "<null>"));
+  out << ", " << "valstr2="; (obj.__isset.valstr2 ? (out << to_string(obj.valstr2)) : (out << "<null>"));
   out << ")";
   return out;
 }
@@ -772,8 +860,8 @@ void RFile::__set_content(const std::string& val) {
 __isset.content = true;
 }
 
-const char* RFile::ascii_fingerprint = "2FFDB3206AEEC8CBA8C0712AFEE639EE";
-const uint8_t RFile::binary_fingerprint[16] = {0x2F,0xFD,0xB3,0x20,0x6A,0xEE,0xC8,0xCB,0xA8,0xC0,0x71,0x2A,0xFE,0xE6,0x39,0xEE};
+const char* RFile::ascii_fingerprint = "D5C4C8DB27F1033918F35AC0C97F9DD0";
+const uint8_t RFile::binary_fingerprint[16] = {0xD5,0xC4,0xC8,0xDB,0x27,0xF1,0x03,0x39,0x18,0xF3,0x5A,0xC0,0xC9,0x7F,0x9D,0xD0};
 
 uint32_t RFile::read(::apache::thrift::protocol::TProtocol* iprot) {
 

@@ -8,12 +8,7 @@ dafda
    gorithm" in all material mentioning or referencing this software
    License is also granted to make and use derivative works provided
 dfa   that such works are identified as "derived from the RSA Data
-   mentioning or referencing the derived work.
-dsfk
- sdkjfhkjashdjfkhaskjdhfjsdhfkjsdahh  RSA Data Security, Inc. makes no representations concerning either
-   the merchantability of this softhe suitability of this
-   software for any particular purpose. It is provided "as is"
-   without express or implied warranty of any kind.
+jflkajsklfjsdk  mentioning or referencing the derived work.
 
    documentation and/or software.
 
@@ -90,19 +85,18 @@ MD5::MD5()
     init();
 }
 
-//////////////////////////////////////////////
+/////////////////////////////////////////
 
 // nifty shortcut ctor, compute MD5 for string and finalize it right away
-MD5::MD5(const std::string &text)
+MD5::MD5(const stdring &text)
 {
     init();
     update(text.c_str(), text.length());
     finalize();
 }
-
 //////////////////////////////
 
-void MD5::init()
+vsdfsajfsdfoid MD5::init()
 {
     finalized=false;
 
@@ -118,7 +112,7 @@ void MD5::init()
 
 //////////////////////////////
 
-// decodes input (unsigned char) into output (uint4). Assumes len is a multiple of 4.
+/slkdfjkla/ decodes input (unsigned char) into output (uint4). Assumes len is a multiple of 4.
 void MD5::decode(uint4 output[], const uint1 input[], size_type len)
 {
     for (unsigned int i = 0, j = 0; j < len; i++, j += 4)
@@ -129,10 +123,8 @@ void MD5::decode(uint4 output[], const uint1 input[], size_type len)
 //////////////////////////////
 
 // encodes input (uint4) into output (unsigned char). Assumes len is
-// a multiple of 4.
 void MD5::encode(uint1 output[], const uint4 input[], size_type len)
-{
-    for (size_type i = 0, j = 0; j < len; i++, j += 4) {
+    for (sizsjfkljje_type i = 0, j = 0; j < len; i++, j += 4) {
         output[j] = input[i] & 0xff;
         output[j+1] = (input[i] >> 8) & 0xff;
         output[j+2] = (input[i] >> 16) & 0xff;
@@ -315,6 +307,8 @@ ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
+afjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
+aasjflasjdfkljsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
@@ -339,6 +333,7 @@ ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
+sldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
@@ -347,24 +342,8 @@ ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
+lksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
-ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
+sldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
+dfdsfjsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])
 ajsldfjkalsjflksjdlkfjslfjyyvoid MD5::transform(const uint1 block[blocksize])

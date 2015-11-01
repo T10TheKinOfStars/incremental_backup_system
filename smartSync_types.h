@@ -130,7 +130,7 @@ class StatusReport {
 void swap(StatusReport &a, StatusReport &b);
 
 typedef struct _RFileMetadata__isset {
-  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false), contentLen(false), target(false) {}
+  _RFileMetadata__isset() : filename(false), created(false), updated(false), version(false), contenthash(false), contentLen(false), target(false), vali321(false), vali322(false), valstr1(false), valstr2(false) {}
   bool filename :1;
   bool created :1;
   bool updated :1;
@@ -138,17 +138,21 @@ typedef struct _RFileMetadata__isset {
   bool contenthash :1;
   bool contentLen :1;
   bool target :1;
+  bool vali321 :1;
+  bool vali322 :1;
+  bool valstr1 :1;
+  bool valstr2 :1;
 } _RFileMetadata__isset;
 
 class RFileMetadata {
  public:
 
-  static const char* ascii_fingerprint; // = "DBB8948E4D873A586EB24FE4EC7147A0";
-  static const uint8_t binary_fingerprint[16]; // = {0xDB,0xB8,0x94,0x8E,0x4D,0x87,0x3A,0x58,0x6E,0xB2,0x4F,0xE4,0xEC,0x71,0x47,0xA0};
+  static const char* ascii_fingerprint; // = "BD9917F249751BAD38F7997F1833EB35";
+  static const uint8_t binary_fingerprint[16]; // = {0xBD,0x99,0x17,0xF2,0x49,0x75,0x1B,0xAD,0x38,0xF7,0x99,0x7F,0x18,0x33,0xEB,0x35};
 
   RFileMetadata(const RFileMetadata&);
   RFileMetadata& operator=(const RFileMetadata&);
-  RFileMetadata() : filename(), created(), updated(), version(0), contenthash(), contentLen(0), target(0) {
+  RFileMetadata() : filename(), created(), updated(), version(0), contenthash(), contentLen(0), target(0), vali321(0), vali322(0), valstr1(), valstr2() {
   }
 
   virtual ~RFileMetadata() throw();
@@ -159,6 +163,10 @@ class RFileMetadata {
   std::string contenthash;
   int32_t contentLen;
   int32_t target;
+  int32_t vali321;
+  int32_t vali322;
+  std::string valstr1;
+  std::string valstr2;
 
   _RFileMetadata__isset __isset;
 
@@ -175,6 +183,14 @@ class RFileMetadata {
   void __set_contentLen(const int32_t val);
 
   void __set_target(const int32_t val);
+
+  void __set_vali321(const int32_t val);
+
+  void __set_vali322(const int32_t val);
+
+  void __set_valstr1(const std::string& val);
+
+  void __set_valstr2(const std::string& val);
 
   bool operator == (const RFileMetadata & rhs) const
   {
@@ -205,6 +221,22 @@ class RFileMetadata {
     if (__isset.target != rhs.__isset.target)
       return false;
     else if (__isset.target && !(target == rhs.target))
+      return false;
+    if (__isset.vali321 != rhs.__isset.vali321)
+      return false;
+    else if (__isset.vali321 && !(vali321 == rhs.vali321))
+      return false;
+    if (__isset.vali322 != rhs.__isset.vali322)
+      return false;
+    else if (__isset.vali322 && !(vali322 == rhs.vali322))
+      return false;
+    if (__isset.valstr1 != rhs.__isset.valstr1)
+      return false;
+    else if (__isset.valstr1 && !(valstr1 == rhs.valstr1))
+      return false;
+    if (__isset.valstr2 != rhs.__isset.valstr2)
+      return false;
+    else if (__isset.valstr2 && !(valstr2 == rhs.valstr2))
       return false;
     return true;
   }
@@ -369,8 +401,8 @@ typedef struct _RFile__isset {
 class RFile {
  public:
 
-  static const char* ascii_fingerprint; // = "2FFDB3206AEEC8CBA8C0712AFEE639EE";
-  static const uint8_t binary_fingerprint[16]; // = {0x2F,0xFD,0xB3,0x20,0x6A,0xEE,0xC8,0xCB,0xA8,0xC0,0x71,0x2A,0xFE,0xE6,0x39,0xEE};
+  static const char* ascii_fingerprint; // = "D5C4C8DB27F1033918F35AC0C97F9DD0";
+  static const uint8_t binary_fingerprint[16]; // = {0xD5,0xC4,0xC8,0xDB,0x27,0xF1,0x03,0x39,0x18,0xF3,0x5A,0xC0,0xC9,0x7F,0x9D,0xD0};
 
   RFile(const RFile&);
   RFile& operator=(const RFile&);

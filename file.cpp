@@ -2,9 +2,6 @@
 
 using namespace std;
 
-std::mutex filemtx;
-std::unordered_map<std::string,int> filestatus;
-
 FileWorker::~FileWorker() {
     path = "";
     blocksize = 0;
@@ -154,12 +151,20 @@ bool FileWorker::updateFile(vector<Filedes> newdes) {
                 ofs<<file[newdes[i].block];
             }
         }
-        filemtx.lock();
-        dprintf("Before change filestaus value, [%s]'s status is %d\n",filename.c_str(),filestatus[filename]);
-        filestatus[filename] = 0;
-        dprintf("After update, file [%s]'s file status is %d\n",filename.c_str(),filestatus[filename]);
-        filemtx.unlock();
         ofs.close();
+        //update modify time
+        struct stat st;
+        time_t t;
+        char timebuf[80];
+        struct tm lt;
+        if (stat(path.c_str(),&st) != -1) {
+            t = st.st_mtime;
+            localtime_r(&t,&lt);
+            strftime(timebuf,80,"%Y%m%d%H%M%S",&lt);
+            dprintf("time is %s\n",timebuf);
+        }
+        filemap[filename].updated = timebuf;
+        ++(filemap[filename].version);
     } else {
         cerr<<"open file error"<<endl;
         return false;
@@ -225,11 +230,6 @@ int FileWorker::writefile(const RFile &_rfile) {
             return -1;
         }
     }
-    filemtx.lock();
-    dprintf("Before change filestaus value, [%s]'s status is %d\n",filename.c_str(),filestatus[filename]);
-    filestatus[filename] = 0;
-    dprintf("After writefile, file %s's file status is %d\n",filename.c_str(),filestatus[filename]);
-    filemtx.unlock();
 
     return 0;
         /* when do update, can review this
@@ -249,4 +249,8 @@ int FileWorker::writefile(const RFile &_rfile) {
 
 NameDataMap FileWorker::getMap() {
     return filemap;
+}
+
+string FileWorker::getFilename() {
+    return path.substr(path.find_last_of('/')+1);
 }

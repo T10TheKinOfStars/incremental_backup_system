@@ -26,6 +26,10 @@ struct RFileMetadata {
     5: optional string contenthash;
     6: optional i32 contentLen;
     7: optional i32 target;
+    8: optional i32 vali321;
+    9: optional i32 vali322;
+    10: optional string valstr1;
+    11: optional string valstr2;
 }
 
 struct Filedes {
@@ -57,16 +61,16 @@ service SmartSync {
     StatusReport writeFile2Server(1:RFile rFile)
         throws (1: SystemException systemException),
 
-    string getFileFromServer(1:string fName)
+    string getFileFromServer(1:string fName, 2: i32 clientID)
         throws (1: SystemException systemException),
 
-    list<Filedes> updateLocal(1: list<Filechk> chks)
+    list<Filedes> updateLocal(1: list<Filechk> chks, 2: i32 clientID)
         throws (1: SystemException systemException),
 
-    StatusReport updateServer(1: list<Filedes> des)
+    StatusReport updateServer(1: list<Filedes> des, 2: i32 clientID)
         throws (1: SystemException systemException),
 
-    list<Filechk> request()
+    list<Filechk> request(1: i32 clientID)
         throws (1: SystemException systemException),
 
     StatusReport checkFile(1: RFileMetadata meta)

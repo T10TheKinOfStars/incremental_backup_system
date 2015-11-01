@@ -35,8 +35,9 @@ static ChksumWorker *chkworker = NULL;
 static Package *pkgworker = NULL;
 static SearchWorker *searchworker = NULL;
 
-extern std::mutex filemtx;
-extern std::unordered_map<std::string,int> filestatus;
+std::mutex mtx;
+std::unordered_map<std::string,int> filestatus;
+int currclient = -1;
 
 class SmartSyncHandler : virtual public SmartSyncIf {
  public:
@@ -46,23 +47,38 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void writeFile2Server(StatusReport& _return, const RFile& rFile) {
     // Your implementation goes here
-    dprintf("writeFile\n");
+    dprintf("---------------------------writeFile-----------------------------------\n");
+
+    mtx.lock();
+    currclient = rFile.meta.target;
+    mtx.unlock();
+
     if (fworker->writefile(rFile) != -1) {
         _return.__set_status(Status::SUCCESS);
     } else {
         _return.__set_status(Status::FAIL);
     }
+
+    mtx.lock();
+    dprintf("set currclient to none\n");
+    currclient = -1;
+    dprintf("Before change filestaus value, [%s]'s status is %d\n",rFile.meta.filename.c_str(),filestatus[rFile.meta.filename]);
+    filestatus[rFile.meta.filename] = 0;
+    dprintf("After writefile, file %s's file status is %d\n",rFile.meta.filename.c_str(),filestatus[rFile.meta.filename]);
+    mtx.unlock();
+
+    dprintf("=========================end writeFile================================\n");
   }
 
-  void getFileFromServer(std::string& _return, const std::string& fName) {
+  void getFileFromServer(std::string& _return, const std::string& fName, const int32_t clientID) {
     // Your implementation goes here
     dprintf("getFileFromServer\n");
   }
 
-  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks, const int32_t clientID) {
     // Your implementation goes here
-    dprintf("updateLocal\n");
-    
+    //update file on client side
+    dprintf("----------------------------updateLocal-----------------------------------\n");
     if ((int)chks.size() * 1000000 < fworker->getFileSize()) {
         _return = fworker->getFiledes();     
     } else {
@@ -72,21 +88,41 @@ class SmartSyncHandler : virtual public SmartSyncIf {
         searchworker->find();
         _return = pkgworker->getFiledes(); 
     }
+    dprintf("==============================end updateLocal=============================\n");
   }
 
-  void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des, const int32_t clientID) {
     // Your implementation goes here
-    dprintf("updateServer\n");
+    dprintf("-------------------------------updateServer-------------------------------\n");
+    dprintf("currclient is %d\n",currclient);
+    //here I dont set currclient, because this operation is bind with request operation
     if (fworker->updateFile(des)) {
         _return.__set_status(Status::SUCCESS);
     } else {
         _return.__set_status(Status::FAIL);
     }
+    string filename = fworker->getFilename();
+    
+    mtx.lock();
+    dprintf("set currclient to -1\n");
+    currclient = -1;
+    dprintf("Before change filestaus value, [%s]'s status is %d\n",filename.c_str(),filestatus[filename]);
+    filestatus[filename] = 0;
+    dprintf("After update, file [%s]'s file status is %d\n",filename.c_str(),filestatus[filename]);
+    mtx.unlock();
+
+    dprintf("=================================end updateServer=========================\n");
   }
 
-  void request(std::vector<Filechk> & _return) {
+  void request(std::vector<Filechk> & _return, const int32_t clientID) {
     // Your implementation goes here
-    dprintf("request filechecks list\n");
+    dprintf("------------------------------request filechecks list---------------------\n");
+
+    mtx.lock();
+    dprintf("set currclient to %d\n",clientID);
+    currclient = clientID;
+    mtx.unlock();
+
     vector<string> file;
     ifstream ifs(fworker->getPath().c_str());
     double filesize = fworker->getFileSize();
@@ -128,6 +164,8 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
         _return.push_back(temp);
     }
+    //here I dont set currclient to -1, because this operation is bind with request operation
+    dprintf("=============================end request===============================\n");
     /*
     cout<<"in request show _return "<<endl;
     for (int i = 0; i < (int)_return.size();++i) {
@@ -144,39 +182,34 @@ class SmartSyncHandler : virtual public SmartSyncIf {
 
   void checkFile(StatusReport& _return, const RFileMetadata& meta) {
     // Your implementation goes here
-    std::string filename = meta.filename;
-    dprintf("checkFile %s's status is %d\n",meta.filename.c_str(),filestatus[meta.filename]);
-    //check file status, if it exists and is modifying by other client, if will do nothing
-    filemtx.lock();
-    dprintf("\nProcessing %s ..........\n\n",filename.c_str());
-    if (filestatus.find(meta.filename) == filestatus.end()) {
-        dprintf("file doesnt exist, filestatus[%s] set to 1\n",filename.c_str());
-        filestatus[filename] = 1;
-    } else {
-        dprintf("[%s]'s filestatus is %d \n",filename.c_str(),filestatus[filename]);
-        if (filestatus[filename] == 1) {
-            dprintf("file is processing, other clients cannot access to check file\n");
-            filemtx.unlock();
-            _return.__set_status(Status::BLOCK);
-            return;    
+    if (currclient != meta.target) {
+        mtx.lock();
+        dprintf("----------------In checkFile--------------\n");
+        dprintf("client %d access the server\n",meta.target);
+        std::string filename = meta.filename;
+        if (filestatus.find(filename) == filestatus.end()) {
+            dprintf("file doesnt exist, filestatus[%s] set to 1 means start write from client to server\n",filename.c_str());
+            filestatus[filename] = 1;
+            currclient = meta.target;
+            dprintf("Set currclient to %d\n",currclient);
+            mtx.unlock();
         } else {
-            if (filestatus[filename] != 0) {
+            mtx.unlock();
+            dprintf("file [%s]'s status is %d and current client is %d\n",filename.c_str(),filestatus[filename],currclient); 
+            if (filestatus[filename] != 0 && currclient == meta.target) {
                 //means server is still doing work, client cannot do other things
-                dprintf("Server is updating file, the same client cannot do anything to the same file\n");
+                dprintf("Server is updating file [%s], the same client %d cannot do anything to the same file\n",filename.c_str(),currclient);
                 _return.__set_status(Status::BLOCK);
-                filemtx.unlock();
                 return;
-            }
+            } 
         }
     }
-    filemtx.unlock();
     //clean pkgworker
     pkgworker->clean();
     fworker->setPath("./files/"+meta.filename);
     //struct stat st;
     NameDataMap mymap = fworker->getMap();
     Timestamp t = mymap[meta.filename].updated;
-    //dprintf("Time of file on server is %s\nTime of send from client is %s\n",t.c_str(),meta.updated.c_str());
     //string filename = meta.filename;
     if (access(fworker->getPath().c_str(),F_OK) == 0) {
         //means exist
@@ -198,34 +231,38 @@ class SmartSyncHandler : virtual public SmartSyncIf {
             string fmd5 = md5(buf);
             delete []buf;
             ifs.close();
-            //cout<<(fmd5 == meta.contenthash)<<endl;
+            
+            mtx.lock();
             if (fmd5 == meta.contenthash) {
                 //it means the same
                 dprintf("same\n");
+                filestatus[meta.filename] = 0;
+                currclient = -1;
                 _return.__set_status(Status::SAME);
             } else {
-                filemtx.lock();
                 if (t < meta.updated) {
                     //client newer
                     dprintf("client is newer, the server needs update\n");
                     filestatus[meta.filename] = 2;
+                    currclient = meta.target;
                     _return.__set_status(Status::NEWER);
                 } else if (t > meta.updated) {
                     //server newer
                     dprintf("client is older, client needs update\n");
                     filestatus[meta.filename] = 3;
+                    currclient = meta.target;
                     _return.__set_status(Status::OLDER);
                 } else {
                     ;
                 }
-                filemtx.unlock(); 
             }
+            mtx.unlock();
         }
     } else {
-        //not exist
+        dprintf("file not exist\n");
         _return.__set_status(Status::NOEXIST);
     }
-    dprintf("end check\n");
+    dprintf("==========================end check================================\n\n");
   }
 
 };

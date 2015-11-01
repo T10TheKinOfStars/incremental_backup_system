@@ -16,10 +16,10 @@ class SmartSyncIf {
  public:
   virtual ~SmartSyncIf() {}
   virtual void writeFile2Server(StatusReport& _return, const RFile& rFile) = 0;
-  virtual void getFileFromServer(std::string& _return, const std::string& fName) = 0;
-  virtual void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) = 0;
-  virtual void updateServer(StatusReport& _return, const std::vector<Filedes> & des) = 0;
-  virtual void request(std::vector<Filechk> & _return) = 0;
+  virtual void getFileFromServer(std::string& _return, const std::string& fName, const int32_t clientID) = 0;
+  virtual void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks, const int32_t clientID) = 0;
+  virtual void updateServer(StatusReport& _return, const std::vector<Filedes> & des, const int32_t clientID) = 0;
+  virtual void request(std::vector<Filechk> & _return, const int32_t clientID) = 0;
   virtual void checkFile(StatusReport& _return, const RFileMetadata& meta) = 0;
 };
 
@@ -53,16 +53,16 @@ class SmartSyncNull : virtual public SmartSyncIf {
   void writeFile2Server(StatusReport& /* _return */, const RFile& /* rFile */) {
     return;
   }
-  void getFileFromServer(std::string& /* _return */, const std::string& /* fName */) {
+  void getFileFromServer(std::string& /* _return */, const std::string& /* fName */, const int32_t /* clientID */) {
     return;
   }
-  void updateLocal(std::vector<Filedes> & /* _return */, const std::vector<Filechk> & /* chks */) {
+  void updateLocal(std::vector<Filedes> & /* _return */, const std::vector<Filechk> & /* chks */, const int32_t /* clientID */) {
     return;
   }
-  void updateServer(StatusReport& /* _return */, const std::vector<Filedes> & /* des */) {
+  void updateServer(StatusReport& /* _return */, const std::vector<Filedes> & /* des */, const int32_t /* clientID */) {
     return;
   }
-  void request(std::vector<Filechk> & /* _return */) {
+  void request(std::vector<Filechk> & /* _return */, const int32_t /* clientID */) {
     return;
   }
   void checkFile(StatusReport& /* _return */, const RFileMetadata& /* meta */) {
@@ -78,8 +78,8 @@ typedef struct _SmartSync_writeFile2Server_args__isset {
 class SmartSync_writeFile2Server_args {
  public:
 
-  static const char* ascii_fingerprint; // = "C343E20498A2CE58B964446FB57A29F8";
-  static const uint8_t binary_fingerprint[16]; // = {0xC3,0x43,0xE2,0x04,0x98,0xA2,0xCE,0x58,0xB9,0x64,0x44,0x6F,0xB5,0x7A,0x29,0xF8};
+  static const char* ascii_fingerprint; // = "53DB09C95726CBDDEEA904173C724C8C";
+  static const uint8_t binary_fingerprint[16]; // = {0x53,0xDB,0x09,0xC9,0x57,0x26,0xCB,0xDD,0xEE,0xA9,0x04,0x17,0x3C,0x72,0x4C,0x8C};
 
   SmartSync_writeFile2Server_args(const SmartSync_writeFile2Server_args&);
   SmartSync_writeFile2Server_args& operator=(const SmartSync_writeFile2Server_args&);
@@ -115,8 +115,8 @@ class SmartSync_writeFile2Server_args {
 class SmartSync_writeFile2Server_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "C343E20498A2CE58B964446FB57A29F8";
-  static const uint8_t binary_fingerprint[16]; // = {0xC3,0x43,0xE2,0x04,0x98,0xA2,0xCE,0x58,0xB9,0x64,0x44,0x6F,0xB5,0x7A,0x29,0xF8};
+  static const char* ascii_fingerprint; // = "53DB09C95726CBDDEEA904173C724C8C";
+  static const uint8_t binary_fingerprint[16]; // = {0x53,0xDB,0x09,0xC9,0x57,0x26,0xCB,0xDD,0xEE,0xA9,0x04,0x17,0x3C,0x72,0x4C,0x8C};
 
 
   virtual ~SmartSync_writeFile2Server_pargs() throw();
@@ -199,31 +199,37 @@ class SmartSync_writeFile2Server_presult {
 };
 
 typedef struct _SmartSync_getFileFromServer_args__isset {
-  _SmartSync_getFileFromServer_args__isset() : fName(false) {}
+  _SmartSync_getFileFromServer_args__isset() : fName(false), clientID(false) {}
   bool fName :1;
+  bool clientID :1;
 } _SmartSync_getFileFromServer_args__isset;
 
 class SmartSync_getFileFromServer_args {
  public:
 
-  static const char* ascii_fingerprint; // = "EFB929595D312AC8F305D5A794CFEDA1";
-  static const uint8_t binary_fingerprint[16]; // = {0xEF,0xB9,0x29,0x59,0x5D,0x31,0x2A,0xC8,0xF3,0x05,0xD5,0xA7,0x94,0xCF,0xED,0xA1};
+  static const char* ascii_fingerprint; // = "EEBC915CE44901401D881E6091423036";
+  static const uint8_t binary_fingerprint[16]; // = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
 
   SmartSync_getFileFromServer_args(const SmartSync_getFileFromServer_args&);
   SmartSync_getFileFromServer_args& operator=(const SmartSync_getFileFromServer_args&);
-  SmartSync_getFileFromServer_args() : fName() {
+  SmartSync_getFileFromServer_args() : fName(), clientID(0) {
   }
 
   virtual ~SmartSync_getFileFromServer_args() throw();
   std::string fName;
+  int32_t clientID;
 
   _SmartSync_getFileFromServer_args__isset __isset;
 
   void __set_fName(const std::string& val);
 
+  void __set_clientID(const int32_t val);
+
   bool operator == (const SmartSync_getFileFromServer_args & rhs) const
   {
     if (!(fName == rhs.fName))
+      return false;
+    if (!(clientID == rhs.clientID))
       return false;
     return true;
   }
@@ -243,12 +249,13 @@ class SmartSync_getFileFromServer_args {
 class SmartSync_getFileFromServer_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "EFB929595D312AC8F305D5A794CFEDA1";
-  static const uint8_t binary_fingerprint[16]; // = {0xEF,0xB9,0x29,0x59,0x5D,0x31,0x2A,0xC8,0xF3,0x05,0xD5,0xA7,0x94,0xCF,0xED,0xA1};
+  static const char* ascii_fingerprint; // = "EEBC915CE44901401D881E6091423036";
+  static const uint8_t binary_fingerprint[16]; // = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
 
 
   virtual ~SmartSync_getFileFromServer_pargs() throw();
   const std::string* fName;
+  const int32_t* clientID;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -327,31 +334,37 @@ class SmartSync_getFileFromServer_presult {
 };
 
 typedef struct _SmartSync_updateLocal_args__isset {
-  _SmartSync_updateLocal_args__isset() : chks(false) {}
+  _SmartSync_updateLocal_args__isset() : chks(false), clientID(false) {}
   bool chks :1;
+  bool clientID :1;
 } _SmartSync_updateLocal_args__isset;
 
 class SmartSync_updateLocal_args {
  public:
 
-  static const char* ascii_fingerprint; // = "19B1BAC76D5A4185FBFD1EBC175F219E";
-  static const uint8_t binary_fingerprint[16]; // = {0x19,0xB1,0xBA,0xC7,0x6D,0x5A,0x41,0x85,0xFB,0xFD,0x1E,0xBC,0x17,0x5F,0x21,0x9E};
+  static const char* ascii_fingerprint; // = "29E0240F1D46389C1DF4554671ABE117";
+  static const uint8_t binary_fingerprint[16]; // = {0x29,0xE0,0x24,0x0F,0x1D,0x46,0x38,0x9C,0x1D,0xF4,0x55,0x46,0x71,0xAB,0xE1,0x17};
 
   SmartSync_updateLocal_args(const SmartSync_updateLocal_args&);
   SmartSync_updateLocal_args& operator=(const SmartSync_updateLocal_args&);
-  SmartSync_updateLocal_args() {
+  SmartSync_updateLocal_args() : clientID(0) {
   }
 
   virtual ~SmartSync_updateLocal_args() throw();
   std::vector<Filechk>  chks;
+  int32_t clientID;
 
   _SmartSync_updateLocal_args__isset __isset;
 
   void __set_chks(const std::vector<Filechk> & val);
 
+  void __set_clientID(const int32_t val);
+
   bool operator == (const SmartSync_updateLocal_args & rhs) const
   {
     if (!(chks == rhs.chks))
+      return false;
+    if (!(clientID == rhs.clientID))
       return false;
     return true;
   }
@@ -371,12 +384,13 @@ class SmartSync_updateLocal_args {
 class SmartSync_updateLocal_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "19B1BAC76D5A4185FBFD1EBC175F219E";
-  static const uint8_t binary_fingerprint[16]; // = {0x19,0xB1,0xBA,0xC7,0x6D,0x5A,0x41,0x85,0xFB,0xFD,0x1E,0xBC,0x17,0x5F,0x21,0x9E};
+  static const char* ascii_fingerprint; // = "29E0240F1D46389C1DF4554671ABE117";
+  static const uint8_t binary_fingerprint[16]; // = {0x29,0xE0,0x24,0x0F,0x1D,0x46,0x38,0x9C,0x1D,0xF4,0x55,0x46,0x71,0xAB,0xE1,0x17};
 
 
   virtual ~SmartSync_updateLocal_pargs() throw();
   const std::vector<Filechk> * chks;
+  const int32_t* clientID;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -455,31 +469,37 @@ class SmartSync_updateLocal_presult {
 };
 
 typedef struct _SmartSync_updateServer_args__isset {
-  _SmartSync_updateServer_args__isset() : des(false) {}
+  _SmartSync_updateServer_args__isset() : des(false), clientID(false) {}
   bool des :1;
+  bool clientID :1;
 } _SmartSync_updateServer_args__isset;
 
 class SmartSync_updateServer_args {
  public:
 
-  static const char* ascii_fingerprint; // = "B2B8C604CBD25F8DA59BB142404EDAE2";
-  static const uint8_t binary_fingerprint[16]; // = {0xB2,0xB8,0xC6,0x04,0xCB,0xD2,0x5F,0x8D,0xA5,0x9B,0xB1,0x42,0x40,0x4E,0xDA,0xE2};
+  static const char* ascii_fingerprint; // = "25017F0725F48F04957FB3B7312A64AC";
+  static const uint8_t binary_fingerprint[16]; // = {0x25,0x01,0x7F,0x07,0x25,0xF4,0x8F,0x04,0x95,0x7F,0xB3,0xB7,0x31,0x2A,0x64,0xAC};
 
   SmartSync_updateServer_args(const SmartSync_updateServer_args&);
   SmartSync_updateServer_args& operator=(const SmartSync_updateServer_args&);
-  SmartSync_updateServer_args() {
+  SmartSync_updateServer_args() : clientID(0) {
   }
 
   virtual ~SmartSync_updateServer_args() throw();
   std::vector<Filedes>  des;
+  int32_t clientID;
 
   _SmartSync_updateServer_args__isset __isset;
 
   void __set_des(const std::vector<Filedes> & val);
 
+  void __set_clientID(const int32_t val);
+
   bool operator == (const SmartSync_updateServer_args & rhs) const
   {
     if (!(des == rhs.des))
+      return false;
+    if (!(clientID == rhs.clientID))
       return false;
     return true;
   }
@@ -499,12 +519,13 @@ class SmartSync_updateServer_args {
 class SmartSync_updateServer_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "B2B8C604CBD25F8DA59BB142404EDAE2";
-  static const uint8_t binary_fingerprint[16]; // = {0xB2,0xB8,0xC6,0x04,0xCB,0xD2,0x5F,0x8D,0xA5,0x9B,0xB1,0x42,0x40,0x4E,0xDA,0xE2};
+  static const char* ascii_fingerprint; // = "25017F0725F48F04957FB3B7312A64AC";
+  static const uint8_t binary_fingerprint[16]; // = {0x25,0x01,0x7F,0x07,0x25,0xF4,0x8F,0x04,0x95,0x7F,0xB3,0xB7,0x31,0x2A,0x64,0xAC};
 
 
   virtual ~SmartSync_updateServer_pargs() throw();
   const std::vector<Filedes> * des;
+  const int32_t* clientID;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -582,22 +603,33 @@ class SmartSync_updateServer_presult {
   friend std::ostream& operator<<(std::ostream& out, const SmartSync_updateServer_presult& obj);
 };
 
+typedef struct _SmartSync_request_args__isset {
+  _SmartSync_request_args__isset() : clientID(false) {}
+  bool clientID :1;
+} _SmartSync_request_args__isset;
 
 class SmartSync_request_args {
  public:
 
-  static const char* ascii_fingerprint; // = "99914B932BD37A50B983C5E7C90AE93B";
-  static const uint8_t binary_fingerprint[16]; // = {0x99,0x91,0x4B,0x93,0x2B,0xD3,0x7A,0x50,0xB9,0x83,0xC5,0xE7,0xC9,0x0A,0xE9,0x3B};
+  static const char* ascii_fingerprint; // = "E86CACEB22240450EDCBEFC3A83970E4";
+  static const uint8_t binary_fingerprint[16]; // = {0xE8,0x6C,0xAC,0xEB,0x22,0x24,0x04,0x50,0xED,0xCB,0xEF,0xC3,0xA8,0x39,0x70,0xE4};
 
   SmartSync_request_args(const SmartSync_request_args&);
   SmartSync_request_args& operator=(const SmartSync_request_args&);
-  SmartSync_request_args() {
+  SmartSync_request_args() : clientID(0) {
   }
 
   virtual ~SmartSync_request_args() throw();
+  int32_t clientID;
 
-  bool operator == (const SmartSync_request_args & /* rhs */) const
+  _SmartSync_request_args__isset __isset;
+
+  void __set_clientID(const int32_t val);
+
+  bool operator == (const SmartSync_request_args & rhs) const
   {
+    if (!(clientID == rhs.clientID))
+      return false;
     return true;
   }
   bool operator != (const SmartSync_request_args &rhs) const {
@@ -616,11 +648,12 @@ class SmartSync_request_args {
 class SmartSync_request_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "99914B932BD37A50B983C5E7C90AE93B";
-  static const uint8_t binary_fingerprint[16]; // = {0x99,0x91,0x4B,0x93,0x2B,0xD3,0x7A,0x50,0xB9,0x83,0xC5,0xE7,0xC9,0x0A,0xE9,0x3B};
+  static const char* ascii_fingerprint; // = "E86CACEB22240450EDCBEFC3A83970E4";
+  static const uint8_t binary_fingerprint[16]; // = {0xE8,0x6C,0xAC,0xEB,0x22,0x24,0x04,0x50,0xED,0xCB,0xEF,0xC3,0xA8,0x39,0x70,0xE4};
 
 
   virtual ~SmartSync_request_pargs() throw();
+  const int32_t* clientID;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -706,8 +739,8 @@ typedef struct _SmartSync_checkFile_args__isset {
 class SmartSync_checkFile_args {
  public:
 
-  static const char* ascii_fingerprint; // = "DE3736C96009E4F517449047271FA906";
-  static const uint8_t binary_fingerprint[16]; // = {0xDE,0x37,0x36,0xC9,0x60,0x09,0xE4,0xF5,0x17,0x44,0x90,0x47,0x27,0x1F,0xA9,0x06};
+  static const char* ascii_fingerprint; // = "2028C2861AB995605D6AEBB25AA5C411";
+  static const uint8_t binary_fingerprint[16]; // = {0x20,0x28,0xC2,0x86,0x1A,0xB9,0x95,0x60,0x5D,0x6A,0xEB,0xB2,0x5A,0xA5,0xC4,0x11};
 
   SmartSync_checkFile_args(const SmartSync_checkFile_args&);
   SmartSync_checkFile_args& operator=(const SmartSync_checkFile_args&);
@@ -743,8 +776,8 @@ class SmartSync_checkFile_args {
 class SmartSync_checkFile_pargs {
  public:
 
-  static const char* ascii_fingerprint; // = "DE3736C96009E4F517449047271FA906";
-  static const uint8_t binary_fingerprint[16]; // = {0xDE,0x37,0x36,0xC9,0x60,0x09,0xE4,0xF5,0x17,0x44,0x90,0x47,0x27,0x1F,0xA9,0x06};
+  static const char* ascii_fingerprint; // = "2028C2861AB995605D6AEBB25AA5C411";
+  static const uint8_t binary_fingerprint[16]; // = {0x20,0x28,0xC2,0x86,0x1A,0xB9,0x95,0x60,0x5D,0x6A,0xEB,0xB2,0x5A,0xA5,0xC4,0x11};
 
 
   virtual ~SmartSync_checkFile_pargs() throw();
@@ -854,17 +887,17 @@ class SmartSyncClient : virtual public SmartSyncIf {
   void writeFile2Server(StatusReport& _return, const RFile& rFile);
   void send_writeFile2Server(const RFile& rFile);
   void recv_writeFile2Server(StatusReport& _return);
-  void getFileFromServer(std::string& _return, const std::string& fName);
-  void send_getFileFromServer(const std::string& fName);
+  void getFileFromServer(std::string& _return, const std::string& fName, const int32_t clientID);
+  void send_getFileFromServer(const std::string& fName, const int32_t clientID);
   void recv_getFileFromServer(std::string& _return);
-  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks);
-  void send_updateLocal(const std::vector<Filechk> & chks);
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks, const int32_t clientID);
+  void send_updateLocal(const std::vector<Filechk> & chks, const int32_t clientID);
   void recv_updateLocal(std::vector<Filedes> & _return);
-  void updateServer(StatusReport& _return, const std::vector<Filedes> & des);
-  void send_updateServer(const std::vector<Filedes> & des);
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des, const int32_t clientID);
+  void send_updateServer(const std::vector<Filedes> & des, const int32_t clientID);
   void recv_updateServer(StatusReport& _return);
-  void request(std::vector<Filechk> & _return);
-  void send_request();
+  void request(std::vector<Filechk> & _return, const int32_t clientID);
+  void send_request(const int32_t clientID);
   void recv_request(std::vector<Filechk> & _return);
   void checkFile(StatusReport& _return, const RFileMetadata& meta);
   void send_checkFile(const RFileMetadata& meta);
@@ -937,43 +970,43 @@ class SmartSyncMultiface : virtual public SmartSyncIf {
     return;
   }
 
-  void getFileFromServer(std::string& _return, const std::string& fName) {
+  void getFileFromServer(std::string& _return, const std::string& fName, const int32_t clientID) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->getFileFromServer(_return, fName);
+      ifaces_[i]->getFileFromServer(_return, fName, clientID);
     }
-    ifaces_[i]->getFileFromServer(_return, fName);
+    ifaces_[i]->getFileFromServer(_return, fName, clientID);
     return;
   }
 
-  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks) {
+  void updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks, const int32_t clientID) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->updateLocal(_return, chks);
+      ifaces_[i]->updateLocal(_return, chks, clientID);
     }
-    ifaces_[i]->updateLocal(_return, chks);
+    ifaces_[i]->updateLocal(_return, chks, clientID);
     return;
   }
 
-  void updateServer(StatusReport& _return, const std::vector<Filedes> & des) {
+  void updateServer(StatusReport& _return, const std::vector<Filedes> & des, const int32_t clientID) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->updateServer(_return, des);
+      ifaces_[i]->updateServer(_return, des, clientID);
     }
-    ifaces_[i]->updateServer(_return, des);
+    ifaces_[i]->updateServer(_return, des, clientID);
     return;
   }
 
-  void request(std::vector<Filechk> & _return) {
+  void request(std::vector<Filechk> & _return, const int32_t clientID) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->request(_return);
+      ifaces_[i]->request(_return, clientID);
     }
-    ifaces_[i]->request(_return);
+    ifaces_[i]->request(_return, clientID);
     return;
   }
 

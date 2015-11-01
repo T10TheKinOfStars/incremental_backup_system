@@ -247,6 +247,14 @@ uint32_t SmartSync_getFileFromServer_args::read(::apache::thrift::protocol::TPro
           xfer += iprot->skip(ftype);
         }
         break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->clientID);
+          this->__isset.clientID = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -268,6 +276,10 @@ uint32_t SmartSync_getFileFromServer_args::write(::apache::thrift::protocol::TPr
   xfer += oprot->writeString(this->fName);
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32(this->clientID);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   oprot->decrementRecursionDepth();
@@ -286,6 +298,10 @@ uint32_t SmartSync_getFileFromServer_pargs::write(::apache::thrift::protocol::TP
 
   xfer += oprot->writeFieldBegin("fName", ::apache::thrift::protocol::T_STRING, 1);
   xfer += oprot->writeString((*(this->fName)));
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32((*(this->clientID)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -465,6 +481,14 @@ uint32_t SmartSync_updateLocal_args::read(::apache::thrift::protocol::TProtocol*
           xfer += iprot->skip(ftype);
         }
         break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->clientID);
+          this->__isset.clientID = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -494,6 +518,10 @@ uint32_t SmartSync_updateLocal_args::write(::apache::thrift::protocol::TProtocol
   }
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32(this->clientID);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   oprot->decrementRecursionDepth();
@@ -520,6 +548,10 @@ uint32_t SmartSync_updateLocal_pargs::write(::apache::thrift::protocol::TProtoco
     }
     xfer += oprot->writeListEnd();
   }
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32((*(this->clientID)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -731,6 +763,14 @@ uint32_t SmartSync_updateServer_args::read(::apache::thrift::protocol::TProtocol
           xfer += iprot->skip(ftype);
         }
         break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->clientID);
+          this->__isset.clientID = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -760,6 +800,10 @@ uint32_t SmartSync_updateServer_args::write(::apache::thrift::protocol::TProtoco
   }
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32(this->clientID);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   oprot->decrementRecursionDepth();
@@ -786,6 +830,10 @@ uint32_t SmartSync_updateServer_pargs::write(::apache::thrift::protocol::TProtoc
     }
     xfer += oprot->writeListEnd();
   }
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32((*(this->clientID)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -943,7 +991,20 @@ uint32_t SmartSync_request_args::read(::apache::thrift::protocol::TProtocol* ipr
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->clientID);
+          this->__isset.clientID = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -956,6 +1017,10 @@ uint32_t SmartSync_request_args::write(::apache::thrift::protocol::TProtocol* op
   uint32_t xfer = 0;
   oprot->incrementRecursionDepth();
   xfer += oprot->writeStructBegin("SmartSync_request_args");
+
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 1);
+  xfer += oprot->writeI32(this->clientID);
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -972,6 +1037,10 @@ uint32_t SmartSync_request_pargs::write(::apache::thrift::protocol::TProtocol* o
   uint32_t xfer = 0;
   oprot->incrementRecursionDepth();
   xfer += oprot->writeStructBegin("SmartSync_request_pargs");
+
+  xfer += oprot->writeFieldBegin("clientID", ::apache::thrift::protocol::T_I32, 1);
+  xfer += oprot->writeI32((*(this->clientID)));
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -1404,19 +1473,20 @@ void SmartSyncClient::recv_writeFile2Server(StatusReport& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "writeFile2Server failed: unknown result");
 }
 
-void SmartSyncClient::getFileFromServer(std::string& _return, const std::string& fName)
+void SmartSyncClient::getFileFromServer(std::string& _return, const std::string& fName, const int32_t clientID)
 {
-  send_getFileFromServer(fName);
+  send_getFileFromServer(fName, clientID);
   recv_getFileFromServer(_return);
 }
 
-void SmartSyncClient::send_getFileFromServer(const std::string& fName)
+void SmartSyncClient::send_getFileFromServer(const std::string& fName, const int32_t clientID)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("getFileFromServer", ::apache::thrift::protocol::T_CALL, cseqid);
 
   SmartSync_getFileFromServer_pargs args;
   args.fName = &fName;
+  args.clientID = &clientID;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -1465,19 +1535,20 @@ void SmartSyncClient::recv_getFileFromServer(std::string& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getFileFromServer failed: unknown result");
 }
 
-void SmartSyncClient::updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks)
+void SmartSyncClient::updateLocal(std::vector<Filedes> & _return, const std::vector<Filechk> & chks, const int32_t clientID)
 {
-  send_updateLocal(chks);
+  send_updateLocal(chks, clientID);
   recv_updateLocal(_return);
 }
 
-void SmartSyncClient::send_updateLocal(const std::vector<Filechk> & chks)
+void SmartSyncClient::send_updateLocal(const std::vector<Filechk> & chks, const int32_t clientID)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("updateLocal", ::apache::thrift::protocol::T_CALL, cseqid);
 
   SmartSync_updateLocal_pargs args;
   args.chks = &chks;
+  args.clientID = &clientID;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -1526,19 +1597,20 @@ void SmartSyncClient::recv_updateLocal(std::vector<Filedes> & _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "updateLocal failed: unknown result");
 }
 
-void SmartSyncClient::updateServer(StatusReport& _return, const std::vector<Filedes> & des)
+void SmartSyncClient::updateServer(StatusReport& _return, const std::vector<Filedes> & des, const int32_t clientID)
 {
-  send_updateServer(des);
+  send_updateServer(des, clientID);
   recv_updateServer(_return);
 }
 
-void SmartSyncClient::send_updateServer(const std::vector<Filedes> & des)
+void SmartSyncClient::send_updateServer(const std::vector<Filedes> & des, const int32_t clientID)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("updateServer", ::apache::thrift::protocol::T_CALL, cseqid);
 
   SmartSync_updateServer_pargs args;
   args.des = &des;
+  args.clientID = &clientID;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -1587,18 +1659,19 @@ void SmartSyncClient::recv_updateServer(StatusReport& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "updateServer failed: unknown result");
 }
 
-void SmartSyncClient::request(std::vector<Filechk> & _return)
+void SmartSyncClient::request(std::vector<Filechk> & _return, const int32_t clientID)
 {
-  send_request();
+  send_request(clientID);
   recv_request(_return);
 }
 
-void SmartSyncClient::send_request()
+void SmartSyncClient::send_request(const int32_t clientID)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("request", ::apache::thrift::protocol::T_CALL, cseqid);
 
   SmartSync_request_pargs args;
+  args.clientID = &clientID;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -1807,7 +1880,7 @@ void SmartSyncProcessor::process_getFileFromServer(int32_t seqid, ::apache::thri
 
   SmartSync_getFileFromServer_result result;
   try {
-    iface_->getFileFromServer(result.success, args.fName);
+    iface_->getFileFromServer(result.success, args.fName, args.clientID);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;
@@ -1864,7 +1937,7 @@ void SmartSyncProcessor::process_updateLocal(int32_t seqid, ::apache::thrift::pr
 
   SmartSync_updateLocal_result result;
   try {
-    iface_->updateLocal(result.success, args.chks);
+    iface_->updateLocal(result.success, args.chks, args.clientID);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;
@@ -1921,7 +1994,7 @@ void SmartSyncProcessor::process_updateServer(int32_t seqid, ::apache::thrift::p
 
   SmartSync_updateServer_result result;
   try {
-    iface_->updateServer(result.success, args.des);
+    iface_->updateServer(result.success, args.des, args.clientID);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;
@@ -1978,7 +2051,7 @@ void SmartSyncProcessor::process_request(int32_t seqid, ::apache::thrift::protoc
 
   SmartSync_request_result result;
   try {
-    iface_->request(result.success);
+    iface_->request(result.success, args.clientID);
     result.__isset.success = true;
   } catch (SystemException &systemException) {
     result.systemException = systemException;

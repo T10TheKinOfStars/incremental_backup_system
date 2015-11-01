@@ -25,6 +25,7 @@ class FileWorker {
         ~FileWorker();
         void setPath(const string &str);
         string getPath();
+        string getFilename();
         vector<Filedes> getFiledes();
         string getWholeFile();
         void setFileSize(int val);
