@@ -26,8 +26,11 @@ smartSync_constants.h/cpp
 SmartSync.h/cpp
 smartSync_types.h/cpp
 
-You can run server as ./server 1024                             (1024 is blocksize, which can be set to other value. It should be the same for server and client)
-You can run client as ./client ip port 1024 --dir directoryname (1024 is blocksize, which can be set to other value. It should be the same for server and client)
+How to use:
+1 make
+2 ./initclient.sh
+3 run server as ./server 1024                             (1024 is blocksize, which can be set to other value. It should be the same for server and client)
+4 go to clients' directory and run client as ./client ip port 1024 --dir directoryname (1024 is blocksize, which can be set to other value. It should be the same for server and client)
 
 Once you run the server, the server will listen the requesets from clients.
 Once you run a client, it will automatically check all the files in directory that you given and compare them with files on server. If they are different, they will be synchronized to the latest version. The lateset version is based on the file modify time. When one file on server is accessed by one client, other clients cannot access to the same file on server even check whether it is the lateset version.
