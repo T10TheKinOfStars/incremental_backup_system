@@ -1,10 +1,15 @@
 Author: Yilin Tao
 
-This project is about increase storage upload files like dropbox
-It is implemented by using C++ and thrift
-Used to study rsync algorithm and implement a simple file system to synchronize files
+This project is about increase storage upload text files
+It is implemented by using C++ and Apache Thrift software framework
+Used rsync algorithm to implement the increamental storage system
 
+thrift file:
+smartSync.thrift        define data structure and service
+
+function files:
 checksum.hpp/cpp        compute rolling-checksum and md5 checksum
+common.h                define macro funtions for debugging
 md5.h/cpp               generate md5 string
 package.hpp/cpp         generate send information and process rececive information
 file.hpp/cpp            file operations
@@ -16,15 +21,15 @@ smartSync.thrift        thrift file
 client1/client2         test folder
 files                   folder to store server files
 
-The first version has completed on May 3 2015
+auto generate files:
+smartSync_constants.h/cpp
+SmartSync.h/cpp
+smartSync_types.h/cpp
 
-You can run server as ./server
-You can run client as ./client ip port --dir xxxxxx
+You can run server as ./server 1024                             (1024 is blocksize, which can be set to other value. It should be the same for server and client)
+You can run client as ./client ip port 1024 --dir directoryname (1024 is blocksize, which can be set to other value. It should be the same for server and client)
 
 Once you run the server, the server will listen the requesets from clients.
-Once you run the client, it will automatically check all the files in directory and compare
-them with files on server. If they are different, they will be synchronized to the latest
-version. The lateset version is based on the file modify time.
+Once you run a client, it will automatically check all the files in directory that you given and compare them with files on server. If they are different, they will be synchronized to the latest version. The lateset version is based on the file modify time. When one file on server is accessed by one client, other clients cannot access to the same file on server even check whether it is the lateset version.
 
-The synchronization algorithm is based on rsync, which will use rolling checksum and md5 checksum
-to tell which part should be sent as content and which part should be only sent identification.
+The synchronization algorithm is based on rsync, which will use rolling checksum and md5 checksum to tell which part should be sent as content and which part should be only sent identification.
