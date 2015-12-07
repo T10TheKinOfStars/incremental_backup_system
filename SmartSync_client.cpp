@@ -181,6 +181,7 @@ int main(int argc, char** argv) {
                         return -1;
                     }
                     try {
+                        dprintf("File doesnt exist on server. The data transport between the client and the server is %lu\n", sizeof(statusReport) + getSizeOfObject(rfile));
                         client.writeFile2Server(statusReport,rfile);
                     } catch (SystemException se) {
                         //format se information in json format
@@ -248,6 +249,7 @@ int main(int argc, char** argv) {
                         }
                     }
                     try {
+                        dprintf("The file on client is older. The data transport between clients and servers are %lu\n", getSizeOfObject(des) + getSizeOfObject(vchk));
                         client.updateLocal(des,vchk,targetid);
                     } catch (SystemException se) {
                         std::cout<<ThriftJSONString(se)<<std::endl;
@@ -290,6 +292,8 @@ int main(int argc, char** argv) {
                         rfile.__set_content(content);
                         rfile.__set_meta(data);
                         data.__set_updated(timebuf);
+                        dprintf("The file on client is newer and need whole update.\
+                        The data transport between the client and the server is %lu\n", sizeof(statusReport)+getSizeOfObject(rfile));
 
                         client.writeFile2Server(statusReport,rfile); 
                     } else {
@@ -308,6 +312,8 @@ int main(int argc, char** argv) {
                         #endif
                          */ 
                         try {
+                            dprintf("The file on client is newer and dont need updata the whole file. \
+                            The data transport between the client and the server is %lu\n", sizeof(statusReport) + getSizeOfObject(vdes) + sizeof(targetid));
                             client.updateServer(statusReport,vdes,targetid);
                         } catch (SystemException se) {
                             cout<<ThriftJSONString(se)<<endl;
