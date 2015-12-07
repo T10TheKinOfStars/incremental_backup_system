@@ -9,7 +9,7 @@ smartSync.thrift        define data structure and service
 
 function files:
 checksum.hpp/cpp        compute rolling-checksum and md5 checksum
-common.h                define macro funtions for debugging
+common.h                define macro funtions for debugging and funs to compute struct size
 md5.h/cpp               generate md5 string
 package.hpp/cpp         generate send information and process rececive information
 file.hpp/cpp            file operations
