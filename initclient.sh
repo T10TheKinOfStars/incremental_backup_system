@@ -1,3 +1,3 @@
 #!/bin/sh
-cp client.exec ./client1
-cp client.exec ./client2
+cp client.exec client ./client1
+cp client.exec client ./client2
