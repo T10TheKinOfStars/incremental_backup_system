@@ -181,7 +181,7 @@ int main(int argc, char** argv) {
                         return -1;
                     }
                     try {
-                        dprintf("File doesnt exist on server. The data transport between the client and the server is %lu\n", sizeof(statusReport) + getSizeOfObject(rfile));
+                        dprintf("File %s doesnt exist on server. The data transport between the client and the server is %lu Byte\n", fworker->getFilename().c_str(), sizeof(statusReport) + getSizeOfObject(rfile));
                         client.writeFile2Server(statusReport,rfile);
                     } catch (SystemException se) {
                         //format se information in json format
@@ -190,7 +190,6 @@ int main(int argc, char** argv) {
                     }
                     //format status in json format
                     dprintf("write 2 server is %d\n",statusReport.status);
-                    //std::cout<<ThriftJSONString(statusReport)<<std::endl;
                 } else if (statusReport.status == 2) {
                     //if client is older, it sends des to server
                     dprintf("file on client is older\n");
@@ -202,8 +201,6 @@ int main(int argc, char** argv) {
                         ifstream ifs(fworker->getPath().c_str());
                         double filesize = fworker->getFileSize();
                         int blocksize = fworker->getBlockSize();
-                        //dprintf<<"File size is "<<filesize<<", blocksize is "<<blocksize<<endl;
-                        //dprintf<<"For loop excutes "<<(int)ceil(filesize/blocksize)<<endl;
                         if (ifs) {
                             for (int i = 0; i < (int)ceil(filesize/blocksize); ++i) {
                                 char *buf = new char[blocksize+1];
@@ -217,14 +214,6 @@ int main(int argc, char** argv) {
                             exit(-1);
                         }
                         ifs.close();
-                        /*
-                        //show files---------------------------
-                        for (int i = 0; i < (int)file.size(); ++i) {
-                            dprintf<<file[i];
-                        }
-                        dprintf<<endl;
-                        */
-                        //------------------------------------
                         int l;
                         int bsize = fworker->getBlockSize();
                         int fsize = fworker->getFileSize();
@@ -249,7 +238,7 @@ int main(int argc, char** argv) {
                         }
                     }
                     try {
-                        dprintf("The file on client is older. The data transport between clients and servers are %lu\n", getSizeOfObject(des) + getSizeOfObject(vchk));
+                        dprintf("The file %s on client is older. The data transport between clients and servers are %lu Byte\n", fworker->getFilename().c_str(), getSizeOfObject(des) + getSizeOfObject(vchk));
                         client.updateLocal(des,vchk,targetid);
                     } catch (SystemException se) {
                         std::cout<<ThriftJSONString(se)<<std::endl;
@@ -266,21 +255,6 @@ int main(int argc, char** argv) {
                     dprintf("File on client is newer\n");
                     vector<Filechk> fchks;
                     client.request(fchks,targetid);
-                    //dprintf<<"fchks size from server is "<<fchks.size()<<endl;
-                    //#ifdef DEBUG
-                    /*
-                    dprintf<<"start show fchks:\n";
-                    for (int i = 0; i < (int)fchks.size();++i) {
-                        dprintf<<i<< " roll:"<<fchks[i].rollchk
-                            <<" num1:"<<fchks[i].num1
-                            <<" num2:"<<fchks[i].num2
-                            <<" md5:"<<fchks[i].md5chk
-                            <<" block:"<<fchks[i].block
-                            <<endl;
-                    }
-                    dprintf<<"end show fchks\n";
-                    #endif
-                    */
                     if (fworker->getFileSize() / 1000000 > fworker->getBlockSize() * (int)fchks.size()) {
                         //directly write file to server
                         t = st.st_mtime;
@@ -292,8 +266,7 @@ int main(int argc, char** argv) {
                         rfile.__set_content(content);
                         rfile.__set_meta(data);
                         data.__set_updated(timebuf);
-                        dprintf("The file on client is newer and need whole update.\
-                        The data transport between the client and the server is %lu\n", sizeof(statusReport)+getSizeOfObject(rfile));
+                        dprintf("The file %s on client is newer and need whole update. The data transport between the client and the server is %lu Byte\n", fworker->getFilename().c_str(),sizeof(statusReport)+getSizeOfObject(rfile));
 
                         client.writeFile2Server(statusReport,rfile); 
                     } else {
@@ -302,18 +275,8 @@ int main(int argc, char** argv) {
                         searchworker->init(fchks);
                         searchworker->find();
                         vdes = pkgworker->getFiledes();
-                        /* 
-                        #ifdef DEBUG
-                            dprintf<<"start show vdes"<<endl;
-                            for (int i = 0; i < (int)vdes.size(); ++i) {
-                                dprintf<<i<<"  flag is "<<vdes[i].flag<<" content is "<<vdes[i].content<<" block is "<<vdes[i].block<<endl;
-                            }
-                            dprintf<<"end show vdes"<<endl;
-                        #endif
-                         */ 
                         try {
-                            dprintf("The file on client is newer and dont need updata the whole file. \
-                            The data transport between the client and the server is %lu\n", sizeof(statusReport) + getSizeOfObject(vdes) + sizeof(targetid));
+                            dprintf("The file %s on client is newer and dont need updata the whole file. The data transport between the client and the server is %lu\n", fworker->getFilename().c_str(), sizeof(statusReport) + getSizeOfObject(vdes) + sizeof(targetid));
                             client.updateServer(statusReport,vdes,targetid);
                         } catch (SystemException se) {
                             cout<<ThriftJSONString(se)<<endl;

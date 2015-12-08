@@ -1,22 +1,34 @@
-This client target id is 4428
+This client target id is 3898
 dir is files/
 There are 3 files in directory
 Processing test .......
 send checkfile request
-[test] file doesn't exist on server and write to server
-File doesnt exist on server. The data transport between the client and the server is 252
-write 2 server is 5
 Processing large-warpeace.txt .......
 send checkfile request
-[large-warpeace.txt] file doesn't exist on server and write to server
-File doesnt exist on server. The data transport between the client and the server is 2338711
-write 2 server is 5
 reset idx and sleep for several seconds
 Processing md5.cpp .......
 send checkfile request
-[md5.cpp] file doesn't exist on server and write to server
-File doesnt exist on server. The data transport between the client and the server is 17214
-write 2 server is 5
+Processing test .......
+send checkfile request
+Processing large-warpeace.txt .......
+send checkfile request
+reset idx and sleep for several seconds
+Processing md5.cpp .......
+send checkfile request
+Processing test .......
+send checkfile request
+Processing large-warpeace.txt .......
+send checkfile request
+reset idx and sleep for several seconds
+Processing md5.cpp .......
+send checkfile request
+Processing test .......
+send checkfile request
+Processing large-warpeace.txt .......
+send checkfile request
+reset idx and sleep for several seconds
+Processing md5.cpp .......
+send checkfile request
 Processing test .......
 send checkfile request
 Processing large-warpeace.txt .......
@@ -99,10 +111,10 @@ send checkfile request
 Processing large-warpeace.txt .......
 send checkfile request
 file on client is older
-The file on client is older. The data transport between clients and servers are 182720
+The file large-warpeace.txt on client is older. The data transport between clients and servers are 182720 Byte
 update filename is [large-warpeace.txt]
 file path is [files/large-warpeace.txt]
-time is 20151207170920
+time is 20151207200328
 update finished
 reset idx and sleep for several seconds
 Processing md5.cpp .......
